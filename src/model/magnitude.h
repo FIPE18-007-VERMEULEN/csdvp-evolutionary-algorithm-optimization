@@ -8,10 +8,17 @@
 class Magnitude
 {
     private:
-        double value = 0;
+        double _value = 0;
+
+        //Constructor
+        Magnitude();
+        Magnitude(double);
+
+        // function
+        static const int _inRange(double);
 
     public:
-    Magnitude();
+        static Magnitude* build(double); //factory
 
     //GETTER
     const double value();

@@ -5,7 +5,13 @@
 #include <queenCrossover.h>
 #include <queenEval.h>
 
+#include <model/magnitude.h>
+
 int main(int argc, char* argv[]){
+
+  Magnitude * m = Magnitude::build(-10.0);
+
+  std::cout << "Magnitude" << m->value() << std::endl;
 
   //Define a QUEEN -> 1 line
   QUEEN s1;

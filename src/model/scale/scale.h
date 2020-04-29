@@ -1,7 +1,7 @@
 #ifndef SRC_SCALE_SCALE_H_
 #define SRC_SCALE_SCALE_H_
 
-#include <scaleValue.h>
+#include "scaleValue.h"
 
 /** Represent a competency scale used by academic to assert competency level of a student.
  * 

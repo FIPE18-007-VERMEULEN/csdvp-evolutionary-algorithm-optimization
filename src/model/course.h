@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include <competency.h>
+#include "competency.h"
 
 /**
  * Represents a course in an academic structure.

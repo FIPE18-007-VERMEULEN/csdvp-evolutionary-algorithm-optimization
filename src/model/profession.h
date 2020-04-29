@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include <competency.h>
+#include "competency.h"
 
 /**
  * A profession is a job sought by a student.

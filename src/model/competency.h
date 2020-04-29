@@ -2,7 +2,8 @@
 #define SRC_COMPETENCY_H_
 
 #include <string>
-#include <magnitude.h>
+
+#include "magnitude.h"
 
 /**
  * Represents the notion of a competency (a.k.a. "non operationalisable" skill).
