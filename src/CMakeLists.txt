@@ -8,3 +8,6 @@ SET (EXERCICE_SOURCES
 )
 
 ADD_LIBRARY(lQueen STATIC ${EXERCICE_SOURCES})
+
+
+add_subdirectory(model)
