@@ -1,5 +1,5 @@
-#ifndef DEF_COMPETENCY
-#define DEF_COMPETNECY
+#ifndef SRC_COMPETENCY_H_
+#define SRC_COMPETENCY_H_
 
 #include <string>
 #include <magnitude.h>
@@ -24,4 +24,4 @@ class Competency
         Competency();
 };
 
-#endif
+#endif // SRC_COMPETENCY_H_

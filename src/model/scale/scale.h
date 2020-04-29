@@ -1,5 +1,5 @@
-#ifndef DEF_SCALE
-#define DEF_SCALE
+#ifndef SRC_SCALE_SCALE_H_
+#define SRC_SCALE_SCALE_H_
 
 #include <scaleValue.h>
 
@@ -15,4 +15,4 @@ class Scale
         void getRange(ScaleValue &, double & inf, double & max);
 };
 
-#endif DEF_SCALE
+#endif // SRC_SCALE_SCALE_H_

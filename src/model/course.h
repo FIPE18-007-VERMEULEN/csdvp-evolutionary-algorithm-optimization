@@ -1,5 +1,5 @@
-#ifndef DEF_COURSE
-#define DEF_COURSE
+#ifndef SRC_COURSE_H_
+#define SRC_COURSE_H_
 
 #include <vector>
 
@@ -36,4 +36,4 @@ class Course
 
 
 
-#endif
+#endif // SRC_COURSE_H_

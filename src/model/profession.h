@@ -1,5 +1,5 @@
-#ifndef DEF_PROFESSION
-#define DEF_PROFESSION
+#ifndef SRC_PROFESSION_H_
+#define SRC_PROFESSION_H_
 
 #include <vector>
 
@@ -21,4 +21,4 @@ class Profession
         Profession();
 };
 
-#endif
+#endif // SRC_PROFESSION_H_

@@ -1,5 +1,5 @@
-#ifndef DEF_MAGNITUDE
-#define DEF_MAGNITUDE
+#ifndef SRC_MAGNITUDE_H_
+#define SRC_MAGNITUDE_H_
 
 /** Magnitude represents the mastery of a competency.
  * 
@@ -20,4 +20,4 @@ class Magnitude
     bool set(double v);
 };
 
-#endif
+#endif // SRC_MAGNITUDE_H_

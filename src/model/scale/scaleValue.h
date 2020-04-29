@@ -1,5 +1,5 @@
-#ifndef DEF_SCALE_VALUE
-#define DEF_SCALE_VALUE
+#ifndef SRC_SCALE_SCALE_VALUE_H_
+#define SRC_SCALE_SCALE_VALUE_H_
 
 #include <string>
 
@@ -15,4 +15,4 @@ class ScaleValue
         ScaleValue();
 };
 
-#endif DEF_SCALE_VALUE
+#endif // SRC_SCALE_SCALE_VALUE_H_

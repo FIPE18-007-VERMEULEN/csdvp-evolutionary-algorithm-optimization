@@ -1,5 +1,5 @@
-#ifndef DEF_MAPI
-#define DEF_MAPI
+#ifndef SRC_SCALE_MAPI_H_
+#define SRC_SCALE_MAPI_H_
 
 #include <scale.h>
 
@@ -10,4 +10,4 @@ class MAPIScale : public Scale
     public:
 };
 
-#endif DEF_MAPI
+#endif // SRC_SCALE_MAPI_H_
