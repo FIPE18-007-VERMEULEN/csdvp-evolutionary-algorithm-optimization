@@ -15,16 +15,27 @@ class Magnitude
         Magnitude(double);
 
         // function
-        static const int _inRange(double);
+        static int _inRange(double);
 
     public:
-        static Magnitude* build(double); //factory
+        static Magnitude build(double); //factory
 
-    //GETTER
-    const double value();
-    
-    //SETTER
-    bool set(double v);
+        Magnitude(const Magnitude & m);
+
+        double rebase(); /// if value is out of range, assign it the nearest value. Usefull when a MagnitudeException is caught
+
+        // Operator
+        Magnitude &  operator+=(const Magnitude & m);
+        Magnitude &  operator+=(double const d);
+
+        //GETTER
+        double value() const;
+        
+        //SETTER
+        bool set(double v);
 };
+
+Magnitude operator+(const Magnitude & m1, const Magnitude & m2);
+Magnitude operator+(const Magnitude & m1, double d);
 
 #endif // SRC_MAGNITUDE_H_

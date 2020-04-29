@@ -6,12 +6,29 @@
 #include <queenEval.h>
 
 #include <model/magnitude.h>
+#include <model/exception/magnitudeException.h>
 
 int main(int argc, char* argv[]){
 
-  Magnitude * m = Magnitude::build(-10.0);
+  Magnitude m = Magnitude::build(0.5);
+  Magnitude n = Magnitude::build(0.3);
 
-  std::cout << "Magnitude" << m->value() << std::endl;
+  std::cout << "Magnitude" << m.value() << std::endl;
+
+  m += n;
+
+  std::cout << "New magnitude is " << m.value() << std::endl;
+
+  try{
+    std::cout << "After addition mag is : " << (m + m).value() << std::endl;
+  }
+  catch(MagnitudeException e)
+  {
+    e.getMagnitude().rebase();
+    std::cout << "REBASE! New magnitude value is" << e.getMagnitude().rebase() << std::endl;
+    std::cout << "Accessing magnitude value : " << e.getMagnitude().value() << std::endl;
+  }
+  
 
   //Define a QUEEN -> 1 line
   QUEEN s1;

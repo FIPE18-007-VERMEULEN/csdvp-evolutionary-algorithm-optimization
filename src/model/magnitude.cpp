@@ -2,14 +2,17 @@
 #include "exception/magnitudeException.h"
 
 // === FACTORY
-Magnitude* Magnitude::build(double value = 0)
+Magnitude Magnitude::build(double value = 0)
 {
     bool isInRange = !(_inRange(value));
 
     if( !isInRange )
-        throw MagnitudeException(value);
+    {
+        Magnitude mag(value);
+        throw MagnitudeException(mag);
+    }
     else
-        return new Magnitude(value);
+        return Magnitude(value);
 }
 
 // === CONSTRUCTOR
@@ -23,15 +26,52 @@ Magnitude::Magnitude(double d)
     this->_value=d;
 }
 
+Magnitude::Magnitude(const Magnitude & m)
+{
+    this->_value = m._value;
+}
+
+// === OPERATOR
+
+Magnitude & Magnitude::operator+=(const double d)
+{
+    this->_value+=d;
+    if( Magnitude::_inRange(this->_value) )
+        throw MagnitudeException(*this);
+    return *this;
+}
+
+Magnitude & Magnitude::operator+=(const Magnitude &  m)
+{
+    this->_value += m._value;
+    if( Magnitude::_inRange(this->_value) )
+        throw MagnitudeException(*this);
+    return *this;
+}
+
+Magnitude operator+(const Magnitude & m, const Magnitude & n)
+{
+    Magnitude mag(m);
+    mag+= n.value();
+    return mag;
+}
+
+Magnitude operator+(const Magnitude & m, const double d)
+{
+    Magnitude mag(m);
+    mag += d;
+    return mag;
+}
+
 // === FUNCTION
 /** Checks if the value v is in [0;1]. If yes, return 0. Else, if v < 0 return -1, 1 otherwise
  */ 
-const int Magnitude::_inRange(double v)
+int Magnitude::_inRange(double v)
 {
     return v < 0 ? -1 : v > 1 ? 1 : 0;
 }
 
-const double Magnitude::value(){return this->_value;}
+double Magnitude::value() const {return this->_value;}
 
 /** Set the magnitude value of a competency. Indicates whether or not there is an overflow in
  * the given v value (and that it has been automatically corrected)
@@ -55,4 +95,13 @@ bool Magnitude::set(double v)
 
     return !isInRange;
 
+}
+
+double Magnitude::rebase()
+{
+    if(this->_value < 0)
+        this->_value = 0;
+    else if(this->_value > 1)
+        this->_value = 1;
+    return this->_value;        
 }
