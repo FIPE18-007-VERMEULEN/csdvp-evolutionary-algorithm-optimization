@@ -5,6 +5,7 @@ SET(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
 
 SET (EXERCICE_SOURCES
   magnitude.cpp
+  competency.cpp
 )
 
 ADD_LIBRARY(lModel STATIC ${EXERCICE_SOURCES})

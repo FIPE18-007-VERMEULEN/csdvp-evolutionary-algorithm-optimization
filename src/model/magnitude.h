@@ -20,7 +20,7 @@ class Magnitude
     public:
         static Magnitude build(double); //factory
 
-        Magnitude(const Magnitude & m);
+        /* Magnitude(const Magnitude & m); */
 
         double rebase(); /// if value is out of range, assign it the nearest value. Usefull when a MagnitudeException is caught
 

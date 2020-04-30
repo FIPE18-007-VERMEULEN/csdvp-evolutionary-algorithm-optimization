@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "magnitude.h"
 #include "exception/magnitudeException.h"
 
@@ -8,8 +10,8 @@ Magnitude Magnitude::build(double value = 0)
 
     if( !isInRange )
     {
-        Magnitude mag(value);
-        throw MagnitudeException(mag);
+        //Magnitude mag(value);
+        throw MagnitudeException(new Magnitude(value));
     }
     else
         return Magnitude(value);
@@ -26,10 +28,10 @@ Magnitude::Magnitude(double d)
     this->_value=d;
 }
 
-Magnitude::Magnitude(const Magnitude & m)
+/* Magnitude::Magnitude(const Magnitude & m)
 {
     this->_value = m._value;
-}
+} */
 
 // === OPERATOR
 
@@ -40,7 +42,10 @@ Magnitude & Magnitude::operator+=(const double d)
 {
     this->_value+=d;
     if( Magnitude::_inRange(this->_value) )
-        throw MagnitudeException(*this);
+    {
+        Magnitude *mag = new Magnitude(*this);
+        throw MagnitudeException(mag);
+    }
     return *this;
 }
 
@@ -51,7 +56,10 @@ Magnitude & Magnitude::operator+=(const Magnitude &  m)
 {
     this->_value += m._value;
     if( Magnitude::_inRange(this->_value) )
-        throw MagnitudeException(*this);
+    {
+        Magnitude *mag = new Magnitude(*this);
+        throw MagnitudeException(mag);
+    }
     return *this;
 }
 
@@ -61,7 +69,7 @@ Magnitude & Magnitude::operator+=(const Magnitude &  m)
 Magnitude operator+(const Magnitude & m, const Magnitude & n)
 {
     Magnitude mag(m);
-    mag+= n.value();
+    mag+= n;
     return mag;
 }
 
@@ -112,8 +120,12 @@ bool Magnitude::set(double v)
 double Magnitude::rebase()
 {
     if(this->_value < 0)
+    {
         this->_value = 0;
+    }
     else if(this->_value > 1)
+    {
         this->_value = 1;
+    }
     return this->_value;        
 }

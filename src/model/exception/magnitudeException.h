@@ -10,14 +10,14 @@
 class MagnitudeException : public std::exception
 {
     private:
-        Magnitude & _triedValue;
+        Magnitude * _triedValue;
         std::string _phrase;
 
     public:
-        MagnitudeException(Magnitude & m) throw()
+        MagnitudeException(Magnitude * m) throw()
             : _triedValue(m)
         {
-            this->_phrase = "Magnitude Exception: value (" + std::to_string(m.value()) + ") is out of bound [0;1].";
+            this->_phrase = "Magnitude Exception: value (" + std::to_string(m->value()) + ") is out of bound [0;1].";
         }
 
         virtual const char* what() const throw()
@@ -26,9 +26,12 @@ class MagnitudeException : public std::exception
         }
 
         virtual ~MagnitudeException() throw()
-        {}
+        {
+            //this->_triedValue must not be freed by ~this !
+        }
 
-        Magnitude & getMagnitude() const {return this->_triedValue;}
+        Magnitude & getMagnitude() const {return *(this->_triedValue);}
+
 };
 
 #endif // SRC_EXCEPTION_MAGNITUDE_EXCEPTION_H_

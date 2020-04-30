@@ -15,7 +15,7 @@
 class Competency
 {
     private:
-        Magnitude & _m;
+        Magnitude _m;
         std::string _name;
         int _id;
 
@@ -33,13 +33,13 @@ class Competency
             /** evolveTowards allows the competency to increase or decrease according to the value passed in parameter (either in Magnitude._value or double). It represents the competency evolving towards a specfic state, here represented by this->_m.value() + m.value(). 
              * Use it instead of manipuling directly a Magnitude, since it'll handle MagnitudeException
              * 
-             * @throw CompetencyEvolvingException
+             * @throw CompetencyEvolvingException Exception containing this
              */ 
             void evolveTowards(Magnitude & m);
             /** evolveTowards allows the competency to increase or decrease according to the value passed in parameter (either in Magnitude._value or double). It represents the competency evolving towards a specfic state, here represented by this->_m.value() + d.
              * Use it instead of manipuling directly a Magnitude, since it'll handle MagnitudeException
              * 
-             * @throw CompetencyEvolvingException
+             * @throw CompetencyEvolvingException Exception containing this
              */ 
             void evolveTowards(double d);
 
@@ -56,8 +56,11 @@ class Competency
         const int id() const {return this->_id;}
 
         // === SETTER
-        void setMagnitude(Magnitude & m){this->_m = m;};
+        void setMagnitude(Magnitude & m){this->_m = m;}
+        void setName(std::string s){this->_name = s;}
+        
 };
-int Competency::COMPETENCY_COUNTER = 0;
+// === OPERATOR
+std::ostream & operator<<(std::ostream& Stream, const Competency & c);
 
 #endif // SRC_COMPETENCY_H_
