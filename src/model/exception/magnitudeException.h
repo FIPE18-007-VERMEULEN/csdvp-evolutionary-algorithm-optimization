@@ -3,13 +3,14 @@
 
 #include <exception>
 #include <string>
+#include <iostream>
 
 #include "../magnitude.h"
 
 class MagnitudeException : public std::exception
 {
     private:
-        Magnitude _triedValue;
+        Magnitude & _triedValue;
         std::string _phrase;
 
     public:
@@ -27,7 +28,7 @@ class MagnitudeException : public std::exception
         virtual ~MagnitudeException() throw()
         {}
 
-        Magnitude getMagnitude() const {return this->_triedValue;}
+        Magnitude & getMagnitude() const {return this->_triedValue;}
 };
 
 #endif // SRC_EXCEPTION_MAGNITUDE_EXCEPTION_H_

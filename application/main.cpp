@@ -24,9 +24,11 @@ int main(int argc, char* argv[]){
   }
   catch(MagnitudeException e)
   {
+    std::cout << "Memory adr of m is : " << &m << std::endl;
     e.getMagnitude().rebase();
     std::cout << "REBASE! New magnitude value is" << e.getMagnitude().rebase() << std::endl;
     std::cout << "Accessing magnitude value : " << e.getMagnitude().value() << std::endl;
+    std::cout << "magnitude value of M : " << m.value() << std::endl;
   }
   
 
