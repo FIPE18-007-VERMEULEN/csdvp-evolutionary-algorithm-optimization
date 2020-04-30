@@ -6,6 +6,7 @@
 #include <queenEval.h>
 
 #include <model/magnitude.h>
+#include <model/competency.h>
 #include <model/exception/magnitudeException.h>
 
 int main(int argc, char* argv[]){

@@ -33,6 +33,9 @@ Magnitude::Magnitude(const Magnitude & m)
 
 // === OPERATOR
 
+/**
+ * @throw MagnitudeException Throw a MagnitudeException if the new value is > 1 or < 0. Note that the this->_value IS set (thus you can use this->rebase() to put _value in good range)
+ */ 
 Magnitude & Magnitude::operator+=(const double d)
 {
     this->_value+=d;
@@ -41,6 +44,9 @@ Magnitude & Magnitude::operator+=(const double d)
     return *this;
 }
 
+/**
+ * @throw MagnitudeException Throw a MagnitudeException if the new value is > 1 or < 0. Note that the this->_value IS set (thus you can use this->rebase() to put _value in good range)
+ */ 
 Magnitude & Magnitude::operator+=(const Magnitude &  m)
 {
     this->_value += m._value;
@@ -49,6 +55,9 @@ Magnitude & Magnitude::operator+=(const Magnitude &  m)
     return *this;
 }
 
+/**
+ * @throw MagnitudeException Throw a MagnitudeException if the new value is > 1 or < 0. You can catch the new magnitude causing the exception with magnitudeException.getMagnitude() (and thus perform the desired action, like a rebase)
+ */ 
 Magnitude operator+(const Magnitude & m, const Magnitude & n)
 {
     Magnitude mag(m);
@@ -56,6 +65,9 @@ Magnitude operator+(const Magnitude & m, const Magnitude & n)
     return mag;
 }
 
+/**
+ * @throw MagnitudeException Throw a MagnitudeException if the new value is > 1 or < 0. You can catch the new magnitude causing the exception with magnitudeException.getMagnitude() (and thus perform the desired action, like a rebase)
+ */
 Magnitude operator+(const Magnitude & m, const double d)
 {
     Magnitude mag(m);
