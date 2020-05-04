@@ -6,6 +6,7 @@ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src)
 
 ADD_EXECUTABLE(ceao main.cpp)
 ADD_EXECUTABLE(ceao_competency ceao_competency.cpp)
+ADD_EXECUTABLE(ceao_course ceao_course.cpp)
 
 ADD_EXECUTABLE(tryInit tryInit.cpp)
 ADD_EXECUTABLE(tryMutation tryMutation.cpp)
@@ -14,6 +15,7 @@ ADD_EXECUTABLE(tryEval tryEval.cpp)
 
 ADD_DEPENDENCIES(ceao lQueen lModel)
 ADD_DEPENDENCIES(ceao_competency lQueen lModel)
+ADD_DEPENDENCIES(ceao_course lQueen lModel)
 
 ADD_DEPENDENCIES(tryInit lQueen)
 ADD_DEPENDENCIES(tryMutation lQueen)
@@ -24,6 +26,7 @@ ADD_DEPENDENCIES(tryEval lQueen)
 
 TARGET_LINK_LIBRARIES(ceao ${PARADISEO_LIBRARIES} lQueen lModel)
 TARGET_LINK_LIBRARIES(ceao_competency ${PARADISEO_LIBRARIES} lQueen lModel)
+TARGET_LINK_LIBRARIES(ceao_course ${PARADISEO_LIBRARIES} lQueen lModel)
 
 TARGET_LINK_LIBRARIES(tryInit ${PARADISEO_LIBRARIES} lQueen)
 TARGET_LINK_LIBRARIES(tryMutation ${PARADISEO_LIBRARIES} lQueen)
