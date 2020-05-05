@@ -10,7 +10,7 @@ int Competency::COMPETENCY_COUNTER = 0;
 
 // === FACTORY
 
-Competency Competency::build(Magnitude & m, std::string name = "")
+Competency Competency::build(Magnitude & m, std::string name)
 {
     int id = Competency::assignID();
     if(name.empty())
@@ -19,7 +19,7 @@ Competency Competency::build(Magnitude & m, std::string name = "")
     return Competency(id, m, name);
 }
 
-Competency Competency::build(double d = 0, std::string name = "")
+Competency Competency::build(double d = 0, std::string name)
 {
     int id = Competency::assignID();
     if(name.empty())
@@ -93,4 +93,9 @@ std::ostream& operator<<(std::ostream& Stream, const Competency & c)
     std::string s = "Competency\n\tid:"+std::to_string(c.id())+"\n\tname:"+c.c_name()+"\n\tvalue:"+std::to_string(c.competencyValue());
     Stream << s ; 
     return Stream; 
+}
+
+bool Competency::operator==(const Competency & c) const
+{
+    return ( this->_id == c.id() || ( this->_name.compare(c.c_name()) == 0 ) );
 }

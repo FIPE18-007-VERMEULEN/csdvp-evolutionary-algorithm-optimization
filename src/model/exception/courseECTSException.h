@@ -26,6 +26,8 @@ class CourseECTSException : public std::exception
         {
             //this->_course must not be free by ~this!
         }
+
+        Course & getCourse() const{return *(this->_course);}
 };
 
 #endif // SRC_MODEL_EXCEPTION_COURSE_ECTS_EXCEPTION_H_

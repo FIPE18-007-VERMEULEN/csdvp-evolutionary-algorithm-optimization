@@ -39,6 +39,12 @@ class Course
         std::string _name;
         int _id;
 
+        // === FUNC
+        /// _duplicataProtection returns true if the value (2nd param) searched into (1st param) is found
+        bool _duplicataProtection(std::vector<int> *, int);
+        bool _duplicataProtection(std::vector<Competency> *, Competency);
+        bool _duplicataProtection(std::vector<std::pair<Competency,double>> *, Competency);
+
         // Static
         static int COURSE_COUNTER;
         static int assignID();
@@ -54,14 +60,15 @@ class Course
         const std::string name() const{return this->_name;};
         const int ects() const{return this->_ects;}
         const std::vector<Competency> prerequisites() const {return this->_prerequisites;}
+        const std::vector<int> timeFrame() const {return this->_temporalAvailability;}
 
         // === MUTATOR
             // SETTER
             void setECTS(int ects);
             void setName(std::string);
-            void setAvailabilities(std::vector<int>);
-            void setPrerequisites(std::vector<Competency>);
-            void setTeachedComps(std::vector<std::pair<Competency,double>>);
+            void setAvailabilities(std::vector<int>&);
+            void setPrerequisites(std::vector<Competency>&);
+            void setTeachedComps(std::vector<std::pair<Competency,double>>&);
 
             // ADDER
             void addTeachedComp(std::pair<Competency,double>);

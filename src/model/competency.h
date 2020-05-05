@@ -26,8 +26,8 @@ class Competency
         static int COMPETENCY_COUNTER;
         static int assignID();
     public:
-        static Competency build(Magnitude &, std::string);
-        static Competency build(double, std::string);
+        static Competency build(Magnitude &, std::string s = "");
+        static Competency build(double, std::string = "");
 
         // === FUNCTION
             /** evolveTowards allows the competency to increase or decrease according to the value passed in parameter (either in Magnitude._value or double). It represents the competency evolving towards a specfic state, here represented by this->_m.value() + m.value(). 
@@ -58,6 +58,10 @@ class Competency
         // === SETTER
         void setMagnitude(Magnitude & m){this->_m = m;}
         void setName(std::string s){this->_name = s;}
+
+        // === OPERATOR
+        /// A competency is equal to another iff their id are the same, or their name
+        bool operator==(const Competency & c) const;
         
 };
 // === OPERATOR
