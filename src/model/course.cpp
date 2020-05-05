@@ -2,6 +2,7 @@
 #include <utility>
 #include <algorithm>
 #include <iterator>
+#include <stdexcept>
 
 #include "course.h"
 #include "competency.h"
@@ -102,14 +103,53 @@ Course::Course(int id, int ects, std::string name)
     }
 
     std::pair<Competency,double> * Course::rmTeachedComp(Competency teached)
-    {return NULL;}
+    {
+        if(this->_weightedTeached.size()==0)
+            return NULL;
+        
+        std::vector<std::pair<Competency, double>>::iterator it = this->_weightedTeached.begin();
+        
+        int index = 0;
+
+        Competency current = this->_weightedTeached.at(index).first;
+
+        while(it != this->_weightedTeached.end() && !( this->_weightedTeached.at(index).first == teached) )
+        {
+            index=std::distance(this->_weightedTeached.begin(), it);
+            current = this->_weightedTeached.at(index).first;
+            it++;
+        }
+
+        if(it == this->_weightedTeached.end() && !( this->_weightedTeached.at(index).first == teached))
+            return NULL;
+        
+        std::pair<Competency, double> * ptr_pair = &(this->_weightedTeached.at(index));
+        this->_weightedTeached.erase(this->_weightedTeached.begin()+index);
+        return ptr_pair;
+    }
     int * Course::rmTemporalFrameIndex(int index)
     {
-        return NULL;
+        int *ptr_time = & (this->_temporalAvailability.at(index)) ;
+
+        this->_temporalAvailability.erase(this->_temporalAvailability.begin()+index);
+        return ptr_time;
     }
+
     int * Course::rmTemporalFrameValue(int value)
     {
-        return NULL;
+        std::vector<int>::iterator it = 
+            std::find(
+                this->_temporalAvailability.begin(),
+                this->_temporalAvailability.end(),
+                value
+            );
+        if(it == this->_temporalAvailability.end())
+            return NULL;
+        
+        int index = std::distance(this->_temporalAvailability.begin(), it);
+        int * ptr_time = &(this->_temporalAvailability.at(index));
+        this->_temporalAvailability.erase(this->_temporalAvailability.begin()+index);
+        return ptr_time;
     }
 // === END MUTATOR
 
@@ -130,19 +170,43 @@ bool Course::_duplicataProtection(std::vector<Competency> * prereq, Competency c
 
 bool Course::_duplicataProtection(std::vector<std::pair<Competency,double>> *teached, Competency c)
 {
+    if(teached->size() == 0)
+        return false;
+    
     std::vector<std::pair<Competency, double>>::iterator it = teached->begin();
-    int index = std::distance(teached->begin(), teached->begin());
+    int index = 0;
     Competency current = teached->at(index).first;
 
     while(it != teached->end() && !( teached->at(index).first == c) )
     {
-        it++;
-        index=std::distance(teached->begin(), teached->begin());
+        index=std::distance(teached->begin(), it);
         current = teached->at(index).first;
+        it++;
     }
 
-    return it!=teached->end();
+    return ( it != teached->end() && !( teached->at(index).first == c) );
 }
+
+// template<typename T>
+// std::pair<int, T> Course::findInVector(const std::vector<T> & vec, const T & findMe)
+// {
+//     std::pair<int, T> res;
+
+//     typename std::vector<T>::iterator it = std::find( vec.begin(), vec.end(), findMe);
+//     if(it == vec.end())
+//     {
+//         res.first = -1;
+//         res.second; //NTD, -1 SHOULD BE USED TO DETECT THAT NOTHING HAS BEEN FOUND
+//     }
+//     else
+//     {
+//         res.first = std::distance(vec.begin(), it);
+//         res.second = vec.at(res.first);
+//     }
+
+//     return res;
+    
+// }
 
 // === OPERATOR
 std::ostream& operator<<(std::ostream& Stream, const Course & c)

@@ -29,6 +29,7 @@ class Competency
         static Competency build(Magnitude &, std::string s = "");
         static Competency build(double, std::string = "");
 
+        Competency() = default;
         // === FUNCTION
             /** evolveTowards allows the competency to increase or decrease according to the value passed in parameter (either in Magnitude._value or double). It represents the competency evolving towards a specfic state, here represented by this->_m.value() + m.value(). 
              * Use it instead of manipuling directly a Magnitude, since it'll handle MagnitudeException

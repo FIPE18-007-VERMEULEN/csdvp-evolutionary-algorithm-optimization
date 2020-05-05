@@ -18,10 +18,10 @@ Magnitude Magnitude::build(double value = 0)
 }
 
 // === CONSTRUCTOR
-Magnitude::Magnitude()
-{
+// Magnitude::Magnitude()
+// {
 
-}
+// }
 
 Magnitude::Magnitude(double d)
 {

@@ -11,7 +11,6 @@ class Magnitude
         double _value = 0;
 
         //Constructor
-        Magnitude();
         Magnitude(double);
 
         // function
@@ -20,6 +19,7 @@ class Magnitude
     public:
         static Magnitude build(double); //factory
 
+        Magnitude() = default;
         /* Magnitude(const Magnitude & m); */
 
         double rebase(); /// if value is out of range, assign it the nearest value. Usefull when a MagnitudeException is caught

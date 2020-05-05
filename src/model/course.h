@@ -44,7 +44,7 @@ class Course
         bool _duplicataProtection(std::vector<int> *, int);
         bool _duplicataProtection(std::vector<Competency> *, Competency);
         bool _duplicataProtection(std::vector<std::pair<Competency,double>> *, Competency);
-
+        
         // Static
         static int COURSE_COUNTER;
         static int assignID();
@@ -61,6 +61,7 @@ class Course
         const int ects() const{return this->_ects;}
         const std::vector<Competency> prerequisites() const {return this->_prerequisites;}
         const std::vector<int> timeFrame() const {return this->_temporalAvailability;}
+        const std::vector<std::pair<Competency, double>> teachedCompetenciesWeighted() const{return this->_weightedTeached;}
 
         // === MUTATOR
             // SETTER
@@ -86,6 +87,10 @@ class Course
         
         // === FUNC
             void fixECTS();
+            
+            /// _findInVector search the 2nd param inside a vector (1st param). It returns the a pair representing the index of the element, and the ptr of the element, or (-1;NULL) otherwise
+            // template<typename T>
+            // static std::pair<int, T> findInVector(const std::vector<T> &, const T &);
 
 };
 
