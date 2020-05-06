@@ -13,12 +13,43 @@
 class Profession
 {
     private:
-        std::vector<Competency> prerequisites;
+        std::vector<Competency> _prerequisites;
+        std::string _name;
+        int _id;
+
+        // === FUNC
+        /** _duplicataProtection returns true if the value (2nd param) searched into (1st param) is found*/
+        bool _duplicataProtection(std::vector<Competency> *, Competency);
 
         // Static
-        static int S_professionCounter;
+        static int PROFESSION_COUNTER;
+        static int assignID();
+
     public:
         Profession();
+        Profession(std::string name);
+        Profession(std::vector<Competency> & p, std::string n = "");
+        
+        // === GETTER
+        const int id() const{return this->_id;}
+        const std::string name() const{return this->_name;}
+        const std::vector<Competency> & prerequisites() const{return this->_prerequisites;}
+        /// return a modifiable reference to _prerequisite;
+        std::vector<Competency> & unlocked_prerequisites(){return this->_prerequisites;}
+
+        // === MUTATOR
+            // SETTER
+            /// Set name of the profession. If name empty, creates a default name based on ID
+            void setName(std::string name);
+            /// Set the prerequisites of a profession. The old prereq is returned.
+            std::vector<Competency> & setPrerequisites(std::vector<Competency> & v);
+
+            // ADDER
+            bool addPrerequisite(Competency &);
+
 };
+
+// === OPERATOR
+std::ostream & operator<<(std::ostream & Stream, const Profession & p);
 
 #endif // SRC_PROFESSION_H_

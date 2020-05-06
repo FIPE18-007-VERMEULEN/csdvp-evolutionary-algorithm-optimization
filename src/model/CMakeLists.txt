@@ -7,6 +7,7 @@ SET (EXERCICE_SOURCES
   magnitude.cpp
   competency.cpp
   course.cpp
+  profession.cpp
 )
 
 ADD_LIBRARY(lModel STATIC ${EXERCICE_SOURCES})

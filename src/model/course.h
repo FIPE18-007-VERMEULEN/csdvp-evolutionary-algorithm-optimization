@@ -72,8 +72,8 @@ class Course
             void setTeachedComps(std::vector<std::pair<Competency,double>>&);
 
             // ADDER
-            void addTeachedComp(std::pair<Competency,double>);
-            void addPrerequisite(Competency);
+            void addTeachedComp(std::pair<Competency,double> &);
+            void addPrerequisite(Competency &);
             void addTemporalFrame(int);
 
             // DELETER

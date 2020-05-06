@@ -62,13 +62,13 @@ Course::Course(int id, int ects, std::string name)
     {this->_weightedTeached = wComps;}
 
     // ADDER
-    void Course::addTeachedComp(std::pair<Competency,double> wComp)
+    void Course::addTeachedComp(std::pair<Competency,double> & wComp)
     {
         if( _duplicataProtection(&(this->_weightedTeached), wComp.first))
             return;
         this->_weightedTeached.push_back(wComp);
     }
-    void Course::addPrerequisite(Competency prereq)
+    void Course::addPrerequisite(Competency & prereq)
     {
         if( _duplicataProtection(&(this->_prerequisites), prereq) )
             return;
