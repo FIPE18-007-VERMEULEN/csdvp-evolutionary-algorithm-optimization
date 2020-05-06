@@ -6,6 +6,7 @@
 
 #include "model/magnitude.h"
 #include "model/competency.h"
+#include "model/course.h"
 
 #include "model/exception/magnitudeException.h"
 #include "model/exception/competencyEvolvingException.h"
@@ -17,6 +18,13 @@ int main(int argc, char* argv[])
     Competency c2 = Competency::build(m,"");
     Competency c3 = Competency::build(0.5);
 
+    std::vector<Competency> vec;
+    vec.push_back(c);
+    vec.push_back(c2);
+    vec.push_back(c3);
+    Course cour = Course::build();
+    cour.findInVector(vec, c);
+    
     assert(c3.name().compare("Competency#"+std::to_string(c3.id())) == 0);
         std::cout << "Default naming ok" << std::endl;
 

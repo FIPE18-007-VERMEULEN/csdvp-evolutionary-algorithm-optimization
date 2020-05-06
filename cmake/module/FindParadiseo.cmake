@@ -48,6 +48,7 @@ set(BUILD_DIR build)
 
 # Path
 set(PARADISEO_SRC_PATHS
+        /home/jerem/Softs/ParadisEO-2.0/
         ${PARADISEO_ROOT}
         $ENV{PARADISEO_ROOT}
         /usr/local/
@@ -101,6 +102,7 @@ endif()
 set(PARADISEO_FOUND true) # will be set to false if one of the required modules is not found
 
 set(FIND_PARADISEO_LIB_PATHS
+        /home/jerem/Softs/ParadisEO-2.0/build/
         ${PARADISEO_ROOT}/${BUILD_DIR}
         $ENV{PARADISEO_ROOT}
         /usr/local/

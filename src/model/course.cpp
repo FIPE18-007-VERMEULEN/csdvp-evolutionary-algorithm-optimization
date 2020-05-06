@@ -187,27 +187,6 @@ bool Course::_duplicataProtection(std::vector<std::pair<Competency,double>> *tea
     return ( it != teached->end() && !( teached->at(index).first == c) );
 }
 
-// template<typename T>
-// std::pair<int, T> Course::findInVector(const std::vector<T> & vec, const T & findMe)
-// {
-//     std::pair<int, T> res;
-
-//     typename std::vector<T>::iterator it = std::find( vec.begin(), vec.end(), findMe);
-//     if(it == vec.end())
-//     {
-//         res.first = -1;
-//         res.second; //NTD, -1 SHOULD BE USED TO DETECT THAT NOTHING HAS BEEN FOUND
-//     }
-//     else
-//     {
-//         res.first = std::distance(vec.begin(), it);
-//         res.second = vec.at(res.first);
-//     }
-
-//     return res;
-    
-// }
-
 // === OPERATOR
 std::ostream& operator<<(std::ostream& Stream, const Course & c)
 {
