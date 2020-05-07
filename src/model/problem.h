@@ -129,9 +129,10 @@ class CSDVP
             void setCompetenciesCatalogue(std::vector<Competency> &);
             // ADDER
             //Any adder has a duplicata protection. Tend to favor addX instead of setX to prevent duplicata
-            void addTimeFrame(int t);
-            void addCourseToCatalogue(Course & c);
-            void addCompetencyToCatalogue(Competency & c);
+            /**Returns true if the element has been inserted. Returns false if the insertion has not been performed to prevent a duplicata*/
+            bool addTimeFrame(int t);
+            bool addCourseToCatalogue(Course & c);
+            bool addCompetencyToCatalogue(Competency & c);
 
         // === FUNC
         /// Checks all configuration attributes. If they have been all set, then isConfig is set to true

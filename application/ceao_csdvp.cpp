@@ -8,6 +8,7 @@
 #include "model/problem.h"
 #include "model/course.h"
 #include "model/competency.h"
+#include "model/tools.h"
 
 #include "model/exception/csdvpOverlapingBoundaryException.h"
 
@@ -139,6 +140,34 @@ int main(int argc, char* argv[])
     assert(pb.timeFrames().at(1) == pb.cfg_minimalTimeFrame()+1);
     assert(pb.timeFrames().at(pb.timeFrames().size()-1) == pb.cfg_maximalTimeFrame());
         std::cout << "TimeFrames vector correctly init" << std::endl;
+
+    assert(pb.coursesCatalogue().size() > 0);
+    for(int i = 0; i < pb.coursesCatalogue().size(); i++)
+        assert(pb.coursesCatalogue().at(i).timeFrame().size() > 0);
+        std::cout << "Course catalogue randomized on TF OK." << std::endl;
+    std::cout << "Displaying size ("+std::to_string(pb.coursesCatalogue().size())+")/ 2 and -1 and +1 course" << std::endl;
+    std::cout << pb.coursesCatalogue().at(pb.coursesCatalogue().size()/2 - 1) << std::endl;
+    std::cout << pb.coursesCatalogue().at(pb.coursesCatalogue().size()/2) << std::endl;
+    std::cout << pb.coursesCatalogue().at(pb.coursesCatalogue().size()/2 + 1) << std::endl;
+
+    int counter;
+    std::cout << "Cheking Time Frames integrity..." << std::endl;
+    for(int i = 0; i < pb.timeFrames().size(); i++)
+    {
+        counter = 0;
+
+        for(int j = 0; j < pb.coursesCatalogue().size(); j++)
+        {
+            for(int k = 0; k < pb.coursesCatalogue().at(j).timeFrame().size(); k++)
+            {
+                if(pb.coursesCatalogue().at(j).timeFrame().at(k) == pb.timeFrames().at(i))
+                    counter++;
+                assert(counter <= pb.cfg_courseByTFMax());
+            }
+        }
+        assert(counter >= pb.cfg_courseByTFMin());
+    }
+    std::cout << "TF Integrity is OK!" << std::endl;
 
     return EXIT_SUCCESS;
 }

@@ -9,6 +9,7 @@
 
 #include "exception/csdvpOverlapingBoundaryException.h"
 #include "exception/notImplementedException.h"
+#include "exception/csdvpBadlyConfigException.h"
 
 int CSDVP::CSDVP_COUNTER = 0;
 
@@ -69,26 +70,29 @@ int CSDVP::CSDVP_COUNTER = 0;
         void CSDVP::setCompetenciesCatalogue(std::vector<Competency> & c)
             {this->_availableCompentecies;}
         // ADDER
-        void CSDVP::addTimeFrame(int tF)
+        bool CSDVP::addTimeFrame(int tF)
         {
             if(duplicataFlag(this->_timeFrames, tF))
-                return; // NTD
+                return false; // NTD
 
             this->_timeFrames.push_back(tF);
+            return true;
         }
-        void CSDVP::addCourseToCatalogue(Course & c)
+        bool CSDVP::addCourseToCatalogue(Course & c)
         {
             if(duplicataFlag(this->_availableCourses, c))
-                return;
+                return false;;
 
             this->_availableCourses.push_back(c);
+            return true;
         }
 
-        void CSDVP::addCompetencyToCatalogue(Competency & c)
+        bool CSDVP::addCompetencyToCatalogue(Competency & c)
         {
             if(duplicataFlag(this->_availableCompentecies, c))
-                return;
+                return false;
             this->_availableCompentecies.push_back(c);
+            return true;
         }
 
 
@@ -122,6 +126,12 @@ int CSDVP::CSDVP_COUNTER = 0;
         {
             throw CSDVPOverlapingBoundariesException(this);
         }
+
+        // verify if the has enough courses
+        if( this->_minimalCoursesByTimeFrame >= this->_quantityAvailableCourses)
+            throw CSDVPBadlyConfiguratedException("this->_minimalCoursesByTimeFrame > this->_quantityAvailableCourses");
+        if(this->_quantityAvailableCourses < this->_maximalCoursesByTimeFrame)
+            throw CSDVPBadlyConfiguratedException("this->_quantityAvailableCourses < this->_maximalCoursesByTimeFrame");
 
         this->_isConfig = true;
         return this->_isConfig;
@@ -186,6 +196,41 @@ int CSDVP::CSDVP_COUNTER = 0;
         {
             pb.addTimeFrame(pb.cfg_minimalTimeFrame()+i);
         }
+
+        /* COURSES ASSIGNATION
+         * First, we create a tmp sized coursed vector.
+         * Then, for each timeframe, we randomly pick between [0,vec.size] n courses (n is random in [_minimalCoursesByTimeFrame ; _ maximalCoursesByTimeFrame])
+         * Then, _availableCourses is all the courses that have at least one assigned TF in vec.
+         */
+        std::vector<Course> tmpCourses;
+        for(int i = 0; i < pb._quantityAvailableCourses; i++)
+        {
+            tmpCourses.push_back(Course::build(CSDVP::_randomizeIn(pb.cfg_minimalTimeFrame(), pb.cfg_maximalTimeFrame())));
+        }
+
+        bool insertRez;
+        for(int i = 0; i < pb.timeFrames().size(); i++)
+        {
+            int nbCoursesInThisTF = CSDVP::_randomizeIn(pb._minimalCoursesByTimeFrame, pb._maximalCoursesByTimeFrame);
+            int courseIdx;
+
+            std::cout << "In the TF "+std::to_string(i)+" I plan " << std::to_string(nbCoursesInThisTF) << " courses." << std::endl;
+
+            for(int j = 0; j < nbCoursesInThisTF; j++)
+            {
+                insertRez = true;
+                courseIdx = CSDVP::_randomizeIn(0,tmpCourses.size()-1);
+                insertRez = tmpCourses.at(courseIdx).addTemporalFrame(pb.timeFrames().at(i));
+
+                if(!insertRez) //If a duplicata has been prevented, we do not count the attempt
+                    j--;
+            }
+        }
+
+        for(int i = 0; i < tmpCourses.size(); i++)
+            if(tmpCourses.at(i).timeFrame().size() > 0)
+                pb.addCourseToCatalogue(tmpCourses.at(i));
+
     }
     // --------- END GENERATION RELATED FUNCTIONS ---------
 

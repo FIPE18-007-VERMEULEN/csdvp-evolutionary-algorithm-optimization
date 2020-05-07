@@ -64,25 +64,28 @@ Course::Course(int id, int ects, std::string name)
     {this->_weightedTeached = wComps;}
 
     // ADDER
-    void Course::addTeachedComp(std::pair<Competency,double> & wComp)
+    bool Course::addTeachedComp(std::pair<Competency,double> & wComp)
     {
         if( _duplicataProtection(&(this->_weightedTeached), wComp.first))
-            return;
+            return false;
         this->_weightedTeached.push_back(wComp);
+        return true;
     }
-    void Course::addPrerequisite(Competency & prereq)
+    bool Course::addPrerequisite(Competency & prereq)
     {
         if( duplicataFlag((this->_prerequisites), prereq) )
-            return;
+            return false;
         this->_prerequisites.push_back(prereq);
+        return true;
     }
-    void Course::addTemporalFrame(int time)
+    bool Course::addTemporalFrame(int time)
     {
         if(time < 0)
             throw CourseTemporalFrameException(this, time);
         if( duplicataFlag((this->_temporalAvailability), time) )
-            return;
+            return false;
         this->_temporalAvailability.push_back(time);
+        return true;
     }
 
     // DELETER
@@ -230,6 +233,11 @@ bool Course::_fullEquality(const Course & c) const
 std::ostream& operator<<(std::ostream& Stream, const Course & c)
 {
     std::string s = "Course\n\tid:"+std::to_string(c.id())+"\n\tname:"+c.name()+"\n\tECTS: "+std::to_string(c.ects());
+    std::string tf;
+    for(int i = 0; i < c.timeFrame().size()-1; i++)
+        tf+=std::to_string(c.timeFrame().at(i))+" ; ";
+    tf+=std::to_string(c.timeFrame().at(c.timeFrame().size()-1));
+    s+="\n\tTimeFrames: ["+tf+"]";
     Stream << s;
     return Stream;
 }
