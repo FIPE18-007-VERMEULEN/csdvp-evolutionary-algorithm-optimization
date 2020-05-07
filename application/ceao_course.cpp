@@ -136,5 +136,12 @@ int main(int argc, char* argv[])
     assert(c.teachedCompetenciesWeighted().size() == 2);
         std::cout << "RM teached comp ok" << std::endl;
 
+    assert(c == c);
+        std::cout << "Equality ok" << std::endl;
+    
+    Course c2;
+    assert( !(c == c2) );
+        std::cout << "Not equal ok" << std::endl;
+
     return EXIT_SUCCESS;
 }

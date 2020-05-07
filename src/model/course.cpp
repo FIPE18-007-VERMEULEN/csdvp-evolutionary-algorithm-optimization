@@ -6,9 +6,11 @@
 
 #include "course.h"
 #include "competency.h"
+#include "tools.h"
 
 #include "exception/courseECTSException.h"
 #include "exception/courseTemporalFrameException.h"
+#include "exception/notImplementedException.h"
 
 int Course::COURSE_COUNTER = 0;
 
@@ -70,7 +72,7 @@ Course::Course(int id, int ects, std::string name)
     }
     void Course::addPrerequisite(Competency & prereq)
     {
-        if( _duplicataProtection(&(this->_prerequisites), prereq) )
+        if( duplicataFlag((this->_prerequisites), prereq) )
             return;
         this->_prerequisites.push_back(prereq);
     }
@@ -78,7 +80,7 @@ Course::Course(int id, int ects, std::string name)
     {
         if(time < 0)
             throw CourseTemporalFrameException(this, time);
-        if( _duplicataProtection(&(this->_temporalAvailability), time) )
+        if( duplicataFlag((this->_temporalAvailability), time) )
             return;
         this->_temporalAvailability.push_back(time);
     }
@@ -155,18 +157,20 @@ Course::Course(int id, int ects, std::string name)
 
 
 // === FUNC
-bool Course::_duplicataProtection(std::vector<int> * timeFrame, int time)
-{
-    std::vector<int>::iterator it = std::find( timeFrame->begin(), timeFrame->end(), time);
+/// @deprecated
+// bool Course::_duplicataProtection(std::vector<int> * timeFrame, int time)
+// {
+//     std::vector<int>::iterator it = std::find( timeFrame->begin(), timeFrame->end(), time);
 
-    return it != timeFrame->end();
-}
+//     return it != timeFrame->end();
+// }
 
-bool Course::_duplicataProtection(std::vector<Competency> * prereq, Competency c)
-{
-    std::vector<Competency>::iterator it = std::find( prereq->begin(), prereq->end(), c);
-    return it != prereq->end();
-}
+/// @deprecated
+// bool Course::_duplicataProtection(std::vector<Competency> * prereq, Competency c)
+// {
+//     std::vector<Competency>::iterator it = std::find( prereq->begin(), prereq->end(), c);
+//     return it != prereq->end();
+// }
 
 bool Course::_duplicataProtection(std::vector<std::pair<Competency,double>> *teached, Competency c)
 {
@@ -208,12 +212,31 @@ bool Course::_duplicataProtection(std::vector<std::pair<Competency,double>> *tea
     
 // }
 
+bool Course::_lazyEquality(const Course & c) const
+{
+    return (this->_id == c.id() &&
+            this->_name.compare(c.name()) == 0 &&
+            this->_ects == c.ects()
+            );
+}
+
+///@todo
+bool Course::_fullEquality(const Course & c) const
+{
+    throw NotImplementedException("Course::_fullEquality");
+}
+
 // === OPERATOR
 std::ostream& operator<<(std::ostream& Stream, const Course & c)
 {
     std::string s = "Course\n\tid:"+std::to_string(c.id())+"\n\tname:"+c.name()+"\n\tECTS: "+std::to_string(c.ects());
     Stream << s;
     return Stream;
+}
+
+bool Course::operator==(const Course & c) const
+{
+    return _lazyEquality(c);
 }
 // === END OPERATOR
 

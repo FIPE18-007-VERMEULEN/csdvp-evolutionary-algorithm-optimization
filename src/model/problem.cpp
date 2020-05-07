@@ -4,6 +4,9 @@
 #include <algorithm>
 
 #include "problem.h"
+#include "tools.h"
+
+#include "exception/csdvpOverlapingBoundaryException.h"
 
 int CSDVP::CSDVP_COUNTER = 0;
 
@@ -30,9 +33,52 @@ int CSDVP::CSDVP_COUNTER = 0;
 // === END CONSTRUCTOR
 
 // === MUTATOR
-            // SETTER
+        // SETTER 
+        void CSDVP::set_cfg_quantityCompetencies(int nb)
+            {this->_quantityAvailableCompetencies = nb;}
+        void CSDVP::set_cfg_quantityCourses(int nb)
+            {this->_quantityAvailableCourses = nb;}
+        void CSDVP::set_cfg_quantityTimeFrames(int nb)
+            {this->_quantityOfTimeFrame = nb;}
+        void CSDVP::set_cfg_ectsMin(int nb)
+            {
+                this->_minimalECTSValue = nb;}
+        void CSDVP::set_cfg_ectsMax(int nb)
+            {this->_maximalECTSValue = nb;}
+        void CSDVP::set_cfg_courseByTFMin(int nb)
+            {this->_minimalCoursesByTimeFrame = nb;}
+        void CSDVP::set_cfg_courseByTFMax(int nb)
+            {this->_maximalCoursesByTimeFrame = nb;}
+        
+        void CSDVP::setTimeFrames(std::vector<int> & v)
+            {this->_timeFrames = v;}
+        void CSDVP::setCoursesCatalogue(std::vector<Course> & c)
+            {this->_availableCourses;}
+        void CSDVP::setCompetenciesCatalogue(std::vector<Competency> & c)
+            {this->_availableCompentecies;}
+        // ADDER
+        void CSDVP::addTimeFrame(int tF)
+        {
+            if(duplicataFlag(this->_timeFrames, tF))
+                return; // NTD
 
-            // ADDER
+            this->_timeFrames.push_back(tF);
+        }
+        void CSDVP::addCourseToCatalogue(Course & c)
+        {
+            if(duplicataFlag(this->_availableCourses, c))
+                return;
+
+            this->_availableCourses.push_back(c);
+        }
+
+        void CSDVP::addCompetencyToCatalogue(Competency & c)
+        {
+            if(duplicataFlag(this->_availableCompentecies, c))
+                return;
+            this->_availableCompentecies.push_back(c);
+        }
+
 
 // === END MUTATOR
 
@@ -53,6 +99,13 @@ int CSDVP::CSDVP_COUNTER = 0;
             return this->_isConfig;
         }
 
+        // verify overlaping range
+        if( this->_minimalECTSValue > this->_maximalECTSValue ||
+            this->_minimalCoursesByTimeFrame > this->_maximalCoursesByTimeFrame)
+        {
+            throw CSDVPOverlapingBoundariesException(this);
+        }
+
         this->_isConfig = true;
         return this->_isConfig;
     }
@@ -64,7 +117,7 @@ int CSDVP::CSDVP_COUNTER = 0;
         csdvp._seed = seed;
 
         if(! csdvp.checkConfig() ) //if csdvp is not configurated, aborting generation
-            return;
+            return; //aborting pb generation
 
         std::cout << "generateProblem TODO" << std::endl;
     }

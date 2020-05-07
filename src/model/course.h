@@ -41,10 +41,17 @@ class Course
 
         // === FUNC
         /// _duplicataProtection returns true if the value (2nd param) searched into (1st param) is found
+        /// @deprecated
         bool _duplicataProtection(std::vector<int> *, int);
+        /// @deprecated
         bool _duplicataProtection(std::vector<Competency> *, Competency);
         bool _duplicataProtection(std::vector<std::pair<Competency,double>> *, Competency);
         
+        /** Only check equality on id, etcs and name. It should be sufficient in the majority of case */
+        bool _lazyEquality (const Course & c) const;
+        /** Full check equality on id, ects, name, timeframes, prerequisites, compentencies*/
+        bool _fullEquality(const Course & c) const;
+
         // Static
         static int COURSE_COUNTER;
         static int assignID();
@@ -54,6 +61,9 @@ class Course
         Course(int id, int ects, std::string name);
     public:
         static Course build(int ects = 0, std::string name = "");
+        
+        /// Default constructor. Use Course::build instead !
+        Course() = default;
 
         // === GETTER
         const int id() const{return this->_id;};
@@ -92,6 +102,9 @@ class Course
             // template<typename T>
             // static std::pair<int, T> findInVector(const std::vector<T> &, const T &);
 
+        // === OPERATOR
+        /// A course is equal to another iff {(lazy_equality) || (full_equality)
+        bool operator==(const Course & c) const;
 };
 
 // === OPERATOR
