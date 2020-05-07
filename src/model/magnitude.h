@@ -27,6 +27,7 @@ class Magnitude
         // Operator
         Magnitude &  operator+=(const Magnitude & m);
         Magnitude &  operator+=(double const d);
+        bool operator>(const Magnitude & m) const;
 
         //GETTER
         double value() const;

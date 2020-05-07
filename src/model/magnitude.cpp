@@ -83,6 +83,11 @@ Magnitude operator+(const Magnitude & m, const double d)
     return mag;
 }
 
+bool Magnitude::operator>(const Magnitude & m) const
+{
+    return this->_value > m.value();
+}
+
 // === FUNCTION
 /** Checks if the value v is in [0;1]. If yes, return 0. Else, if v < 0 return -1, 1 otherwise
  */ 
