@@ -3,6 +3,8 @@
 #include <vector>
 #include <algorithm>
 #include <cstdlib>
+#include <queue>
+#include <cassert>
 
 #include "problem.h"
 #include "tools.h"
@@ -33,6 +35,8 @@ int CSDVP::CSDVP_COUNTER = 0;
         this->_maximalECTSValue = -1;
         this->_minimalCoursesByTimeFrame = -1;
         this->_maximalCoursesByTimeFrame = -1;
+        this->_minimalCompetencyByCourse = -1;
+        this->_maximalCompetencyByCourse = -1;
     }
 // === END CONSTRUCTOR
 
@@ -54,6 +58,14 @@ int CSDVP::CSDVP_COUNTER = 0;
             {this->_minimalCoursesByTimeFrame = nb;}
         void CSDVP::set_cfg_courseByTFMax(int nb)
             {this->_maximalCoursesByTimeFrame = nb;}
+        void CSDVP::set_cfg_minimalCompetencyByCourse(int nb)
+            {this->_minimalCompetencyByCourse = nb;}
+        void CSDVP::set_cfg_maximalCompetencyByCourse(int nb)
+            {this->_maximalCompetencyByCourse = nb;}
+        void CSDVP::set_cfg_minimalPrerequisiteByCourse(int nb)
+            {this->_minimalPrerequisiteByCourse = nb;}
+        void CSDVP::set_cfg_maximalPrerequisiteByCourse(int nb)
+            {this->_maximalPrerequisiteByCourse = nb;}
         void CSDVP::set_cfg_minimalMagnitude(double m)
         {
             this->_minimalMagnitude = Magnitude::build(m);
@@ -112,7 +124,11 @@ int CSDVP::CSDVP_COUNTER = 0;
             this->_minimalCoursesByTimeFrame < 0    ||
             this->_maximalCoursesByTimeFrame < 0    ||
             this->_minimalMagnitude.value() < 0     ||
-            this->_maximalMagnitude.value() < 0     )
+            this->_maximalMagnitude.value() < 0     ||
+            this->_maximalCompetencyByCourse < 0    ||
+            this->_minimalCompetencyByCourse < 0    ||
+            this->_minimalPrerequisiteByCourse < 0  ||
+            this->_maximalPrerequisiteByCourse < 0  )
         {
             this->_isConfig = false;
             return this->_isConfig;
@@ -127,11 +143,16 @@ int CSDVP::CSDVP_COUNTER = 0;
             throw CSDVPOverlapingBoundariesException(this);
         }
 
-        // verify if the has enough courses
+        // verify if the pb has enough courses
         if( this->_minimalCoursesByTimeFrame >= this->_quantityAvailableCourses)
             throw CSDVPBadlyConfiguratedException("this->_minimalCoursesByTimeFrame > this->_quantityAvailableCourses");
         if(this->_quantityAvailableCourses < this->_maximalCoursesByTimeFrame)
             throw CSDVPBadlyConfiguratedException("this->_quantityAvailableCourses < this->_maximalCoursesByTimeFrame");
+        // IDEM from competency
+        if(this->_minimalCompetencyByCourse >= this->_quantityAvailableCompetencies)
+            throw CSDVPBadlyConfiguratedException("this->_minimalCompetencyByCourse >= this->_quantityAvailableCompetencies");
+        if(this->_quantityAvailableCompetencies < this->_maximalCompetencyByCourse)
+            throw CSDVPBadlyConfiguratedException("this->_quantityAvailableCompetencies < this->_maximalCompetencyByCourse");
 
         this->_isConfig = true;
         return this->_isConfig;
@@ -150,7 +171,6 @@ int CSDVP::CSDVP_COUNTER = 0;
         if(! csdvp.checkConfig() ) //if csdvp is not configurated, aborting generation
             return; //aborting pb generation
 
-        std::cout << "generateProblem TODO" << std::endl;
         switch (type)
         {
         case CSDVP::GenerationType::RANDOM:
@@ -230,6 +250,67 @@ int CSDVP::CSDVP_COUNTER = 0;
         for(int i = 0; i < tmpCourses.size(); i++)
             if(tmpCourses.at(i).timeFrame().size() > 0)
                 pb.addCourseToCatalogue(tmpCourses.at(i));
+        
+        /* COMPETENCY CREATION
+         * We create _quantityAvailableCompetency competencies. For each comp, we randomly define it's magnitude.
+         */
+        double magVal;
+        for(int i = 0; i < pb.cfg_quantityCompetencies(); i++)
+        {
+
+            magVal = pb.cfg_magnitudeMin().value() + ( (double)rand()/RAND_MAX) * ( pb.cfg_magnitudeMax().value() - pb.cfg_magnitudeMin().value()) ;
+            assert(magVal >= pb.cfg_magnitudeMin().value());
+            assert(magVal <= pb.cfg_magnitudeMax().value());
+            
+            Competency c = Competency::build(magVal);
+            pb.addCompetencyToCatalogue(c);
+            assert(c == pb.competencyCatalogue().at(pb.competencyCatalogue().size()-1));
+        }
+        /* COMPETENCY ASSIGNATION FOR TEACHED
+         * For each course c, we roll x, the nb of competencies associated to c.
+         * To assign a competency to c exhaustively, we create a tmp competency vector v, where the competencies are randomly sorted, then create a queue from it.
+         * Then, it is equal to take the firsts x competencies from the queue (and put them at the end of the queue) for c.
+         */ 
+        std::vector<Competency> randomVec(pb.competencyCatalogue());
+        std::random_shuffle(randomVec.begin(), randomVec.end());
+        std::queue<Competency> queue;
+        for(int i = 0 ; i < randomVec.size(); i++)
+            queue.push(randomVec.at(i));
+        
+        int x;
+        Competency tmpComp;
+        std::pair<Competency, double> teachedComp;
+
+        for(int i = 0; i < pb.coursesCatalogue().size(); i++)
+        {
+            x = _randomizeIn(pb.cfg_competencyByCourseMin(), pb.cfg_competencyByCourseMax());
+            for(int j = 0; j < x; j++)
+            {
+                tmpComp = queue.front();
+                queue.pop();queue.push(tmpComp);
+                teachedComp = std::pair<Competency,double>(tmpComp, 1.0);
+                pb.unlocked_coursesCatalogue().at(i).addTeachedComp(teachedComp);
+            }
+        }
+
+        /* COMPETENCY ASSIGNATION FOR PREREQ
+         * IDEM AS ABOVE
+         */
+        std::random_shuffle(randomVec.begin(), randomVec.end());
+        queue = std::queue<Competency>();
+        for(int i = 0 ; i < randomVec.size(); i++)
+            queue.push(randomVec.at(i));
+        
+        for(int i = 0; i < pb.coursesCatalogue().size(); i++)
+        {
+            x = _randomizeIn(pb.cfg_prerequisiteByCourseMin(), pb.cfg_prerequisiteByCourseMax());
+            for(int j = 0; j < x; j++)
+            {
+                tmpComp = queue.front();
+                queue.pop(); queue.push(tmpComp);
+                pb.unlocked_coursesCatalogue().at(i).addPrerequisite(tmpComp);
+            }
+        }
 
     }
     // --------- END GENERATION RELATED FUNCTIONS ---------
@@ -242,7 +323,7 @@ int CSDVP::CSDVP_COUNTER = 0;
         std::string s = "--------------\n| Problem n°"+std::to_string(c.id())+"|\n---------------\n| Configuration:";
         s+= "\n\tseed: "+std::to_string(c.seed())+"\n\tNb comp: "+std::to_string(c.cfg_quantityCompetencies())+"\n\tNb courses: "+std::to_string(c.cfg_quantityCourses())+"\n\tMin TimeF: "+std::to_string(c.cfg_minimalTimeFrame())+"\n\tMax TimeF: "+std::to_string(c.cfg_maximalTimeFrame());
         s+= "\n\tECTS Min: "+std::to_string(c.cfg_ectsMin())+"\n\tECTS Max: "+std::to_string(c.cfg_ectsMax())+"\n\tCourse by TF min: "+std::to_string(c.cfg_courseByTFMin())+"\n\tCourse by TF max: "+std::to_string(c.cfg_courseByTFMax());
-        s+="\n\tMagnitude min: "+std::to_string(c.cfg_magnitudeMax().value())+"\n\tMagnitude max: "+std::to_string(c.cfg_magnitudeMax().value());
+        s+="\n\tMagnitude min: "+std::to_string(c.cfg_magnitudeMin().value())+"\n\tMagnitude max: "+std::to_string(c.cfg_magnitudeMax().value());
 
         Stream << s;
         return Stream;

@@ -38,6 +38,12 @@ class CSDVP
         int _minimalCoursesByTimeFrame;
         int _maximalCoursesByTimeFrame;
 
+        int _minimalCompetencyByCourse;
+        int _maximalCompetencyByCourse;
+
+        int _minimalPrerequisiteByCourse;
+        int _maximalPrerequisiteByCourse;
+
         Magnitude _minimalMagnitude;
         Magnitude _maximalMagnitude;
         // ---------- END CONFIGURATION ATTRIBUTES ----------
@@ -98,6 +104,10 @@ class CSDVP
         const int cfg_ectsMin() const{return this->_minimalECTSValue;}
         const int cfg_courseByTFMax() const{return this->_maximalCoursesByTimeFrame;}
         const int cfg_courseByTFMin() const{return this->_minimalCoursesByTimeFrame;}
+        const int cfg_competencyByCourseMin() const {return this->_minimalCompetencyByCourse;}
+        const int cfg_competencyByCourseMax() const {return this->_maximalCompetencyByCourse;}
+        const int cfg_prerequisiteByCourseMin() const {return this->_minimalPrerequisiteByCourse;}
+        const int cfg_prerequisiteByCourseMax() const {return this->_maximalPrerequisiteByCourse;}
         const Magnitude & cfg_magnitudeMin() const{return this->_minimalMagnitude;}
         const Magnitude & cfg_magnitudeMax() const{return this->_maximalMagnitude;}
 
@@ -123,6 +133,10 @@ class CSDVP
             void set_cfg_courseByTFMin(int nb);
             void set_cfg_minimalMagnitude(double mag);
             void set_cfg_maximalMagnitude(double mag);
+            void set_cfg_minimalCompetencyByCourse(int nb);
+            void set_cfg_maximalCompetencyByCourse(int nb);
+            void set_cfg_minimalPrerequisiteByCourse(int nb);
+            void set_cfg_maximalPrerequisiteByCourse(int nb);
 
             void setTimeFrames(std::vector<int> & v);
             void setCoursesCatalogue(std::vector<Course> &);

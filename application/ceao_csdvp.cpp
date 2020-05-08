@@ -132,6 +132,12 @@ int main(int argc, char* argv[])
 
     std::cout << pb << std::endl;
 
+    pb.set_cfg_minimalCompetencyByCourse(1);
+    pb.set_cfg_maximalCompetencyByCourse(5);
+
+    pb.set_cfg_minimalPrerequisiteByCourse(0);
+    pb.set_cfg_maximalPrerequisiteByCourse(2);
+
     CSDVP::generateProblem(pb, CSDVP::GenerationType::RANDOM, 7777);
     assert(pb.checkConfig());
         std::cout << "CSDVP has been correctly configurated" << std::endl;
@@ -168,6 +174,36 @@ int main(int argc, char* argv[])
         assert(counter >= pb.cfg_courseByTFMin());
     }
     std::cout << "TF Integrity is OK!" << std::endl;
+
+    assert(pb.competencyCatalogue().size() == pb.cfg_quantityCompetencies());
+
+    // for(int i = 0; i < pb.coursesCatalogue().size(); i++)
+    // {
+    //     std::cout << pb.coursesCatalogue().at(i).name() << "\n\tPrereq: " + std::to_string(pb.coursesCatalogue().at(i).prerequisites().size()) << std::endl;
+    //     if(pb.coursesCatalogue().at(i).prerequisites().size() > 0)
+    //         std::cout << "Competency 0" << pb.coursesCatalogue().at(i).prerequisites().at(0) << std::endl;  
+    //     std::cout << "\n\tTeach: "+ std::to_string(pb.coursesCatalogue().at(i).teachedCompetenciesWeighted().size()) << std::endl;
+    // }
+
+    for(int i = 0; i < pb.competencyCatalogue().size() ; i++)
+    {
+        assert(pb.competencyCatalogue().at(i).c_magnitude().value() >= pb.cfg_magnitudeMin().value());
+        assert(pb.competencyCatalogue().at(i).c_magnitude().value() <= pb.cfg_magnitudeMax().value());
+    }
+        std::cout << "Magnitudes OK" << std::endl;
+
+    //CHECK QTE COMP IN RANGE OK
+    for(int i = 0 ; i < pb.coursesCatalogue().size(); i++)
+    {
+        assert(pb.coursesCatalogue().at(i).prerequisites().size() >= pb.cfg_prerequisiteByCourseMin());
+        assert(pb.coursesCatalogue().at(i).prerequisites().size() <= pb.cfg_prerequisiteByCourseMax());
+        assert(pb.coursesCatalogue().at(i).teachedCompetenciesWeighted().size() >= pb.cfg_competencyByCourseMin());
+        assert(pb.coursesCatalogue().at(i).teachedCompetenciesWeighted().size() <= pb.cfg_competencyByCourseMax());
+    }
+    std::cout << "Courses prerequistes ok!" << std::endl;
+    std::cout << "Courses teached comp ok!" << std::endl;
+
+    std::cout << "CSDVP HAS BEEN CORRECTLY GENERATED!" << std::endl;
 
     return EXIT_SUCCESS;
 }
