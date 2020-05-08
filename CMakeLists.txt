@@ -5,11 +5,11 @@
 cmake_minimum_required(VERSION 2.6)
 
 # Here define your project name
-project(QUEEN)
+project(CEAO)
 
 # Here define the name and the version of your package
-set(PACKAGE_NAME "QUEEN" CACHE STRING "Package name" FORCE)
-set(PACKAGE_VERSION "2.0" CACHE STRING "aPackage version" FORCE)
+set(PACKAGE_NAME "CEAO" CACHE STRING "Package name" FORCE)
+set(PACKAGE_VERSION "1.0" CACHE STRING "aPackage version" FORCE)
 
 
 # regular expression checking

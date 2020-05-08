@@ -5,7 +5,47 @@
 #include <queenCrossover.h>
 #include <queenEval.h>
 
+#include <model/magnitude.h>
+#include <model/competency.h>
+#include <model/exception/magnitudeException.h>
+#include <model/exception/competencyEvolvingException.h>
+
 int main(int argc, char* argv[]){
+
+  // ================================ TEST ZONE ===========================================
+  Magnitude m = Magnitude::build(0.5);
+  Magnitude n = Magnitude::build(0.3);
+  Magnitude o = Magnitude::build(0.2);
+
+  o = m;
+
+  std::cout << "Magnitude" << o.value() << std::endl;
+
+  std::cout << "Magnitude" << m.value() << std::endl;
+
+  m += n;
+
+  std::cout << "New magnitude is " << m.value() << std::endl;
+
+  try{
+    std::cout << "After addition mag is : " << (m + m).value() << std::endl;
+  }
+  catch(MagnitudeException & e)
+  {
+    std::cout << "\nEXCEPTION CATCH !\n";
+    std::cout << "Memory adr of m is : " << &m << std::endl;
+    std::cout << "Memory adr of e is : " << &e.getMagnitude() << std::endl;
+    e.getMagnitude().rebase();
+    std::cout << "REBASE! New magnitude value is" << e.getMagnitude().rebase() << std::endl;
+    std::cout << "Accessing magnitude value : " << e.getMagnitude().value() << std::endl;
+    std::cout << "magnitude value of M : " << m.value() << std::endl;
+    m = e.getMagnitude();
+    std::cout << "before end catch" << m.value() << std::endl;
+  }
+
+  std::cout << "Inspect m value:" << m.value() << std::endl;
+
+  // ================================= END TEST ZONE =====================================
 
   //Define a QUEEN -> 1 line
   QUEEN s1;
