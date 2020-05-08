@@ -18,7 +18,7 @@ int Course::COURSE_COUNTER = 0;
 Course Course::build(int ects, std::string name)
 {
     int id = Course::assignID();
-
+    
     if(name.empty())
         name = "Course#"+std::to_string(id);
     
@@ -234,10 +234,13 @@ std::ostream& operator<<(std::ostream& Stream, const Course & c)
 {
     std::string s = "Course\n\tid:"+std::to_string(c.id())+"\n\tname:"+c.name()+"\n\tECTS: "+std::to_string(c.ects());
     std::string tf;
-    for(int i = 0; i < c.timeFrame().size()-1; i++)
-        tf+=std::to_string(c.timeFrame().at(i))+" ; ";
-    tf+=std::to_string(c.timeFrame().at(c.timeFrame().size()-1));
-    s+="\n\tTimeFrames: ["+tf+"]";
+    if(c.timeFrame().size() > 0)
+    {
+        for(int i = 0; i < c.timeFrame().size()-1; i++)
+            tf+=std::to_string(c.timeFrame().at(i))+" ; ";
+        tf+=std::to_string(c.timeFrame().at(c.timeFrame().size()-1));
+        s+="\n\tTimeFrames: ["+tf+"]";
+    }
     Stream << s;
     return Stream;
 }
