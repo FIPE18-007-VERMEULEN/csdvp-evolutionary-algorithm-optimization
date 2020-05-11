@@ -28,7 +28,7 @@ ADD_DEPENDENCIES(tryEval lQueen)
 
 # 3) Link the librairies for your executable
 
-TARGET_LINK_LIBRARIES(ceao ${PARADISEO_LIBRARIES} lQueen lModel)
+TARGET_LINK_LIBRARIES(ceao ${PARADISEO_LIBRARIES} lQueen lModel lEA)
 TARGET_LINK_LIBRARIES(ceao_competency ${PARADISEO_LIBRARIES} lQueen lModel)
 TARGET_LINK_LIBRARIES(ceao_course ${PARADISEO_LIBRARIES} lQueen lModel)
 TARGET_LINK_LIBRARIES(ceao_profession ${PARADISEO_LIBRARIES} lQueen lModel)
