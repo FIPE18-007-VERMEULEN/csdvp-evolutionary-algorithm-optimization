@@ -5,8 +5,8 @@
 #include <queenCrossover.h>
 #include <queenEval.h>
 
+#include <model/problem.h>
 #include <model/magnitude.h>
-#include <model/competency.h>
 
 #include <model/ea/cursus.h>
 #include <model/ea/initializer.h>
@@ -57,10 +57,32 @@ int main(int argc, char* argv[]){
   // ================================= END TEST ZONE =====================================
 
   // ================================= CEAO ZONE ===================================
-  //CSDVP pb;
+  CSDVP pb;
+    // ===== PB CONFIG ZONE =====
+      pb.set_cfg_quantityCourses(15);
+      pb.set_cfg_quantityCompetencies(15);
+      pb.set_cfg_minimalTimeFrames(1);
+      pb.set_cfg_maximalTimeFrames(6); //Just "Licence"
+      pb.set_cfg_ectsMin(3);
+      pb.set_cfg_ectsMax(5);
+      pb.set_cfg_courseByTFMin(3);
+      pb.set_cfg_courseByTFMax(5);
+      pb.set_cfg_minimalMagnitude(0.2);
+      pb.set_cfg_maximalMagnitude(0.75);
+      pb.set_cfg_minimalCompetencyByCourse(1);
+      pb.set_cfg_maximalCompetencyByCourse(3);
+      pb.set_cfg_minimalPrerequisiteByCourse(0);
+      pb.set_cfg_maximalPrerequisiteByCourse(2);
+
+      pb.set_cfg_pickedCoursesByTimeFrame(2);
+
+      CSDVP::generateProblem(pb, CSDVP::GenerationType::RANDOM, 7777);
+      assert(pb.checkConfig());
+    // ===== END PB CONFIG =====
 
   Cursus c1;
-  CursusInit init(8,1); //init(pb.getQuantityCoursesToPick(),1); 
+  
+  CursusInit init(pb.getQuantityCoursesToPick(),pb.cfg_quantityCourses(), pb.seed()); 
   CursusEval eval;
   CursusMutation mut;
   CursusCrossover xOver;
