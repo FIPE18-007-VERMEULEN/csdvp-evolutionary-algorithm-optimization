@@ -66,6 +66,8 @@ int CSDVP::CSDVP_COUNTER = 0;
             {this->_minimalPrerequisiteByCourse = nb;}
         void CSDVP::set_cfg_maximalPrerequisiteByCourse(int nb)
             {this->_maximalPrerequisiteByCourse = nb;}
+        void CSDVP::set_cfg_pickedCoursesByTimeFrame(int nb)
+            {this->_pickedCoursesByTimeFrame = nb;}
         void CSDVP::set_cfg_minimalMagnitude(double m)
         {
             this->_minimalMagnitude = Magnitude::build(m);
@@ -128,7 +130,8 @@ int CSDVP::CSDVP_COUNTER = 0;
             this->_maximalCompetencyByCourse < 0    ||
             this->_minimalCompetencyByCourse < 0    ||
             this->_minimalPrerequisiteByCourse < 0  ||
-            this->_maximalPrerequisiteByCourse < 0  )
+            this->_maximalPrerequisiteByCourse < 0  ||
+            this->_pickedCoursesByTimeFrame < 1     )
         {
             this->_isConfig = false;
             return this->_isConfig;
@@ -153,6 +156,8 @@ int CSDVP::CSDVP_COUNTER = 0;
             throw CSDVPBadlyConfiguratedException("this->_minimalCompetencyByCourse >= this->_quantityAvailableCompetencies");
         if(this->_quantityAvailableCompetencies < this->_maximalCompetencyByCourse)
             throw CSDVPBadlyConfiguratedException("this->_quantityAvailableCompetencies < this->_maximalCompetencyByCourse");
+        if(this->_pickedCoursesByTimeFrame > this->_minimalCoursesByTimeFrame)
+            throw CSDVPBadlyConfiguratedException("this->_pickedCoursesByTimeFrame > this->_minimalCoursesByTimeFrame");
 
         this->_isConfig = true;
         return this->_isConfig;

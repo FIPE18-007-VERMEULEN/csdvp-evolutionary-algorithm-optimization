@@ -44,6 +44,8 @@ class CSDVP
         int _minimalPrerequisiteByCourse;
         int _maximalPrerequisiteByCourse;
 
+        int _pickedCoursesByTimeFrame;
+
         Magnitude _minimalMagnitude;
         Magnitude _maximalMagnitude;
         // ---------- END CONFIGURATION ATTRIBUTES ----------
@@ -108,6 +110,7 @@ class CSDVP
         const int cfg_competencyByCourseMax() const {return this->_maximalCompetencyByCourse;}
         const int cfg_prerequisiteByCourseMin() const {return this->_minimalPrerequisiteByCourse;}
         const int cfg_prerequisiteByCourseMax() const {return this->_maximalPrerequisiteByCourse;}
+        const int cfg_pickedCoursesByTimeFrame() const {return this->_pickedCoursesByTimeFrame;}
         const Magnitude & cfg_magnitudeMin() const{return this->_minimalMagnitude;}
         const Magnitude & cfg_magnitudeMax() const{return this->_maximalMagnitude;}
 
@@ -117,6 +120,12 @@ class CSDVP
         std::vector<int> & unlocked_timeFrames(){return this->_timeFrames;}
         std::vector<Course> & unlocked_coursesCatalogue(){return this->_availableCourses;}
         std::vector<Competency> & unlocked_competenciesCatalogue(){return this->_availableCompentecies;}
+        
+        const int getQuantityCoursesToPick() const{
+            if(this->_isConfig)
+                return this->_timeFrames.size() * this->_pickedCoursesByTimeFrame;
+            return -1;//if not config
+        }
         ///@todo getDecayPolitic
 
         // === MUTATOR
@@ -137,6 +146,7 @@ class CSDVP
             void set_cfg_maximalCompetencyByCourse(int nb);
             void set_cfg_minimalPrerequisiteByCourse(int nb);
             void set_cfg_maximalPrerequisiteByCourse(int nb);
+            void set_cfg_pickedCoursesByTimeFrame(int nb);
 
             void setTimeFrames(std::vector<int> & v);
             void setCoursesCatalogue(std::vector<Course> &);

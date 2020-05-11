@@ -20,6 +20,7 @@
 int main(int argc, char* argv[]){
 
   // ================================ TEST ZONE ===========================================
+  std::cout << "MAGNITUDE TEST ZONE" << std::endl;
   Magnitude m = Magnitude::build(0.5);
   Magnitude n = Magnitude::build(0.3);
   Magnitude o = Magnitude::build(0.2);
@@ -51,12 +52,15 @@ int main(int argc, char* argv[]){
   }
 
   std::cout << "Inspect m value:" << m.value() << std::endl;
+  std::cout << "END MAGNITUDE TEST\n\n\n" << std::endl;
 
   // ================================= END TEST ZONE =====================================
 
   // ================================= CEAO ZONE ===================================
+  //CSDVP pb;
+
   Cursus c1;
-  CursusInit init(8,1);
+  CursusInit init(8,1); //init(pb.getQuantityCoursesToPick(),1); 
   CursusEval eval;
   CursusMutation mut;
   CursusCrossover xOver;
