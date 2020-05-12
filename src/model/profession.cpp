@@ -2,6 +2,7 @@
 #include <vector>
 #include <utility>
 #include <algorithm>
+#include <cassert>
 
 #include "profession.h"
 #include "competency.h"
@@ -52,6 +53,13 @@ int Profession::PROFESSION_COUNTER = 0;
         std::vector<Competency> * old = &this->_prerequisites;
         this->_prerequisites = p;
         return *old;
+    }
+
+    void Profession::setRequiredECTS(int nb)
+    {
+        assert(nb >= 0);
+
+        this->_requiredECTS = nb;
     }
 
     // ADDER

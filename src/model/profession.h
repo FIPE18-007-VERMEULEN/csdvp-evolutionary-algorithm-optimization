@@ -17,6 +17,8 @@ class Profession
         std::string _name;
         int _id;
 
+        int _requiredECTS;
+
         // === FUNC
         /** _duplicataProtection returns true if the value (2nd param) searched into (1st param) is found*/
         bool _duplicataProtection(std::vector<Competency> *, Competency);
@@ -32,6 +34,7 @@ class Profession
         
         // === GETTER
         const int id() const{return this->_id;}
+        const int requiredECTS() const{return this->_requiredECTS;}
         const std::string name() const{return this->_name;}
         const std::vector<Competency> & prerequisites() const{return this->_prerequisites;}
         /// return a modifiable reference to _prerequisite;
@@ -43,7 +46,7 @@ class Profession
             void setName(std::string name);
             /// Set the prerequisites of a profession. The old prereq is returned.
             std::vector<Competency> & setPrerequisites(std::vector<Competency> & v);
-
+            void setRequiredECTS(int ects);
             // ADDER
             bool addPrerequisite(Competency &);
 
