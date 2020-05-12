@@ -162,6 +162,23 @@ int CSDVP::CSDVP_COUNTER = 0;
         this->_isConfig = true;
         return this->_isConfig;
     }
+
+    void CSDVP::_makeCoursesSortedByTF()
+    {
+        //Init the vector of the size of the time frames
+        for(int i = 0; i < this->_timeFrames.size(); i++)
+            this->_coursesSortedByTF.push_back(std::vector<Course>());
+        
+        int tmpIdx;
+        for(int i = 0; i < this->_availableCourses.size(); i++)
+        {
+            for(int j = 0; j < this->_availableCourses.at(i).timeFrame().size(); j++)
+            {
+                tmpIdx = this->_availableCourses.at(i).timeFrame().at(j) - this->_minimalTimeFrame;
+                this->_coursesSortedByTF.at(tmpIdx).push_back(this->_availableCourses.at(i));
+            }
+        }
+    }
 // === END FUNC
 
 // === STATIC
@@ -299,6 +316,7 @@ int CSDVP::CSDVP_COUNTER = 0;
                 pb.addCourseToCatalogue(tmpCourses.at(i));
         
         //From here, coursesCatalogue can still be < to minCourseTF * nbTF (due to the fact that a same course can belongs to )
+        pb._makeCoursesSortedByTF();
 
         /* COMPETENCY CREATION
          * We create _quantityAvailableCompetency competencies. For each comp, we randomly define it's magnitude.

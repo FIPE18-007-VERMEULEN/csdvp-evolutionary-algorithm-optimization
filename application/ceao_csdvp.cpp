@@ -211,5 +211,14 @@ int main(int argc, char* argv[])
 
     std::cout << "CSDVP HAS BEEN CORRECTLY GENERATED!" << std::endl;
 
+    for(int i = 0 ; i < pb.coursesSortedByTF().size(); i++)
+    {
+        std::cout << "TF#" << std::to_string(i) << std::endl;
+        for(int j = 0; j < pb.coursesSortedByTF().at(i).size(); j++)
+        {
+            std::cout << pb.coursesSortedByTF().at(i).at(j) << std::endl;
+        }
+    }
+
     return EXIT_SUCCESS;
 }

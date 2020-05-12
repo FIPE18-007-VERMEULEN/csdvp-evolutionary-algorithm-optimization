@@ -52,8 +52,9 @@ class CSDVP
 
         // ---------- PROBLEM SPECIFIC ATTRIBUTES ----------
         // Theses attributes represent the CSDVP
-        std::vector<int> _timeFrames;
+        std::vector<int> _timeFrames; // Time frames stocks the VALUE, not the index
         std::vector<Course> _availableCourses;
+        std::vector<std::vector<Course>> _coursesSortedByTF; //sorted by standard index. e.g. TF[4;6] -> [0]=4; [1]=5 ; [2] = 6
         std::vector<Competency> _availableCompentecies;
 
         ///@todo implements a decay politics
@@ -76,6 +77,8 @@ class CSDVP
         static int _randomizeIn(const int min, const int max);
         static double _randomizeIn(const double min, const double max);
         // --------- END GENERATION RELATED FUNCTION ---------
+
+        void _makeCoursesSortedByTF();
 
     public:
         // --------- GENERATION RELATED FUNCTION ---------
@@ -117,6 +120,7 @@ class CSDVP
         const std::vector<int> & timeFrames() const{return this->_timeFrames;}
         const std::vector<Course> & coursesCatalogue() const{return this->_availableCourses;}
         const std::vector<Competency> & competencyCatalogue() const{return this->_availableCompentecies;}
+        const std::vector<std::vector<Course>> & coursesSortedByTF() const {return this->_coursesSortedByTF;}
         std::vector<int> & unlocked_timeFrames(){return this->_timeFrames;}
         std::vector<Course> & unlocked_coursesCatalogue(){return this->_availableCourses;}
         std::vector<Competency> & unlocked_competenciesCatalogue(){return this->_availableCompentecies;}
