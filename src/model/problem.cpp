@@ -186,6 +186,7 @@ int CSDVP::CSDVP_COUNTER = 0;
         }
     }
 
+    /// [x;y[ ?
     int CSDVP::_randomizeIn(const int min, const int max)
     {
         return min + ( rand() % (max - min + 1) );
@@ -230,32 +231,75 @@ int CSDVP::CSDVP_COUNTER = 0;
         std::vector<Course> tmpCourses;
         for(int i = 0; i < pb._quantityAvailableCourses; i++)
         {
-            tmpCourses.push_back(Course::build(CSDVP::_randomizeIn(pb.cfg_minimalTimeFrame(), pb.cfg_maximalTimeFrame())));
+            tmpCourses.push_back(Course::build(CSDVP::_randomizeIn(pb.cfg_ectsMin(), pb.cfg_ectsMax()+1)));
         }
 
-        bool insertRez;
-        for(int i = 0; i < pb.timeFrames().size(); i++)
+        /* We obtain how many courses n by semester s
+         * then we create an idxCourses vector of size n * s
+         * then we shuffle it
+         * then we distribute the course accordingly. If a course already exists, we repick one randomly until it's ok 
+         */
+        std::vector<int> idxCourses;
+        std::vector<int> nbCoursesByTF;
+        for(int i = 0 ; i < pb.timeFrames().size(); i++)
+            nbCoursesByTF.push_back(CSDVP::_randomizeIn(pb._minimalCoursesByTimeFrame, pb._maximalCoursesByTimeFrame));
+        int idxCoursesCounter = 0;
+        for(int i = 0; i < nbCoursesByTF.size(); i++)
         {
-            int nbCoursesInThisTF = CSDVP::_randomizeIn(pb._minimalCoursesByTimeFrame, pb._maximalCoursesByTimeFrame);
-            int courseIdx;
-
-            std::cout << "In the TF "+std::to_string(i)+" I plan " << std::to_string(nbCoursesInThisTF) << " courses." << std::endl;
-
-            for(int j = 0; j < nbCoursesInThisTF; j++)
+            for(int j = 0; j < nbCoursesByTF.at(i); j++)
             {
-                insertRez = true;
-                courseIdx = CSDVP::_randomizeIn(0,tmpCourses.size()-1);
-                insertRez = tmpCourses.at(courseIdx).addTemporalFrame(pb.timeFrames().at(i));
-
-                if(!insertRez) //If a duplicata has been prevented, we do not count the attempt
-                    j--;
+                idxCourses.push_back(idxCoursesCounter % pb._quantityAvailableCourses);
+                idxCoursesCounter++;
             }
         }
+
+        std::random_shuffle(idxCourses.begin(), idxCourses.end());
+        bool insertRez;
+        int rndIdx;
+        idxCoursesCounter = 0;
+        for(int i = 0; i < pb.timeFrames().size(); i++)
+        {
+            for(int j = 0; j < nbCoursesByTF.at(i); j++)
+            {
+                insertRez = true;
+                int cc = idxCourses.at(idxCoursesCounter);
+                insertRez = tmpCourses.at(idxCourses.at(idxCoursesCounter)).addTemporalFrame(pb.timeFrames().at(i));
+
+                while(!insertRez)//if duplicataProtection (i.e. course already in this semester)
+                {
+                    rndIdx = CSDVP::_randomizeIn(0, pb._quantityAvailableCourses);
+                    insertRez = tmpCourses.at(rndIdx).addTemporalFrame(pb.timeFrames().at(i));
+                }
+                idxCoursesCounter++;
+            }
+        }
+
+        // // OLD WAY
+        // bool insertRez;
+        // for(int i = 0; i < pb.timeFrames().size(); i++)
+        // {
+        //     int nbCoursesInThisTF = CSDVP::_randomizeIn(pb._minimalCoursesByTimeFrame, pb._maximalCoursesByTimeFrame);
+        //     int courseIdx;
+
+        //     std::cout << "In the TF "+std::to_string(i)+" I plan " << std::to_string(nbCoursesInThisTF) << " courses." << std::endl;
+
+        //     for(int j = 0; j < nbCoursesInThisTF; j++)
+        //     {
+        //         insertRez = true;
+        //         courseIdx = CSDVP::_randomizeIn(0,tmpCourses.size()-1);
+        //         insertRez = tmpCourses.at(courseIdx).addTemporalFrame(pb.timeFrames().at(i));
+
+        //         if(!insertRez) //If a duplicata has been prevented, we do not count the attempt
+        //             j--;
+        //     }
+        // }
 
         for(int i = 0; i < tmpCourses.size(); i++)
             if(tmpCourses.at(i).timeFrame().size() > 0)
                 pb.addCourseToCatalogue(tmpCourses.at(i));
         
+        //From here, coursesCatalogue can still be < to minCourseTF * nbTF (due to the fact that a same course can belongs to )
+
         /* COMPETENCY CREATION
          * We create _quantityAvailableCompetency competencies. For each comp, we randomly define it's magnitude.
          */
