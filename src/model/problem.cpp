@@ -179,7 +179,7 @@ int CSDVP::CSDVP_COUNTER = 0;
             }
         }
     }
-    int CSDVP::mapCoursePosition(const Course & c)
+    int CSDVP::mapCourseToPosition(const Course & c)
     {
         for(int i = 0; i << this->coursesCatalogue().size(); i++)
             if(c == this->coursesCatalogue().at(i))

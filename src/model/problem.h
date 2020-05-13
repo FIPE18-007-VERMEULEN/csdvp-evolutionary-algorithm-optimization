@@ -136,7 +136,7 @@ class CSDVP
         /** Maps a course into its position inside the this->courseCatalogue().
          * returns the index of the course within the coursesCatalogue [0;size[  ; otherwise return -1 if the course is not found.
          */
-        int mapCoursePosition(const Course & c);
+        int mapCourseToPosition(const Course & c);
         ///@todo getDecayPolitic
 
         // === MUTATOR
