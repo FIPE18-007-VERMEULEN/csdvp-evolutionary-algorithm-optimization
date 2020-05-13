@@ -78,6 +78,7 @@ class CSDVP
         static double _randomizeIn(const double min, const double max);
         // --------- END GENERATION RELATED FUNCTION ---------
 
+        /// It sources _coursesSortedByTF, which is another view of _availableCourses, sorted by TF
         void _makeCoursesSortedByTF();
 
     public:
@@ -95,7 +96,9 @@ class CSDVP
 
         // === CONSTRUCTOR
         CSDVP();
-        /// Generate an instance of the CSDVP iff isConfig is true. Thus, seed != -1;
+        /**Generate an instance of the CSDVP iff isConfig is true. Thus, seed != -1;
+         * @developper each kind of generation must sources correctly the main arrays (_availableCours/comp) TF and _sortedCoursesByTF
+         */
         static void generateProblem(CSDVP & csdvp, CSDVP::GenerationType type, int seed= -1 );
 
         // === GETTER

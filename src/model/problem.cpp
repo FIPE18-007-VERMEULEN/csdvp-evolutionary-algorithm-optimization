@@ -248,7 +248,7 @@ int CSDVP::CSDVP_COUNTER = 0;
         std::vector<Course> tmpCourses;
         for(int i = 0; i < pb._quantityAvailableCourses; i++)
         {
-            tmpCourses.push_back(Course::build(CSDVP::_randomizeIn(pb.cfg_ectsMin(), pb.cfg_ectsMax()+1)));
+            tmpCourses.push_back(Course::build(CSDVP::_randomizeIn(pb.cfg_ectsMin(), pb.cfg_ectsMax())));
         }
 
         /* We obtain how many courses n by semester s
