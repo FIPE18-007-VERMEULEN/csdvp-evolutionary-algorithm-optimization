@@ -5,6 +5,7 @@
 #include <utility>
 
 #include "competency.h"
+#include "model/exception/notImplementedException.h"
 
 /**
  * Represents a course in an academic structure.

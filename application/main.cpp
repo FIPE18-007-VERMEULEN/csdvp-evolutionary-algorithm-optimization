@@ -6,6 +6,7 @@
 #include <queenEval.h>
 
 #include <model/problem.h>
+#include <model/profession.h>
 #include <model/magnitude.h>
 
 #include <model/ea/cursus.h>
@@ -13,6 +14,9 @@
 #include <model/ea/mutation.h>
 #include <model/ea/crossover.h>
 #include <model/ea/evaluator.h>
+
+#include <model/constraints/ectsConstraints.h>
+#include <model/constraints/repetitionConstraints.h>
 
 #include <model/exception/magnitudeException.h>
 #include <model/exception/competencyEvolvingException.h>
@@ -58,12 +62,13 @@ int main(int argc, char* argv[]){
 
   // ================================= CEAO ZONE ===================================
   CSDVP pb;
+  Profession job;
     // ===== PB CONFIG ZONE =====
       pb.set_cfg_quantityCourses(15);
       pb.set_cfg_quantityCompetencies(15);
       pb.set_cfg_minimalTimeFrames(1);
       pb.set_cfg_maximalTimeFrames(6); //Just "Licence"
-      pb.set_cfg_ectsMin(3);
+      pb.set_cfg_ectsMin(1);
       pb.set_cfg_ectsMax(5);
       pb.set_cfg_courseByTFMin(3);
       pb.set_cfg_courseByTFMax(5);
@@ -78,11 +83,15 @@ int main(int argc, char* argv[]){
 
       CSDVP::generateProblem(pb, CSDVP::GenerationType::RANDOM, 7777);
       assert(pb.checkConfig());
+
+      job.setRequiredECTS(4 * 6);
     // ===== END PB CONFIG =====
 
   Cursus c1;
   
-  CursusInit init(pb.getQuantityCoursesToPick(),pb.cfg_quantityCourses(), pb.seed()); 
+  std::cout << "getQuantityCoursesToPick : " << std::to_string(pb.getQuantityCoursesToPick()) << std::endl;
+  std::cout << "cfg_quantityCourses() : " << std::to_string(pb.cfg_quantityCourses()) << std::endl;
+  CursusInit init(pb.getQuantityCoursesToPick()-5,0);//pb.cfg_quantityCourses());//pb.getQuantityCoursesToPick(),pb.cfg_quantityCourses(), pb.seed()); 
   CursusEval eval;
   CursusMutation mut;
   CursusCrossover xOver;
@@ -97,12 +106,25 @@ int main(int argc, char* argv[]){
   eoPop<Cursus> pop;
 
   /**@todo make size of the pb accessible as well as size of an individu*/
-  int size_of_the_pb = 100;
+  int size_of_the_pb = 30;
+
+  ConstraintsECTS ctrECTS(pb, job);
+  ConstraintsRepetition ctrRep(pb, job);
+  std::pair<bool,double> res;
+
   for(int i = 0; i < size_of_the_pb; i++)
   {
     init(c1);
     eval(c1);
+    res = ctrECTS.integrityCheck(c1);
+    res = ctrRep.integrityCheck(c1);
+    std::cout << "IND#" << std::to_string(i) << "\nFirst: " << res.first << "\nSecond: " << std::to_string(res.second) << std::endl;
     pop.push_back(c1);
+  }
+
+  for(int i = 0; i < pb.coursesCatalogue().size(); i++)
+  {
+    std::cout << pb.coursesCatalogue().at(i) << std::endl;
   }
 
   std::cout << "===== CURRENT POP =====" << std::endl;
