@@ -18,6 +18,7 @@
 #include <model/constraints/ectsConstraints.h>
 #include <model/constraints/repetitionConstraints.h>
 #include <model/constraints/professionConstraints.h>
+#include <model/constraints/prerequisitesConstraints.h>
 
 #include <model/exception/magnitudeException.h>
 #include <model/exception/competencyEvolvingException.h>
@@ -100,7 +101,7 @@ int main(int argc, char* argv[]){
   
   std::cout << "getQuantityCoursesToPick : " << std::to_string(pb.getQuantityCoursesToPick()) << std::endl;
   std::cout << "cfg_quantityCourses() : " << std::to_string(pb.cfg_quantityCourses()) << std::endl;
-  CursusInit init(pb.getQuantityCoursesToPick()-5,0);//pb.cfg_quantityCourses());//pb.getQuantityCoursesToPick(),pb.cfg_quantityCourses(), pb.seed()); 
+  CursusInit init(pb.getQuantityCoursesToPick(),0);//pb.cfg_quantityCourses());//pb.getQuantityCoursesToPick(),pb.cfg_quantityCourses(), pb.seed()); 
   CursusEval eval;
   CursusMutation mut;
   CursusCrossover xOver;
@@ -120,6 +121,7 @@ int main(int argc, char* argv[]){
   ConstraintsECTS ctrECTS(pb, job);
   ConstraintsRepetition ctrRep(pb, job);
   ConstraintsProfession ctrJob(pb, job);
+  ConstraintsPrerequisites ctrPrq(pb, job);
   std::pair<bool,double> res;
 
   for(int i = 0; i < size_of_the_pb; i++)
@@ -128,8 +130,9 @@ int main(int argc, char* argv[]){
     eval(c1);
     //res = ctrECTS.integrityCheck(c1);
     //res = ctrRep.integrityCheck(c1);
-    res = ctrJob.integrityCheck(c1);
-    std::cout << "IND#" << std::to_string(i) << "\nFirst: " << res.first << "\nSecond: " << std::to_string(res.second) << std::endl;
+    //res = ctrJob.integrityCheck(c1);
+    res = ctrPrq.integrityCheck(c1);
+    std::cout << "IND#" << std::to_string(i) << "\nFirst: " << res.first << "\nSecond: " << std::to_string((double)res.second) << std::endl;
     pop.push_back(c1);
   }
 

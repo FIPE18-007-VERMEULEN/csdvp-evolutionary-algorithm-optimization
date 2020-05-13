@@ -7,6 +7,7 @@ SET (EXERCICE_SOURCES
   ectsConstraints.cpp
   repetitionConstraints.cpp
   professionConstraints.cpp
+  prerequisitesConstraints.cpp
 )
 
 ADD_LIBRARY(lCstr STATIC ${EXERCICE_SOURCES})
