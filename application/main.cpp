@@ -101,15 +101,26 @@ int main(int argc, char* argv[]){
   
   std::cout << "getQuantityCoursesToPick : " << std::to_string(pb.getQuantityCoursesToPick()) << std::endl;
   std::cout << "cfg_quantityCourses() : " << std::to_string(pb.cfg_quantityCourses()) << std::endl;
-  CursusInit init(pb.getQuantityCoursesToPick(),0);//pb.cfg_quantityCourses());//pb.getQuantityCoursesToPick(),pb.cfg_quantityCourses(), pb.seed()); 
-  CursusEval eval;
-  CursusMutation mut;
-  CursusCrossover xOver;
 
-  eoGenContinue<Cursus> cont(100); // runs for 100 gen
+  /**@todo make size of the pb accessible as well as size of an individu*/
+  int size_of_the_pb = 30;
+
+  ConstraintsECTS ctrECTS(pb, job);
+  ConstraintsRepetition ctrRep(pb, job);
+  std::pair<bool,double> res;
+
+  //CursusInit init(pb.getQuantityCoursesToPick()-5,0);
+  CursusInit init(pb.getQuantityCoursesToPick(),pb.coursesCatalogue().size(),pb.seed());
+  //pb.cfg_quantityCourses());//pb.getQuantityCoursesToPick(),pb.cfg_quantityCourses(), pb.seed()); 
+  CursusEval eval;
+
+  CursusCrossover cross(pb, ctrRep, init);
+  CursusMutation mut(pb, ctrRep);
+  
+  eoGenContinue<Cursus> cont(1000); // runs for 100 gen
   
   //xOver, xOver rate, mutation, mutation rate
-  eoSGATransform<Cursus> transform(xOver, 0.1, mut, 0.1);
+  eoSGATransform<Cursus> transform(cross, 1, mut, 1);
   eoDetTournamentSelect<Cursus> selectOne(2); //selection method by tournament, here against 2
   eoSelectPerc<Cursus> select(selectOne);
   eoGenerationalReplacement<Cursus> replace;
@@ -135,12 +146,38 @@ int main(int argc, char* argv[]){
     std::cout << "IND#" << std::to_string(i) << "\nFirst: " << res.first << "\nSecond: " << std::to_string((double)res.second) << std::endl;
     pop.push_back(c1);
   }
-
+  //MUTATION TEST
+  /*
+  pop[0].printOn(std::cout);
+  std::cout << std::endl;
+  for(int i=0; i<50; i++){
+    mut(pop[0]);
+    pop[0].printOn(std::cout);
+    std::cout << std::endl;
+    }*/
+  
+  //CROSS TEST
+  /*
+  pop[0].printOn(std::cout);
+  std::cout << std::endl;
+  pop[1].printOn(std::cout);
+  std::cout << std::endl;
+  for(int i=0; i<50; i++){
+    cross(pop[0],pop[1]);
+  pop[0].printOn(std::cout);
+  std::cout << std::endl;
+  pop[1].printOn(std::cout);
+  std::cout << std::endl;
+  std::cout << std::endl;
+  }
+  */
+  
   for(int i = 0; i < pb.coursesCatalogue().size(); i++)
   {
     std::cout << pb.coursesCatalogue().at(i) << std::endl;
   }
 
+  
   std::cout << "===== CURRENT POP =====" << std::endl;
   pop.printOn(std::cout);
   std::cout << "=====             =====" << std::endl;
@@ -154,6 +191,8 @@ int main(int argc, char* argv[]){
   std::cout << " fitness:" << pop.best_element().fitness() << std::endl;
   std::cout << "===============" << std::endl;
 
+  std::cout << "cpt: " << cross.cpt << std::endl;
+  
   // ================================= END CEAO ZONE ===============================
   
   
