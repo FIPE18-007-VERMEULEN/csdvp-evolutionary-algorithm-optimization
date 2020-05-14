@@ -17,6 +17,8 @@
 
 #include <model/constraints/ectsConstraints.h>
 #include <model/constraints/repetitionConstraints.h>
+#include <model/constraints/professionConstraints.h>
+#include <model/constraints/prerequisitesConstraints.h>
 
 #include <model/exception/magnitudeException.h>
 #include <model/exception/competencyEvolvingException.h>
@@ -85,6 +87,14 @@ int main(int argc, char* argv[]){
       assert(pb.checkConfig());
 
       job.setRequiredECTS(4 * 6);
+      Competency tmpC = pb.competencyCatalogue().at(0);
+      job.addPrerequisite(tmpC);
+      tmpC = pb.competencyCatalogue().at(1);
+      job.addPrerequisite(tmpC);
+      tmpC = Competency::build(0.5,"Wesh");
+      job.addPrerequisite(tmpC);
+      tmpC = pb.competencyCatalogue().at(8);
+      job.addPrerequisite(tmpC);
     // ===== END PB CONFIG =====
 
   Cursus c1;
@@ -116,15 +126,24 @@ int main(int argc, char* argv[]){
   eoGenerationalReplacement<Cursus> replace;
   eoPop<Cursus> pop;
 
-  
-  
+  /**@todo make size of the pb accessible as well as size of an individu*/
+  int size_of_the_pb = 30;
+
+  ConstraintsECTS ctrECTS(pb, job);
+  ConstraintsRepetition ctrRep(pb, job);
+  ConstraintsProfession ctrJob(pb, job);
+  ConstraintsPrerequisites ctrPrq(pb, job);
+  std::pair<bool,double> res;
+
   for(int i = 0; i < size_of_the_pb; i++)
   {
     init(c1);
     eval(c1);
-    res = ctrECTS.integrityCheck(c1);
-    res = ctrRep.integrityCheck(c1);
-    std::cout << "IND#" << std::to_string(i) << "\nFirst: " << res.first << "\nSecond: " << std::to_string(res.second) << std::endl;
+    //res = ctrECTS.integrityCheck(c1);
+    //res = ctrRep.integrityCheck(c1);
+    //res = ctrJob.integrityCheck(c1);
+    res = ctrPrq.integrityCheck(c1);
+    std::cout << "IND#" << std::to_string(i) << "\nFirst: " << res.first << "\nSecond: " << std::to_string((double)res.second) << std::endl;
     pop.push_back(c1);
   }
   //MUTATION TEST

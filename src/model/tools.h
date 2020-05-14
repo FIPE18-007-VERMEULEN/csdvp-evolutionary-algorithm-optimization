@@ -40,6 +40,17 @@ static bool duplicataFlag(std::vector<T> & toProtect, T & toAdd)
 
 }
 
+template<typename T>
+static std::pair<bool,T> getElementById(const std::vector<T> & elem, int idToFind)
+{
+    for(int i = 0; i < elem.size(); i++)
+    {
+        if(elem.at(i).id() == idToFind)
+            return std::pair<bool,T>(true, elem.at(i));
+    }
+    return std::pair<bool, T>(false, T());
+}
+
 ///Not working properly yet, just for debug
 // static std::queue<int> RNG_QUEUE;
 // /**Init a queue of size s from 0 to s, then shuffle it*/

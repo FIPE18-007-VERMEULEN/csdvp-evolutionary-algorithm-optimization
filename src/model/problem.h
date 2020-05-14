@@ -133,6 +133,10 @@ class CSDVP
                 return this->_timeFrames.size() * this->_pickedCoursesByTimeFrame;
             return -1;//if not config
         }
+        /** Maps a course into its position inside the this->courseCatalogue().
+         * returns the index of the course within the coursesCatalogue [0;size[  ; otherwise return -1 if the course is not found.
+         */
+        int mapCourseToPosition(const Course & c);
         ///@todo getDecayPolitic
 
         // === MUTATOR
