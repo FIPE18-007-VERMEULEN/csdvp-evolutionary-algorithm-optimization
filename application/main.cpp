@@ -107,6 +107,8 @@ int main(int argc, char* argv[]){
 
   ConstraintsECTS ctrECTS(pb, job);
   ConstraintsRepetition ctrRep(pb, job);
+  ConstraintsProfession ctrJob(pb, job);
+  ConstraintsPrerequisites ctrPrq(pb, job);
   std::pair<bool,double> res;
 
   //CursusInit init(pb.getQuantityCoursesToPick()-5,0);
@@ -126,14 +128,7 @@ int main(int argc, char* argv[]){
   eoGenerationalReplacement<Cursus> replace;
   eoPop<Cursus> pop;
 
-  /**@todo make size of the pb accessible as well as size of an individu*/
-  int size_of_the_pb = 30;
 
-  ConstraintsECTS ctrECTS(pb, job);
-  ConstraintsRepetition ctrRep(pb, job);
-  ConstraintsProfession ctrJob(pb, job);
-  ConstraintsPrerequisites ctrPrq(pb, job);
-  std::pair<bool,double> res;
 
   for(int i = 0; i < size_of_the_pb; i++)
   {
