@@ -66,8 +66,8 @@ int main(int argc, char* argv[]){
   CSDVP pb;
   Profession job;
     // ===== PB CONFIG ZONE =====
-      pb.set_cfg_quantityCourses(15);
-      pb.set_cfg_quantityCompetencies(15);
+      pb.set_cfg_quantityCourses(10);
+      pb.set_cfg_quantityCompetencies(5);
       pb.set_cfg_minimalTimeFrames(1);
       pb.set_cfg_maximalTimeFrames(6); //Just "Licence"
       pb.set_cfg_ectsMin(1);
@@ -79,11 +79,11 @@ int main(int argc, char* argv[]){
       pb.set_cfg_minimalCompetencyByCourse(1);
       pb.set_cfg_maximalCompetencyByCourse(3);
       pb.set_cfg_minimalPrerequisiteByCourse(0);
-      pb.set_cfg_maximalPrerequisiteByCourse(2);
+      pb.set_cfg_maximalPrerequisiteByCourse(1);
 
       pb.set_cfg_pickedCoursesByTimeFrame(2);
 
-      CSDVP::generateProblem(pb, CSDVP::GenerationType::RANDOM, 7777);
+      CSDVP::generateProblem(pb, CSDVP::GenerationType::RANDOM, 11);
       assert(pb.checkConfig());
 
       job.setRequiredECTS(4 * 6);
@@ -93,8 +93,8 @@ int main(int argc, char* argv[]){
       job.addPrerequisite(tmpC);
       tmpC = Competency::build(0.5,"Wesh");
       job.addPrerequisite(tmpC);
-      tmpC = pb.competencyCatalogue().at(8);
-      job.addPrerequisite(tmpC);
+      // tmpC = pb.competencyCatalogue().at(8);
+      // job.addPrerequisite(tmpC);
     // ===== END PB CONFIG =====
 
   Cursus c1;
@@ -103,7 +103,7 @@ int main(int argc, char* argv[]){
   std::cout << "cfg_quantityCourses() : " << std::to_string(pb.cfg_quantityCourses()) << std::endl;
 
   /**@todo make size of the pb accessible as well as size of an individu*/
-  int size_of_the_pb = 30;
+  int size_of_the_pb = 3;
 
   ConstraintsECTS ctrECTS(pb, job);
   ConstraintsRepetition ctrRep(pb, job);
@@ -112,7 +112,7 @@ int main(int argc, char* argv[]){
   std::pair<bool,double> res;
 
   //CursusInit init(pb.getQuantityCoursesToPick()-5,0);
-  CursusInit init(pb.getQuantityCoursesToPick(),pb.coursesCatalogue().size(),pb.seed());
+  CursusInit init(pb.getQuantityCoursesToPick()-6,pb.coursesCatalogue().size(),pb.seed());
   //pb.cfg_quantityCourses());//pb.getQuantityCoursesToPick(),pb.cfg_quantityCourses(), pb.seed()); 
   CursusEval eval;
 
@@ -139,6 +139,19 @@ int main(int argc, char* argv[]){
     //res = ctrJob.integrityCheck(c1);
     res = ctrPrq.integrityCheck(c1);
     std::cout << "IND#" << std::to_string(i) << "\nFirst: " << res.first << "\nSecond: " << std::to_string((double)res.second) << std::endl;
+    if(res.first)
+    {
+      std::cout << "*************** OK PREREQ !! ***********" << std::endl;
+    }
+    else
+    {
+      std::cout << "$$$$$$$$$$$$$$$$ NON OK PREREQ !! $$$$$$$$$$$$$$$$$$$" << std::endl;
+    }
+    for(int i = 0 ; i < c1.size(); i++)
+      {
+        std::cout << pb.coursesCatalogue().at(c1.at(i)) << std::endl;
+      }
+
     pop.push_back(c1);
   }
   //MUTATION TEST

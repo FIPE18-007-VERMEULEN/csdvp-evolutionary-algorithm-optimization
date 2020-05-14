@@ -245,13 +245,13 @@ std::ostream& operator<<(std::ostream& Stream, const Course & c)
     s+="\n\tRequirement: [";
     for(int i = 0; i < c.prerequisites().size(); i++)
     {
-        s+="" + c.prerequisites().at(i).c_name() + " ; ";
+        s+="" + c.prerequisites().at(i).c_name()+ "("+ std::to_string(c.prerequisites().at(i).c_magnitude().value()) + ") ; ";
     }
     s+="]";
     s+="\n\tTeaches: [";
     for(int i = 0 ; i < c.teachedCompetenciesWeighted().size(); i++)
     {
-        s+= "" + std::to_string(c.teachedCompetenciesWeighted().at(i).second) + "." + c.teachedCompetenciesWeighted().at(i).first.c_name() + " ; ";
+        s+= "" + c.teachedCompetenciesWeighted().at(i).first.c_name() + "("+ std::to_string(c.teachedCompetenciesWeighted().at(i).first.c_magnitude().value())+") ; ";
     }
     s+="]";
     Stream << s;
