@@ -241,6 +241,19 @@ std::ostream& operator<<(std::ostream& Stream, const Course & c)
         tf+=std::to_string(c.timeFrame().at(c.timeFrame().size()-1));
         s+="\n\tTimeFrames: ["+tf+"]";
     }
+
+    s+="\n\tRequirement: [";
+    for(int i = 0; i < c.prerequisites().size(); i++)
+    {
+        s+="" + c.prerequisites().at(i).c_name() + " ; ";
+    }
+    s+="]";
+    s+="\n\tTeaches: [";
+    for(int i = 0 ; i < c.teachedCompetenciesWeighted().size(); i++)
+    {
+        s+= "" + std::to_string(c.teachedCompetenciesWeighted().at(i).second) + "." + c.teachedCompetenciesWeighted().at(i).first.c_name() + " ; ";
+    }
+    s+="]";
     Stream << s;
     return Stream;
 }
