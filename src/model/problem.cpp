@@ -362,7 +362,9 @@ int CSDVP::CSDVP_COUNTER = 0;
             {
                 tmpComp = queue.front();
                 queue.pop();queue.push(tmpComp);
-                teachedComp = std::pair<Competency,double>(tmpComp, 1.0);
+                magVal = pb.cfg_magnitudeMin().value() + ( (double)rand()/RAND_MAX) * ( pb.cfg_magnitudeMax().value() - pb.cfg_magnitudeMin().value()) ;
+                Competency cpt = Competency::build(magVal,tmpComp.c_name());
+                teachedComp = std::pair<Competency,double>(cpt, 1.0);
                 pb.unlocked_coursesCatalogue().at(i).addTeachedComp(teachedComp);
             }
         }
@@ -381,8 +383,12 @@ int CSDVP::CSDVP_COUNTER = 0;
             for(int j = 0; j < x; j++)
             {
                 tmpComp = queue.front();
-                queue.pop(); queue.push(tmpComp);
-                pb.unlocked_coursesCatalogue().at(i).addPrerequisite(tmpComp);
+                queue.pop();
+                //we change mag value for prereq
+                magVal = pb.cfg_magnitudeMin().value() + ( (double)rand()/RAND_MAX) * ( pb.cfg_magnitudeMax().value() - pb.cfg_magnitudeMin().value()) ;
+                Competency cpt = Competency::build(magVal,tmpComp.c_name());
+                pb.unlocked_coursesCatalogue().at(i).addPrerequisite(cpt);
+                queue.push(tmpComp);
             }
         }
 

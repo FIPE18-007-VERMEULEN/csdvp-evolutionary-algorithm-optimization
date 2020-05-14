@@ -83,7 +83,7 @@ int main(int argc, char* argv[]){
 
       pb.set_cfg_pickedCoursesByTimeFrame(2);
 
-      CSDVP::generateProblem(pb, CSDVP::GenerationType::RANDOM, 11);
+      CSDVP::generateProblem(pb, CSDVP::GenerationType::RANDOM, 7777);
       assert(pb.checkConfig());
 
       job.setRequiredECTS(4 * 6);
