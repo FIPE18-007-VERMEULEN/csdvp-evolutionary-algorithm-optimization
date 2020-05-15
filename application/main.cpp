@@ -46,7 +46,7 @@ int main(int argc, char* argv[]){
     unsigned int NBCOURSES = parser.createParam((unsigned int)(15), "nbCourses", "Nb of courses available in the cursus",'C',"Param").value();
     unsigned int NBCOMP = parser.createParam((unsigned int)(10), "nbComp", "Nb of competencies available in the cursus",'c',"Param").value();
     unsigned int MINTF = parser.createParam((unsigned int)(1), "minTF", "id of the first time frame",'t',"Param").value();
-    unsigned int MAXTF = parser.createParam((unsigned int)(6), "maxTF", "id of the first time frame",'T',"Param").value();
+    unsigned int MAXTF = parser.createParam((unsigned int)(6), "maxTF", "id of the last time frame",'T',"Param").value();
     unsigned int MINECTS = parser.createParam((unsigned int)(1), "minECTS", "minimum number ECTS by course",'e',"Param").value();
     unsigned int MAXECTS = parser.createParam((unsigned int)(5), "maxECTS", "maxmimum number ECTS by course",'E',"Param").value();
     unsigned int MINCBYTF = parser.createParam((unsigned int)(3), "minCbyTF", "minimal course by time frame",'n',"Param").value();
