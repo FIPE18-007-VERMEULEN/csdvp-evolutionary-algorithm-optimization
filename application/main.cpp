@@ -12,6 +12,7 @@
 
 #include <model/ea/cursus.h>
 #include <model/ea/initializer.h>
+#include <model/ea/initConstraint.h>
 #include <model/ea/mutation.h>
 #include <model/ea/crossover.h>
 #include <model/ea/evaluator.h>
@@ -92,10 +93,10 @@ int main(int argc, char* argv[]){
       job.addPrerequisite(tmpC);
       tmpC = pb.competencyCatalogue().at(1);
       job.addPrerequisite(tmpC);
-      tmpC = Competency::build(0.5,"Wesh");
+      //tmpC = Competency::build(0.5,"Wesh");
+      //job.addPrerequisite(tmpC);
+      tmpC = pb.competencyCatalogue().at(8);
       job.addPrerequisite(tmpC);
-      // tmpC = pb.competencyCatalogue().at(8);
-      // job.addPrerequisite(tmpC);
     // ===== END PB CONFIG =====
 
   Cursus c1;
@@ -104,7 +105,7 @@ int main(int argc, char* argv[]){
   std::cout << "cfg_quantityCourses() : " << std::to_string(pb.cfg_quantityCourses()) << std::endl;
 
   /**@todo make size of the pb accessible as well as size of an individu*/
-  int size_of_the_pb = 3;
+  int size_of_the_pb = 100;
 
   ConstraintsECTS ctrECTS(pb, job);
   ConstraintsRepetition ctrRep(pb, job);
@@ -113,18 +114,19 @@ int main(int argc, char* argv[]){
   std::pair<bool,double> res;
 
   //CursusInit init(pb.getQuantityCoursesToPick()-5,0);
-  CursusInit init(pb.getQuantityCoursesToPick()-6,pb.coursesCatalogue().size(),pb.seed());
+  //CursusInit init(pb.getQuantityCoursesToPick(),pb.coursesCatalogue().size(),pb.seed());
+  CursusInitConstraint init(pb);
   //pb.cfg_quantityCourses());//pb.getQuantityCoursesToPick(),pb.cfg_quantityCourses(), pb.seed()); 
-  CursusEval eval;
+  CursusEval eval(ctrRep, ctrJob, ctrECTS);
 
   CursusCrossover cross(pb, ctrRep, init);
   CursusMutation mut(pb, ctrRep);
   
-  eoGenContinue<Cursus> cont(1000); // runs for 100 gen
+  eoGenContinue<Cursus> cont(10000); // runs for 100 gen
   
   //xOver, xOver rate, mutation, mutation rate
-  eoSGATransform<Cursus> transform(cross, 1, mut, 1);
-  eoDetTournamentSelect<Cursus> selectOne(2); //selection method by tournament, here against 2
+  eoSGATransform<Cursus> transform(cross, 0.1, mut, 0.7);
+  eoDetTournamentSelect<Cursus> selectOne(5); //selection method by tournament, here against 2
   eoSelectPerc<Cursus> select(selectOne);
   eoGenerationalReplacement<Cursus> replace;
   eoPop<Cursus> pop;
@@ -184,7 +186,7 @@ int main(int argc, char* argv[]){
   
   for(int i = 0; i < pb.coursesCatalogue().size(); i++)
   {
-    std::cout << pb.coursesCatalogue().at(i) << std::endl;
+    //std::cout << pb.coursesCatalogue().at(i) << std::endl;
   }
 
   
