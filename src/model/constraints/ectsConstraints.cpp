@@ -18,7 +18,11 @@ std::pair<bool, double> ConstraintsECTS::integrityCheck(Cursus indiv)
     if(tmpECTS >= this->_job.requiredECTS())
         isCheckOK = true;
     //std::cout << "Required: " << std::to_string(this->_job.requiredECTS());
-    double metric = (double)tmpECTS / this->_job.requiredECTS();
+    double metric;
+    if(tmpECTS > this->_job.requiredECTS())
+        metric = 1;
+    else
+        metric = (double)tmpECTS / this->_job.requiredECTS();
 
     return std::pair<bool, double>(isCheckOK, metric);
 }

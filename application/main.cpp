@@ -8,6 +8,7 @@
 #include <model/problem.h>
 #include <model/profession.h>
 #include <model/magnitude.h>
+#include <model/tools.h>
 
 #include <model/ea/cursus.h>
 #include <model/ea/initializer.h>
@@ -67,8 +68,8 @@ int main(int argc, char* argv[]){
   CSDVP pb;
   Profession job;
     // ===== PB CONFIG ZONE =====
-      pb.set_cfg_quantityCourses(15);
-      pb.set_cfg_quantityCompetencies(15);
+      pb.set_cfg_quantityCourses(10);
+      pb.set_cfg_quantityCompetencies(5);
       pb.set_cfg_minimalTimeFrames(1);
       pb.set_cfg_maximalTimeFrames(6); //Just "Licence"
       pb.set_cfg_ectsMin(1);
@@ -80,7 +81,7 @@ int main(int argc, char* argv[]){
       pb.set_cfg_minimalCompetencyByCourse(1);
       pb.set_cfg_maximalCompetencyByCourse(3);
       pb.set_cfg_minimalPrerequisiteByCourse(0);
-      pb.set_cfg_maximalPrerequisiteByCourse(2);
+      pb.set_cfg_maximalPrerequisiteByCourse(1);
 
       pb.set_cfg_pickedCoursesByTimeFrame(2);
 
@@ -136,11 +137,25 @@ int main(int argc, char* argv[]){
   {
     init(c1);
     eval(c1);
-    //res = ctrECTS.integrityCheck(c1);
+    res = ctrECTS.integrityCheck(c1);
+    std::cout << "ECTS Metric" << std::to_string(res.second) << std::endl;
     //res = ctrRep.integrityCheck(c1);
     //res = ctrJob.integrityCheck(c1);
     res = ctrPrq.integrityCheck(c1);
-    //std::cout << "IND#" << std::to_string(i) << "\nFirst: " << res.first << "\nSecond: " << std::to_string((double)res.second) << std::endl;
+    std::cout << "IND#" << std::to_string(i) << "\nFirst: " << res.first << "\nSecond: " << std::to_string((double)res.second) << std::endl;
+    if(res.first)
+    {
+      std::cout << "*************** OK PREREQ !! ***********" << std::endl;
+    }
+    else
+    {
+      std::cout << "$$$$$$$$$$$$$$$$ NON OK PREREQ !! $$$$$$$$$$$$$$$$$$$" << std::endl;
+    }
+    for(int i = 0 ; i < c1.size(); i++)
+      {
+        std::cout << pb.coursesCatalogue().at(c1.at(i)) << std::endl;
+      }
+
     pop.push_back(c1);
   }
   //MUTATION TEST

@@ -55,13 +55,17 @@ class Course
 
         // Static
         static int COURSE_COUNTER;
+        static int COURSE_TMP_COUNTER;
+
         static int assignID();
+        static int assignID4TMP();
 
         // Constructor
         //Course();
         Course(int id, int ects, std::string name);
     public:
         static Course build(int ects = 0, std::string name = "");
+        static Course buildTMP(int ects = 0, std::string name = "");
         
         /// Default constructor. Use Course::build instead !
         Course() = default;

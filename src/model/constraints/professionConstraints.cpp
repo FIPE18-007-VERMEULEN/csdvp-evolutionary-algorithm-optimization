@@ -16,7 +16,7 @@ std::pair<bool, double> ConstraintsProfession::integrityCheck(Cursus indiv)
     for(int i = 0 ; i < this->_job.prerequisites().size(); i++)
     {
         std::string name = this->_job.prerequisites().at(i).c_name();
-        compToAnswer.push_back(Competency::build(0, name)); //same name to exploit the Competency::operator== on name equality
+        compToAnswer.push_back(Competency::buildTMP(0, name)); //same name to exploit the Competency::operator== on name equality
     }
 
     Course current;

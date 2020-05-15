@@ -55,7 +55,7 @@ class CSDVP
         std::vector<int> _timeFrames; // Time frames stocks the VALUE, not the index
         std::vector<Course> _availableCourses;
         std::vector<std::vector<Course>> _coursesSortedByTF; //sorted by standard index. e.g. TF[4;6] -> [0]=4; [1]=5 ; [2] = 6
-        std::vector<Competency> _availableCompentecies;
+        std::vector<Competency> _availableCompentecies; //The competency's magnitude should not be used here. 
 
         ///@todo implements a decay politics
         //DecayPolitics 
@@ -122,6 +122,9 @@ class CSDVP
 
         const std::vector<int> & timeFrames() const{return this->_timeFrames;}
         const std::vector<Course> & coursesCatalogue() const{return this->_availableCourses;}
+        /**CompetencyCatalogue should be used to know which competency exists in the current pb. However, it should not
+         * be used to know the magnitude of each comp in the pb, since these mag changes accordingly to the courses (and if it is teached or a prereq)
+         */ 
         const std::vector<Competency> & competencyCatalogue() const{return this->_availableCompentecies;}
         const std::vector<std::vector<Course>> & coursesSortedByTF() const {return this->_coursesSortedByTF;}
         std::vector<int> & unlocked_timeFrames(){return this->_timeFrames;}

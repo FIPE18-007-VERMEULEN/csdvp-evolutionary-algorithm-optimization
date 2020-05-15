@@ -55,6 +55,22 @@ std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
         //std::cout << "\tPrereq: " << std::to_string(currentCourse.prerequisites().size()) << std::endl;
         nbPrereq += currentCourse.prerequisites().size();
 
+
+        //Handling prereq
+        // Check if prerequisites exists in TF-1
+        if(currentTF > 0)
+        {
+            prereqFound = this->_prereqsInPreviousTF(compByTF.at(currentTF-1), currentCourse.prerequisites());
+        }
+        else
+        {
+            prereqFound = this->_prereqsInPreviousTF(std::vector<Competency>(0), currentCourse.prerequisites());
+        }
+        notFound += prereqFound.first;
+        notRespected += prereqFound.second;
+
+
+        // Handling teached comp
         for(int j = 0; j < currentCourse.teachedCompetenciesWeighted().size() ; j++)
         {
             currentCompetency = currentCourse.teachedCompetenciesWeighted().at(j).first;
@@ -80,20 +96,7 @@ std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
             }
             else
             {
-                // Check if prerequisites exists in TF-1
-                if(currentTF > 0)
-                {
-                    prereqFound = this->_prereqsInPreviousTF(compByTF.at(currentTF-1), currentCourse.prerequisites());
-                }
-                else
-                {
-                    prereqFound = this->_prereqsInPreviousTF(std::vector<Competency>(0), currentCourse.prerequisites());
-                }
-
-                notFound += prereqFound.first;
-                notRespected += prereqFound.second;
-
-                compByTF.at(currentTF).push_back(Competency::build(currentCompetency.c_magnitude().value(), currentCompetency.c_name()));
+                compByTF.at(currentTF).push_back(Competency::buildTMP(currentCompetency.c_magnitude().value(), currentCompetency.c_name()));
             }
         }
     }
@@ -109,11 +112,24 @@ std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
     }
 
     bool isOK = ((notFound == 0) && (notRespected == 0));
-    //std::cout << "Not Found: " << std::to_string(notFound) << std::endl;
-    //std::cout << "Not Respected: " << std::to_string(notRespected) << std::endl;
-    //std::cout << "Nb Prereq: " << std::to_string(nbPrereq) << std::endl;
-    double metric = 1.0 - ( (((double)2 * (double)notFound) + (double)notRespected ) / (2 * (double) nbPrereq) );
-    //std::cout << "Metric: " << std::to_string(metric) << std::endl;
+    std::cout << "========== PREREQ CSTR RES ==========" << std::endl;
+    std::cout << "Not Found: " << std::to_string(notFound) << std::endl;
+    std::cout << "Not Respected: " << std::to_string(notRespected) << std::endl;
+    std::cout << "Nb Prereq: " << std::to_string(nbPrereq) << std::endl;
+    double metric = 0;
+    if(nbPrereq > 0)
+    {
+        metric = 1.0 - ( (((double)2 * (double)notFound) + (double)notRespected ) / (2 * (double) nbPrereq) );
+    }
+    else //can't divide by 0
+    {
+        if(isOK)
+            metric = 1;
+        else
+            metric = 0;
+    }
+    std::cout << "Metric: " << std::to_string(metric) << std::endl;
+    std::cout << "====================" << std::endl;
     return std::pair<bool, double>(isOK, metric);
 }
 

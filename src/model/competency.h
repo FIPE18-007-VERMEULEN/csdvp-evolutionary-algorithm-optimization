@@ -24,10 +24,15 @@ class Competency
 
         //STATIC
         static int COMPETENCY_COUNTER;
+        static int COMPETENCY_TMP_COUNTER;
+        
         static int assignID();
+        static int assignID4TMP();//Called by the tmp builder
     public:
         static Competency build(Magnitude &, std::string s = "");
         static Competency build(double, std::string = "");
+        ///This builder should be used for TMP element
+        static Competency buildTMP(double, std::string);
 
         Competency() = default;
         // === FUNCTION

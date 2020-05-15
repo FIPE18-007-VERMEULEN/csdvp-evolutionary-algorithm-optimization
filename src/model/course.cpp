@@ -11,13 +11,28 @@
 #include "exception/courseECTSException.h"
 #include "exception/courseTemporalFrameException.h"
 #include "exception/notImplementedException.h"
+#include "exception/idOverflowException.h"
 
 int Course::COURSE_COUNTER = 0;
+int Course::COURSE_TMP_COUNTER = ID_RANGE_FOR_OBJECT + 1;
 
 // === FACTORY
 Course Course::build(int ects, std::string name)
 {
     int id = Course::assignID();
+    
+    if(name.empty())
+        name = "Course#"+std::to_string(id);
+    
+    if(ects < 0)
+        throw CourseECTSException(new Course(id, ects, name));
+    else
+        return Course(id, ects, name);
+}
+
+Course Course::buildTMP(int ects, std::string name)
+{
+    int id = Course::assignID4TMP();
     
     if(name.empty())
         name = "Course#"+std::to_string(id);
@@ -245,13 +260,13 @@ std::ostream& operator<<(std::ostream& Stream, const Course & c)
     s+="\n\tRequirement: [";
     for(int i = 0; i < c.prerequisites().size(); i++)
     {
-        s+="" + c.prerequisites().at(i).c_name() + " ; ";
+        s+="" + c.prerequisites().at(i).c_name()+ "("+ std::to_string(c.prerequisites().at(i).c_magnitude().value()) + ") ; ";
     }
     s+="]";
     s+="\n\tTeaches: [";
     for(int i = 0 ; i < c.teachedCompetenciesWeighted().size(); i++)
     {
-        s+= "" + std::to_string(c.teachedCompetenciesWeighted().at(i).second) + "." + c.teachedCompetenciesWeighted().at(i).first.c_name() + " ; ";
+        s+= "" + c.teachedCompetenciesWeighted().at(i).first.c_name() + "("+ std::to_string(c.teachedCompetenciesWeighted().at(i).first.c_magnitude().value())+") ; ";
     }
     s+="]";
     Stream << s;
@@ -269,6 +284,18 @@ bool Course::operator==(const Course & c) const
 /// Course counter
 int Course::assignID()
 {
+    if(Course::COURSE_COUNTER + 1 > ID_RANGE_FOR_OBJECT)
+        throw idOverflowException("assignID()@Course.cpp");
     return ++Course::COURSE_COUNTER;
+}
+
+int Course::assignID4TMP()
+{
+    if(Course::COURSE_TMP_COUNTER + 1 > ID_RANGE_FOR_TEMPORARY_OBJECT)
+    {
+        std::cout << "INFO: COURSE_TMP_COUNTER was about to overflow: restored to ID_RANGE_OBJECT + 1" << std::endl;
+        COURSE_TMP_COUNTER = ID_RANGE_FOR_OBJECT + 1;
+    }
+    return ++COURSE_TMP_COUNTER;
 }
 // === END STATIC
