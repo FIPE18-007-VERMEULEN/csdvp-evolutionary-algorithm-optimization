@@ -9,6 +9,7 @@
 #include <model/profession.h>
 #include <model/magnitude.h>
 #include <model/tools.h>
+#include <model/competency.h>
 
 #include <model/ea/cursus.h>
 #include <model/ea/initializer.h>
@@ -68,35 +69,42 @@ int main(int argc, char* argv[]){
   CSDVP pb;
   Profession job;
     // ===== PB CONFIG ZONE =====
-      pb.set_cfg_quantityCourses(10);
-      pb.set_cfg_quantityCompetencies(5);
+      pb.set_cfg_quantityCourses(25);
+      pb.set_cfg_quantityCompetencies(40);
       pb.set_cfg_minimalTimeFrames(1);
       pb.set_cfg_maximalTimeFrames(6); //Just "Licence"
       pb.set_cfg_ectsMin(1);
       pb.set_cfg_ectsMax(5);
       pb.set_cfg_courseByTFMin(3);
-      pb.set_cfg_courseByTFMax(5);
+      pb.set_cfg_courseByTFMax(8);
       pb.set_cfg_minimalMagnitude(0.2);
       pb.set_cfg_maximalMagnitude(0.75);
       pb.set_cfg_minimalCompetencyByCourse(1);
-      pb.set_cfg_maximalCompetencyByCourse(3);
+      pb.set_cfg_maximalCompetencyByCourse(5);
       pb.set_cfg_minimalPrerequisiteByCourse(0);
-      pb.set_cfg_maximalPrerequisiteByCourse(1);
+      pb.set_cfg_maximalPrerequisiteByCourse(3);
 
       pb.set_cfg_pickedCoursesByTimeFrame(2);
 
       CSDVP::generateProblem(pb, CSDVP::GenerationType::RANDOM, 7777);
       assert(pb.checkConfig());
+      
+
 
       job.setRequiredECTS(4 * 6);
       Competency tmpC = pb.competencyCatalogue().at(0);
+      tmpC = Competency::buildTMP(0.8, tmpC.c_name());
       job.addPrerequisite(tmpC);
-      tmpC = pb.competencyCatalogue().at(1);
+      tmpC = pb.competencyCatalogue().at(10);
+      tmpC = Competency::buildTMP(0.8, tmpC.c_name());
+      job.addPrerequisite(tmpC);
+      tmpC = pb.competencyCatalogue().at(20);
+      tmpC = Competency::buildTMP(0.8, tmpC.c_name());
       job.addPrerequisite(tmpC);
       //tmpC = Competency::build(0.5,"Wesh");
       //job.addPrerequisite(tmpC);
-      tmpC = pb.competencyCatalogue().at(8);
-      job.addPrerequisite(tmpC);
+      //tmpC = pb.competencyCatalogue().at(8);
+      //job.addPrerequisite(tmpC);
     // ===== END PB CONFIG =====
 
   Cursus c1;
@@ -117,15 +125,15 @@ int main(int argc, char* argv[]){
   //CursusInit init(pb.getQuantityCoursesToPick(),pb.coursesCatalogue().size(),pb.seed());
   CursusInitConstraint init(pb);
   //pb.cfg_quantityCourses());//pb.getQuantityCoursesToPick(),pb.cfg_quantityCourses(), pb.seed()); 
-  CursusEval eval(ctrRep, ctrJob, ctrECTS);
+  CursusEval eval(ctrPrq, ctrRep, ctrJob, ctrECTS);
 
   CursusCrossover cross(pb, ctrRep, init);
   CursusMutation mut(pb, ctrRep);
   
-  eoGenContinue<Cursus> cont(10000); // runs for 100 gen
+  eoGenContinue<Cursus> cont(1000); // runs for 100 gen
   
   //xOver, xOver rate, mutation, mutation rate
-  eoSGATransform<Cursus> transform(cross, 0.1, mut, 0.7);
+  eoSGATransform<Cursus> transform(cross, 0.5, mut, 0.8);
   eoDetTournamentSelect<Cursus> selectOne(5); //selection method by tournament, here against 2
   eoSelectPerc<Cursus> select(selectOne);
   eoGenerationalReplacement<Cursus> replace;
@@ -137,6 +145,7 @@ int main(int argc, char* argv[]){
   {
     init(c1);
     eval(c1);
+    /*
     res = ctrECTS.integrityCheck(c1);
     std::cout << "ECTS Metric" << std::to_string(res.second) << std::endl;
     //res = ctrRep.integrityCheck(c1);
@@ -155,9 +164,10 @@ int main(int argc, char* argv[]){
       {
         std::cout << pb.coursesCatalogue().at(c1.at(i)) << std::endl;
       }
-
+    */
     pop.push_back(c1);
   }
+    
   //MUTATION TEST
   /*
   pop[0].printOn(std::cout);
@@ -191,7 +201,7 @@ int main(int argc, char* argv[]){
 
   
   std::cout << "===== CURRENT POP =====" << std::endl;
-  pop.printOn(std::cout);
+  pop.best_element().printOn(std::cout);
   std::cout << "=====             =====" << std::endl;
 
   eoEasyEA<QUEEN> algo(cont,eval,select,transform,replace);

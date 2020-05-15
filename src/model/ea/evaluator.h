@@ -13,12 +13,13 @@ class CursusEval : public eoEvalFunc<Cursus>
 {
 public:
 
- CursusEval(ConstraintsRepetition& _cr, ConstraintsProfession& _cp, ConstraintsECTS& _ce): cr(_cr), cp(_cp), ce(_ce){}
+ CursusEval(ConstraintsPrerequisites& _cpr, ConstraintsRepetition& _cr, ConstraintsProfession& _cp, ConstraintsECTS& _ce):cpr(_cpr), cr(_cr), cp(_cp), ce(_ce){}
   
     void operator()(Cursus & _cursus);
 
 
  private:
+    ConstraintsPrerequisites cpr;
     ConstraintsRepetition cr;
     ConstraintsProfession cp;
     ConstraintsECTS ce;

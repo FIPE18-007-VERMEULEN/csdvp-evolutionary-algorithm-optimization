@@ -112,10 +112,12 @@ std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
     }
 
     bool isOK = ((notFound == 0) && (notRespected == 0));
-    std::cout << "========== PREREQ CSTR RES ==========" << std::endl;
+    /*
+      std::cout << "========== PREREQ CSTR RES ==========" << std::endl;
     std::cout << "Not Found: " << std::to_string(notFound) << std::endl;
     std::cout << "Not Respected: " << std::to_string(notRespected) << std::endl;
     std::cout << "Nb Prereq: " << std::to_string(nbPrereq) << std::endl;
+    */
     double metric = 0;
     if(nbPrereq > 0)
     {
@@ -128,8 +130,8 @@ std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
         else
             metric = 0;
     }
-    std::cout << "Metric: " << std::to_string(metric) << std::endl;
-    std::cout << "====================" << std::endl;
+    //std::cout << "Metric: " << std::to_string(metric) << std::endl;
+    //std::cout << "====================" << std::endl;
     return std::pair<bool, double>(isOK, metric);
 }
 
