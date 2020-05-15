@@ -27,7 +27,7 @@ std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
 
     bool changedTF = false;
 
-    std::cout << "=========START========" << std::endl;
+    //std::cout << "=========START========" << std::endl;
     for(int i = 0; i < indiv.size() ; i++)
     {
         if(currentTF != i / this->_pb.cfg_pickedCoursesByTimeFrame())
@@ -50,7 +50,7 @@ std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
 
         // Then, we explore the current TF for new Comp
         currentCourse = this->_pb.coursesCatalogue().at(indiv.at(i));
-        std::cout << "\t" << currentCourse << std::endl;
+        //std::cout << "\t" << currentCourse << std::endl;
 
         //std::cout << "\tPrereq: " << std::to_string(currentCourse.prerequisites().size()) << std::endl;
         nbPrereq += currentCourse.prerequisites().size();
@@ -64,7 +64,7 @@ std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
 
             if(alreadyExists.first >= 0) //Already Exists in the array
             {
-                std::cout << currentCompetency.c_name() << " already exists" <<std::endl;
+	      //std::cout << currentCompetency.c_name() << " already exists" <<std::endl;
                 try
                 {
                     compByTF.at(currentTF).at(alreadyExists.first).evolveTowards(currentCompetency.magnitude());
@@ -75,7 +75,7 @@ std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
                     //compToAnswer.at(posFound.first) = e.getCompetency();
                     //std::cout << "INFO:\n(during ConstraintsProfession)\n\n Compentecy evolution throw an exception. Auto rebase. New value is " << e.getCompetency() << std::endl;
                     //std::cout << "Comp rebased val is" << compByTF.at(currentTF).at(alreadyExists.first) << std::endl;
-                    std::cout << "exception.Rebased";
+                    //std::cout << "exception.Rebased";
                 }
             }
             else
@@ -98,22 +98,22 @@ std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
         }
     }
 
-    std::cout << "==EXPLORING COMP BY TF" << std::endl;
+    //std::cout << "==EXPLORING COMP BY TF" << std::endl;
     for(int i = 0; i < compByTF.size(); i++)
     {
-        std::cout << "TF#" << std::to_string(i) << std::endl;
+      //std::cout << "TF#" << std::to_string(i) << std::endl;
         for(int j = 0; j < compByTF.at(i).size() ; j++)
         {
-            std::cout << compByTF.at(i).at(j) << std::endl;
+	  //std::cout << compByTF.at(i).at(j) << std::endl;
         }
     }
 
     bool isOK = ((notFound == 0) && (notRespected == 0));
-    std::cout << "Not Found: " << std::to_string(notFound) << std::endl;
-    std::cout << "Not Respected: " << std::to_string(notRespected) << std::endl;
-    std::cout << "Nb Prereq: " << std::to_string(nbPrereq) << std::endl;
+    //std::cout << "Not Found: " << std::to_string(notFound) << std::endl;
+    //std::cout << "Not Respected: " << std::to_string(notRespected) << std::endl;
+    //std::cout << "Nb Prereq: " << std::to_string(nbPrereq) << std::endl;
     double metric = 1.0 - ( (((double)2 * (double)notFound) + (double)notRespected ) / (2 * (double) nbPrereq) );
-    std::cout << "Metric: " << std::to_string(metric) << std::endl;
+    //std::cout << "Metric: " << std::to_string(metric) << std::endl;
     return std::pair<bool, double>(isOK, metric);
 }
 
@@ -129,11 +129,11 @@ std::pair<int, int> ConstraintsPrerequisites::_prereqsInPreviousTF(std::vector<C
     for(int i = 0; i < prereqs.size(); i++)
     {
         found = false;
-        std::cout << "Looking for " << prereqs.at(i) << std::endl;
+        //std::cout << "Looking for " << prereqs.at(i) << std::endl;
 
         for(int j = 0 ; j < cInTF.size() && !found; j++)
         {
-            std::cout << "\n\t" << cInTF.at(j) << std::endl;
+	  //std::cout << "\n\t" << cInTF.at(j) << std::endl;
 
             if(prereqs.at(i)==cInTF.at(j))
             {
@@ -146,6 +146,6 @@ std::pair<int, int> ConstraintsPrerequisites::_prereqsInPreviousTF(std::vector<C
         if(!found)
             notFound++;
     }
-    std::cout << "NF: " << std::to_string(notFound) << " | NR: " << std::to_string(notRespected) << std::endl;
+    //std::cout << "NF: " << std::to_string(notFound) << " | NR: " << std::to_string(notRespected) << std::endl;
     return std::pair<int, int>(notFound, notRespected);
 }

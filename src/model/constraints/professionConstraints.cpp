@@ -42,7 +42,7 @@ std::pair<bool, double> ConstraintsProfession::integrityCheck(Cursus indiv)
                 {
                     //Should has NTD here
                     //compToAnswer.at(posFound.first) = e.getCompetency();
-                    std::cout << "INFO:\n(during ConstraintsProfession)\n\n Compentecy evolution throw an exception. Auto rebase. New value is " << e.getCompetency() << std::endl;
+                    //std::cout << "INFO:\n(during ConstraintsProfession)\n\n Compentecy evolution throw an exception. Auto rebase. New value is " << e.getCompetency() << std::endl;
                 }
             }
         }
@@ -57,8 +57,8 @@ std::pair<bool, double> ConstraintsProfession::integrityCheck(Cursus indiv)
             score++;
     }
 
-    std::cout << "Score: " << std::to_string(score) << std::endl;
-    std::cout << "Size: " << std::to_string(compToAnswer.size()) << std::endl;
+    //std::cout << "Score: " << std::to_string(score) << std::endl;
+    //std::cout << "Size: " << std::to_string(compToAnswer.size()) << std::endl;
     bool res = score == 0;
 
 

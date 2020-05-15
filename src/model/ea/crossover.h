@@ -1,6 +1,7 @@
 #ifndef SRC_MODEL_EA_CROSSOVER_H_
 #define SRC_MODEL_EA_CROSSOVER_H_
 
+#include <model/ea/initConstraint.h>
 
 template <class EOT>
 class crossCSDVP: public eoQuadOp<EOT>
@@ -8,7 +9,7 @@ class crossCSDVP: public eoQuadOp<EOT>
 
  public:
   
- crossCSDVP(CSDVP& _pb, ConstraintsRepetition& _ctr, CursusInit& _init):pb(_pb),ctr(_ctr), init(_init), cpt(0){}
+ crossCSDVP(CSDVP& _pb, ConstraintsRepetition& _ctr, CursusInitConstraint& _init):pb(_pb),ctr(_ctr), init(_init), cpt(0){}
 
   
   virtual bool operator()(EOT& _chrom1, EOT& _chrom2){
@@ -141,7 +142,7 @@ class crossCSDVP: public eoQuadOp<EOT>
   
   CSDVP pb;
   ConstraintsRepetition ctr;
-  CursusInit init;
+  CursusInitConstraint init;
 };
 
 typedef crossCSDVP<Cursus> CursusCrossover;
