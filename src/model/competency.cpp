@@ -2,11 +2,14 @@
 
 #include "competency.h"
 #include "magnitude.h"
+#include "tools.h"
 
 #include "exception/magnitudeException.h"
 #include "exception/competencyEvolvingException.h"
+#include "exception/idOverflowException.h"
 
 int Competency::COMPETENCY_COUNTER = 0;
+int Competency::COMPETENCY_TMP_COUNTER = ID_RANGE_FOR_OBJECT + 1;
 
 // === FACTORY
 
@@ -37,6 +40,24 @@ Competency Competency::build(double d = 0, std::string name)
     }  
 }
 
+Competency Competency::buildTMP(double d, std::string name)
+{
+    int id = Competency::assignID4TMP();
+    if(name.empty())
+        name = "Competency#"+std::to_string(id);
+
+    try
+    {
+        Magnitude m = Magnitude::build(d);
+        return Competency(id, m, name); 
+    }
+    catch(MagnitudeException & e)
+    {
+        e.getMagnitude().rebase();
+        throw CompetencyEvolvingException(new Competency(id, e.getMagnitude(), name)); 
+    }  
+}
+
 // === CONSTRUCTOR
 
 Competency::Competency(int id, Magnitude m, std::string s)
@@ -49,7 +70,19 @@ Competency::Competency(int id, Magnitude m, std::string s)
 
 int Competency::assignID()
 {
+    if(Competency::COMPETENCY_COUNTER + 1 > ID_RANGE_FOR_OBJECT)
+        throw idOverflowException("assignID()@Competency.cpp");
     return ++Competency::COMPETENCY_COUNTER;
+}
+
+int Competency::assignID4TMP()
+{
+    if(Competency::COMPETENCY_TMP_COUNTER + 1 > ID_RANGE_FOR_TEMPORARY_OBJECT)
+    {
+        std::cout << "INFO: COMPETENCY_TMP_COUNTER was about to overflow: restored to ID_RANGE_OBJECT + 1" << std::endl;
+        COMPETENCY_TMP_COUNTER = ID_RANGE_FOR_OBJECT + 1;
+    }
+    return ++Competency::COMPETENCY_TMP_COUNTER;
 }
 
 // === FUNCTION

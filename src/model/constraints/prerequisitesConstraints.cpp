@@ -96,7 +96,7 @@ std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
             }
             else
             {
-                compByTF.at(currentTF).push_back(Competency::build(currentCompetency.c_magnitude().value(), currentCompetency.c_name()));
+                compByTF.at(currentTF).push_back(Competency::buildTMP(currentCompetency.c_magnitude().value(), currentCompetency.c_name()));
             }
         }
     }

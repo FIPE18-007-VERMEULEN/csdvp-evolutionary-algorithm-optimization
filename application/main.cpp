@@ -8,6 +8,7 @@
 #include <model/problem.h>
 #include <model/profession.h>
 #include <model/magnitude.h>
+#include <model/tools.h>
 
 #include <model/ea/cursus.h>
 #include <model/ea/initializer.h>
