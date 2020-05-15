@@ -158,7 +158,8 @@ int CSDVP::CSDVP_COUNTER = 0;
             throw CSDVPBadlyConfiguratedException("this->_quantityAvailableCompetencies < this->_maximalCompetencyByCourse");
         if(this->_pickedCoursesByTimeFrame > this->_minimalCoursesByTimeFrame)
             throw CSDVPBadlyConfiguratedException("this->_pickedCoursesByTimeFrame > this->_minimalCoursesByTimeFrame");
-        
+        if(this->_pickedCoursesByTimeFrame * ( (this->_maximalTimeFrame - this->_minimalTimeFrame) + 1) > this->_quantityAvailableCourses)
+            throw CSDVPBadlyConfiguratedException("this->_pickedCoursesByTimeFrame * ( (this->_maximalTimeFrame - this->_minimalTimeFrame) + 1) > this->_quantityAvailableCourses");
         this->_isConfig = true;
         return this->_isConfig;
     }
