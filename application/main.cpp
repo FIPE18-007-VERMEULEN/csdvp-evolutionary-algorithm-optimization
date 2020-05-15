@@ -134,7 +134,8 @@ int main(int argc, char* argv[]){
   {
     init(c1);
     eval(c1);
-    //res = ctrECTS.integrityCheck(c1);
+    res = ctrECTS.integrityCheck(c1);
+    std::cout << "ECTS Metric" << std::to_string(res.second) << std::endl;
     //res = ctrRep.integrityCheck(c1);
     //res = ctrJob.integrityCheck(c1);
     res = ctrPrq.integrityCheck(c1);
