@@ -1,5 +1,5 @@
 #ifndef SRC_MODEL_TOOLS_H_
-#define SRC_MODEL_TOOLS_H
+#define SRC_MODEL_TOOLS_H_
 
 #include <vector>
 #include <utility>
