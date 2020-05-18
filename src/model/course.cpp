@@ -232,8 +232,8 @@ bool Course::_duplicataProtection(std::vector<std::pair<Competency,double>> *tea
 
 bool Course::_lazyEquality(const Course & c) const
 {
-    return (this->_id == c.id() &&
-            this->_name.compare(c.name()) == 0 &&
+    return ( (this->_id == c.id() ||
+            this->_name.compare(c.name()) == 0 ) &&
             this->_ects == c.ects()
             );
 }
@@ -297,5 +297,26 @@ int Course::assignID4TMP()
         COURSE_TMP_COUNTER = ID_RANGE_FOR_OBJECT + 1;
     }
     return ++COURSE_TMP_COUNTER;
+}
+
+/** It produces a new vector, which is another view of courses in param, sorted by TF
+ * Duplicates the behaviour of CSDVP::_makeCoursesSortedByTF() except that it applies to any vector of courses
+ * size of timeFrames must be equal to the maximal TF value in courses.timeFrames !
+ */ 
+std::vector<std::vector<Course>> Course::organiseByTF(std::vector<Course> courses, std::vector<int> timeFrames)
+{
+    std::vector<std::vector<Course>> coursesByTF(timeFrames.size());
+    
+    int tmpIdx;
+    for(int i = 0; i < courses.size(); i++)
+    {
+        for(int j = 0; j < courses.at(i).timeFrame().size(); j++)
+        {
+            tmpIdx = courses.at(i).timeFrame().at(j) - timeFrames.at(0);
+            coursesByTF.at(tmpIdx).push_back(courses.at(i));
+        }
+    }
+
+    return coursesByTF;
 }
 // === END STATIC
