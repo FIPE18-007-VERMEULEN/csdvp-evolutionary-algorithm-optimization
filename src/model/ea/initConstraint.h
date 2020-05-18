@@ -36,22 +36,22 @@ class eoInitConstraintCSDVP: public eoInit<EOT>
 	possibleIDbyTF[tmp[j]-pb.cfg_minimalTimeFrame()].push_back(i);
       }
     }
-    for(int i=0; i<possibleIDbyTF.size(); i++){
-      std::cout << "Possible course in TF " << i+pb.cfg_minimalTimeFrame() << ": ";
-      for(int j=0; j<possibleIDbyTF[i].size(); j++){
-	std::cout << possibleIDbyTF[i][j] << " ";
-      }
-      std::cout << std::endl;
-    }
+  //   for(int i=0; i<possibleIDbyTF.size(); i++){
+  //     std::cout << "Possible course in TF " << i+pb.cfg_minimalTimeFrame() << ": ";
+  //     for(int j=0; j<possibleIDbyTF[i].size(); j++){
+	// std::cout << possibleIDbyTF[i][j] << " ";
+  //     }
+  //     std::cout << std::endl;
+  //   }
   }
   
   virtual void operator()(EOT& chrom){
     int cpt=0;
-    std::cout << "Enter init" << std::endl;
+    //std::cout << "Enter init" << std::endl;
     unsigned int r=eo::rng.random(possibleIDbyTF[0].size());
     chrom.resize(0);
     chrom.push_back(possibleIDbyTF[0][r]);
-    std::cout << "push " << possibleIDbyTF[0][r] << std::endl;
+    //std::cout << "push " << possibleIDbyTF[0][r] << std::endl;
     for(int i = 1; i < chromSize; i++){
       cpt=0;
       r=eo::rng.random(possibleIDbyTF[i/sizeTF].size());
@@ -60,9 +60,9 @@ class eoInitConstraintCSDVP: public eoInit<EOT>
 	cpt++;
       }
       if(cpt<maxVal){
-	std::cout << i << " " << r << " ";
+	//std::cout << i << " " << r << " ";
 	chrom.push_back(possibleIDbyTF[i/sizeTF][r]);
-	std::cout << "push " << possibleIDbyTF[i/sizeTF][r] << std::endl;
+	//std::cout << "push " << possibleIDbyTF[i/sizeTF][r] << std::endl;
       }
       else{
 	r=eo::rng.random(maxVal);
