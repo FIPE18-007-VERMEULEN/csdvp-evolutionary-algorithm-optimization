@@ -256,6 +256,41 @@ int main(int argc, char* argv[]){
     std::cout << "===== BEST INDIVIDU =====" << std::endl;
     pop.best_element().printOn(std::cout);
     std::cout << " fitness:" << pop.best_element().fitness() << std::endl;
+    std::cout << "Stats & metrics: \n" << std::endl;
+    std::pair<bool, double> resECTS = ctrECTS.integrityCheck(pop.best_element());
+    std::pair<bool, double> resRep = ctrRep.integrityCheck(pop.best_element());
+    std::pair<bool, double> resJob = ctrJob.integrityCheck(pop.best_element());
+    std::pair<bool, double> resPrq = ctrPrq.integrityCheck(pop.best_element());
+    
+    std::cout << "ECTS: ";
+    if(resECTS.first)
+      std::cout << "succeed";
+    else
+      std::cout << "failed";
+    std::cout << " | value: " << resECTS.second << std::endl;
+
+    std::cout << "Repetition: ";
+    if(resRep.first)
+      std::cout << "succeed";
+    else
+      std::cout << "failed";
+    std::cout << " | value: " << resRep.second << std::endl;
+
+    std::cout << "Job: ";
+    if(resJob.first)
+      std::cout << "succeed";
+    else
+      std::cout << "failed";
+    std::cout << " | value: " << resJob.second << std::endl;
+
+    std::cout << "Prereq: ";
+    if(resPrq.first)
+      std::cout << "succeed";
+    else
+      std::cout << "failed";
+    std::cout << " | value: " << resPrq.second << std::endl;
+
+
     std::cout << "===============" << std::endl;
 
     std::cout << "cpt: " << cross.cpt << std::endl;
