@@ -96,12 +96,12 @@ class mutCSDVP: public eoMonOp<EOT>
    * This mutation choose a course randomly, then replace it with a course available in the current TF.
    * The course selection is made as follow :
    *  Select a course (at random) where its prerequisite are respected by the previous assignation
-   *  Otherwise, pick the least constrained course
+   *  Otherwise, pick the least constrained course in 60% of cases, otherwise random
    * Note that even if the select course's prerequisite may be respected, the _chrom is not guaranteed to be a solution, since the previous
    * assignement of course could be wrong.
    * @author Alex
    * @version 2.0
-   * @todo optimize
+   * @todo optimize + define a global variable for random
    */ 
   virtual bool operator()(EOT& _chrom)
   {
@@ -178,15 +178,23 @@ class mutCSDVP: public eoMonOp<EOT>
         std::random_shuffle(gfiCourse.begin(), gfiCourse.end());
         _chrom[rngCourseToSwap] = pb.mapCourseToPosition(gfiCourse.at(0));        
       }
-      else //least constraint courses
+      else //least constraint courses in 60% of the cases, otherwise full rand
       {
-        fbBestCourse = coursesOfTF.at(0);
-        for(i = 1; i < coursesOfTF.size(); i++)
+        if(eo::rng.random(100) > 60)
         {
-          if(fbBestCourse.prerequisites().size() > coursesOfTF.at(i).prerequisites().size())
-            fbBestCourse = coursesOfTF.at(i);
+          fbBestCourse = coursesOfTF.at(0);
+          for(i = 1; i < coursesOfTF.size(); i++)
+          {
+            if(fbBestCourse.prerequisites().size() > coursesOfTF.at(i).prerequisites().size())
+              fbBestCourse = coursesOfTF.at(i);
+          }
+          _chrom[rngCourseToSwap] = pb.mapCourseToPosition(fbBestCourse);
         }
-        _chrom[rngCourseToSwap] = pb.mapCourseToPosition(fbBestCourse);
+        else
+        {
+          std::random_shuffle(coursesOfTF.begin(), coursesOfTF.end());
+          _chrom[rngCourseToSwap] = pb.mapCourseToPosition(coursesOfTF.at(0));
+        }
       }
       
 
