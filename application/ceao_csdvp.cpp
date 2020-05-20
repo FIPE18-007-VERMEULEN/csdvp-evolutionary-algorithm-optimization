@@ -84,6 +84,10 @@ int main(int argc, char* argv[])
     }
 
     pb.set_cfg_courseByTFMin(4);
+
+    assert(pb.getQuantityCoursesToPick() == -1);//'cauz pb is not yet fully config
+    pb.set_cfg_pickedCoursesByTimeFrame(3);
+
     pb.set_cfg_ectsMax(2);
 
     try
@@ -141,6 +145,8 @@ int main(int argc, char* argv[])
     CSDVP::generateProblem(pb, CSDVP::GenerationType::RANDOM, 7777);
     assert(pb.checkConfig());
         std::cout << "CSDVP has been correctly configurated" << std::endl;
+
+    assert(pb.getQuantityCoursesToPick() == 3 * 6);//course to pick * number of timeframe max - min +1
 
     assert(pb.timeFrames().at(0) == pb.cfg_minimalTimeFrame());
     assert(pb.timeFrames().at(1) == pb.cfg_minimalTimeFrame()+1);
@@ -204,6 +210,15 @@ int main(int argc, char* argv[])
     std::cout << "Courses teached comp ok!" << std::endl;
 
     std::cout << "CSDVP HAS BEEN CORRECTLY GENERATED!" << std::endl;
+
+    for(int i = 0 ; i < pb.coursesSortedByTF().size(); i++)
+    {
+        std::cout << "TF#" << std::to_string(i) << std::endl;
+        for(int j = 0; j < pb.coursesSortedByTF().at(i).size(); j++)
+        {
+            std::cout << pb.coursesSortedByTF().at(i).at(j) << std::endl;
+        }
+    }
 
     return EXIT_SUCCESS;
 }

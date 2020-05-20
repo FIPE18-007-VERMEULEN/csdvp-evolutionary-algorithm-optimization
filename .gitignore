@@ -2,3 +2,5 @@ correction/
 build/
 howto.pdf
 .vscode/
+.cmake/
+

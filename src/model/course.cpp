@@ -11,13 +11,28 @@
 #include "exception/courseECTSException.h"
 #include "exception/courseTemporalFrameException.h"
 #include "exception/notImplementedException.h"
+#include "exception/idOverflowException.h"
 
 int Course::COURSE_COUNTER = 0;
+int Course::COURSE_TMP_COUNTER = ID_RANGE_FOR_OBJECT + 1;
 
 // === FACTORY
 Course Course::build(int ects, std::string name)
 {
     int id = Course::assignID();
+    
+    if(name.empty())
+        name = "Course#"+std::to_string(id);
+    
+    if(ects < 0)
+        throw CourseECTSException(new Course(id, ects, name));
+    else
+        return Course(id, ects, name);
+}
+
+Course Course::buildTMP(int ects, std::string name)
+{
+    int id = Course::assignID4TMP();
     
     if(name.empty())
         name = "Course#"+std::to_string(id);
@@ -217,8 +232,8 @@ bool Course::_duplicataProtection(std::vector<std::pair<Competency,double>> *tea
 
 bool Course::_lazyEquality(const Course & c) const
 {
-    return (this->_id == c.id() &&
-            this->_name.compare(c.name()) == 0 &&
+    return ( (this->_id == c.id() ||
+            this->_name.compare(c.name()) == 0 ) &&
             this->_ects == c.ects()
             );
 }
@@ -241,6 +256,19 @@ std::ostream& operator<<(std::ostream& Stream, const Course & c)
         tf+=std::to_string(c.timeFrame().at(c.timeFrame().size()-1));
         s+="\n\tTimeFrames: ["+tf+"]";
     }
+
+    s+="\n\tRequirement: [";
+    for(int i = 0; i < c.prerequisites().size(); i++)
+    {
+        s+="" + c.prerequisites().at(i).c_name()+ "("+ std::to_string(c.prerequisites().at(i).c_magnitude().value()) + ") ; ";
+    }
+    s+="]";
+    s+="\n\tTeaches: [";
+    for(int i = 0 ; i < c.teachedCompetenciesWeighted().size(); i++)
+    {
+        s+= "" + c.teachedCompetenciesWeighted().at(i).first.c_name() + "("+ std::to_string(c.teachedCompetenciesWeighted().at(i).first.c_magnitude().value())+") ; ";
+    }
+    s+="]";
     Stream << s;
     return Stream;
 }
@@ -256,6 +284,39 @@ bool Course::operator==(const Course & c) const
 /// Course counter
 int Course::assignID()
 {
+    if(Course::COURSE_COUNTER + 1 > ID_RANGE_FOR_OBJECT)
+        throw idOverflowException("assignID()@Course.cpp");
     return ++Course::COURSE_COUNTER;
+}
+
+int Course::assignID4TMP()
+{
+    if(Course::COURSE_TMP_COUNTER + 1 > ID_RANGE_FOR_TEMPORARY_OBJECT)
+    {
+        std::cout << "INFO: COURSE_TMP_COUNTER was about to overflow: restored to ID_RANGE_OBJECT + 1" << std::endl;
+        COURSE_TMP_COUNTER = ID_RANGE_FOR_OBJECT + 1;
+    }
+    return ++COURSE_TMP_COUNTER;
+}
+
+/** It produces a new vector, which is another view of courses in param, sorted by TF
+ * Duplicates the behaviour of CSDVP::_makeCoursesSortedByTF() except that it applies to any vector of courses
+ * size of timeFrames must be equal to the maximal TF value in courses.timeFrames !
+ */ 
+std::vector<std::vector<Course>> Course::organiseByTF(std::vector<Course> courses, std::vector<int> timeFrames)
+{
+    std::vector<std::vector<Course>> coursesByTF(timeFrames.size());
+    
+    int tmpIdx;
+    for(int i = 0; i < courses.size(); i++)
+    {
+        for(int j = 0; j < courses.at(i).timeFrame().size(); j++)
+        {
+            tmpIdx = courses.at(i).timeFrame().at(j) - timeFrames.at(0);
+            coursesByTF.at(tmpIdx).push_back(courses.at(i));
+        }
+    }
+
+    return coursesByTF;
 }
 // === END STATIC

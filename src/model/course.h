@@ -5,6 +5,7 @@
 #include <utility>
 
 #include "competency.h"
+#include "model/exception/notImplementedException.h"
 
 /**
  * Represents a course in an academic structure.
@@ -54,14 +55,20 @@ class Course
 
         // Static
         static int COURSE_COUNTER;
+        static int COURSE_TMP_COUNTER;
+
         static int assignID();
+        static int assignID4TMP();
 
         // Constructor
         //Course();
         Course(int id, int ects, std::string name);
     public:
         static Course build(int ects = 0, std::string name = "");
+        static Course buildTMP(int ects = 0, std::string name = "");
         
+        static std::vector<std::vector<Course>> organiseByTF(std::vector<Course> courses, std::vector<int> timeFrames);
+
         /// Default constructor. Use Course::build instead !
         Course() = default;
 
@@ -70,6 +77,7 @@ class Course
         const std::string name() const{return this->_name;};
         const int ects() const{return this->_ects;}
         const std::vector<Competency> prerequisites() const {return this->_prerequisites;}
+        std::vector<Competency>& unlocked_prerequisites() {return this->_prerequisites;}
         const std::vector<int> timeFrame() const {return this->_temporalAvailability;}
         const std::vector<std::pair<Competency, double>> teachedCompetenciesWeighted() const{return this->_weightedTeached;}
 

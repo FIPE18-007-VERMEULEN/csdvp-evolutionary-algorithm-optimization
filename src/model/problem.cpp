@@ -66,6 +66,8 @@ int CSDVP::CSDVP_COUNTER = 0;
             {this->_minimalPrerequisiteByCourse = nb;}
         void CSDVP::set_cfg_maximalPrerequisiteByCourse(int nb)
             {this->_maximalPrerequisiteByCourse = nb;}
+        void CSDVP::set_cfg_pickedCoursesByTimeFrame(int nb)
+            {this->_pickedCoursesByTimeFrame = nb;}
         void CSDVP::set_cfg_minimalMagnitude(double m)
         {
             this->_minimalMagnitude = Magnitude::build(m);
@@ -128,7 +130,8 @@ int CSDVP::CSDVP_COUNTER = 0;
             this->_maximalCompetencyByCourse < 0    ||
             this->_minimalCompetencyByCourse < 0    ||
             this->_minimalPrerequisiteByCourse < 0  ||
-            this->_maximalPrerequisiteByCourse < 0  )
+            this->_maximalPrerequisiteByCourse < 0  ||
+            this->_pickedCoursesByTimeFrame < 1     )
         {
             this->_isConfig = false;
             return this->_isConfig;
@@ -153,9 +156,36 @@ int CSDVP::CSDVP_COUNTER = 0;
             throw CSDVPBadlyConfiguratedException("this->_minimalCompetencyByCourse >= this->_quantityAvailableCompetencies");
         if(this->_quantityAvailableCompetencies < this->_maximalCompetencyByCourse)
             throw CSDVPBadlyConfiguratedException("this->_quantityAvailableCompetencies < this->_maximalCompetencyByCourse");
-
+        if(this->_pickedCoursesByTimeFrame > this->_minimalCoursesByTimeFrame)
+            throw CSDVPBadlyConfiguratedException("this->_pickedCoursesByTimeFrame > this->_minimalCoursesByTimeFrame");
+        if(this->_pickedCoursesByTimeFrame * ( (this->_maximalTimeFrame - this->_minimalTimeFrame) + 1) > this->_quantityAvailableCourses)
+            throw CSDVPBadlyConfiguratedException("this->_pickedCoursesByTimeFrame * ( (this->_maximalTimeFrame - this->_minimalTimeFrame) + 1) > this->_quantityAvailableCourses");
         this->_isConfig = true;
         return this->_isConfig;
+    }
+
+    void CSDVP::_makeCoursesSortedByTF()
+    {
+        //Init the vector of the size of the time frames
+        for(int i = 0; i < this->_timeFrames.size(); i++)
+            this->_coursesSortedByTF.push_back(std::vector<Course>());
+        
+        int tmpIdx;
+        for(int i = 0; i < this->_availableCourses.size(); i++)
+        {
+            for(int j = 0; j < this->_availableCourses.at(i).timeFrame().size(); j++)
+            {
+                tmpIdx = this->_availableCourses.at(i).timeFrame().at(j) - this->_minimalTimeFrame;
+                this->_coursesSortedByTF.at(tmpIdx).push_back(this->_availableCourses.at(i));
+            }
+        }
+    }
+    int CSDVP::mapCourseToPosition(const Course & c)
+    {
+        for(int i = 0; i < this->coursesCatalogue().size(); i++)
+            if(c == this->coursesCatalogue().at(i))
+                return i;
+        return -1;
     }
 // === END FUNC
 
@@ -181,6 +211,7 @@ int CSDVP::CSDVP_COUNTER = 0;
         }
     }
 
+    /// [x;y[ ?
     int CSDVP::_randomizeIn(const int min, const int max)
     {
         return min + ( rand() % (max - min + 1) );
@@ -225,32 +256,76 @@ int CSDVP::CSDVP_COUNTER = 0;
         std::vector<Course> tmpCourses;
         for(int i = 0; i < pb._quantityAvailableCourses; i++)
         {
-            tmpCourses.push_back(Course::build(CSDVP::_randomizeIn(pb.cfg_minimalTimeFrame(), pb.cfg_maximalTimeFrame())));
+            tmpCourses.push_back(Course::build(CSDVP::_randomizeIn(pb.cfg_ectsMin(), pb.cfg_ectsMax())));
         }
 
-        bool insertRez;
-        for(int i = 0; i < pb.timeFrames().size(); i++)
+        /* We obtain how many courses n by semester s
+         * then we create an idxCourses vector of size n * s
+         * then we shuffle it
+         * then we distribute the course accordingly. If a course already exists, we repick one randomly until it's ok 
+         */
+        std::vector<int> idxCourses;
+        std::vector<int> nbCoursesByTF;
+        for(int i = 0 ; i < pb.timeFrames().size(); i++)
+            nbCoursesByTF.push_back(CSDVP::_randomizeIn(pb._minimalCoursesByTimeFrame, pb._maximalCoursesByTimeFrame));
+        int idxCoursesCounter = 0;
+        for(int i = 0; i < nbCoursesByTF.size(); i++)
         {
-            int nbCoursesInThisTF = CSDVP::_randomizeIn(pb._minimalCoursesByTimeFrame, pb._maximalCoursesByTimeFrame);
-            int courseIdx;
-
-            std::cout << "In the TF "+std::to_string(i)+" I plan " << std::to_string(nbCoursesInThisTF) << " courses." << std::endl;
-
-            for(int j = 0; j < nbCoursesInThisTF; j++)
+            for(int j = 0; j < nbCoursesByTF.at(i); j++)
             {
-                insertRez = true;
-                courseIdx = CSDVP::_randomizeIn(0,tmpCourses.size()-1);
-                insertRez = tmpCourses.at(courseIdx).addTemporalFrame(pb.timeFrames().at(i));
-
-                if(!insertRez) //If a duplicata has been prevented, we do not count the attempt
-                    j--;
+                idxCourses.push_back(idxCoursesCounter % pb._quantityAvailableCourses);
+                idxCoursesCounter++;
             }
         }
+
+        std::random_shuffle(idxCourses.begin(), idxCourses.end());
+        bool insertRez;
+        int rndIdx;
+        idxCoursesCounter = 0;
+        for(int i = 0; i < pb.timeFrames().size(); i++)
+        {
+            for(int j = 0; j < nbCoursesByTF.at(i); j++)
+            {
+                insertRez = true;
+                int cc = idxCourses.at(idxCoursesCounter);
+                insertRez = tmpCourses.at(idxCourses.at(idxCoursesCounter)).addTemporalFrame(pb.timeFrames().at(i));
+
+                while(!insertRez)//if duplicataProtection (i.e. course already in this semester)
+                {
+                    rndIdx = CSDVP::_randomizeIn(0, pb._quantityAvailableCourses);
+                    insertRez = tmpCourses.at(rndIdx).addTemporalFrame(pb.timeFrames().at(i));
+                }
+                idxCoursesCounter++;
+            }
+        }
+
+        // // OLD WAY
+        // bool insertRez;
+        // for(int i = 0; i < pb.timeFrames().size(); i++)
+        // {
+        //     int nbCoursesInThisTF = CSDVP::_randomizeIn(pb._minimalCoursesByTimeFrame, pb._maximalCoursesByTimeFrame);
+        //     int courseIdx;
+
+        //     std::cout << "In the TF "+std::to_string(i)+" I plan " << std::to_string(nbCoursesInThisTF) << " courses." << std::endl;
+
+        //     for(int j = 0; j < nbCoursesInThisTF; j++)
+        //     {
+        //         insertRez = true;
+        //         courseIdx = CSDVP::_randomizeIn(0,tmpCourses.size()-1);
+        //         insertRez = tmpCourses.at(courseIdx).addTemporalFrame(pb.timeFrames().at(i));
+
+        //         if(!insertRez) //If a duplicata has been prevented, we do not count the attempt
+        //             j--;
+        //     }
+        // }
 
         for(int i = 0; i < tmpCourses.size(); i++)
             if(tmpCourses.at(i).timeFrame().size() > 0)
                 pb.addCourseToCatalogue(tmpCourses.at(i));
         
+        //From here, coursesCatalogue can still be < to minCourseTF * nbTF (due to the fact that a same course can belongs to )
+        pb._makeCoursesSortedByTF();
+
         /* COMPETENCY CREATION
          * We create _quantityAvailableCompetency competencies. For each comp, we randomly define it's magnitude.
          */
@@ -288,7 +363,9 @@ int CSDVP::CSDVP_COUNTER = 0;
             {
                 tmpComp = queue.front();
                 queue.pop();queue.push(tmpComp);
-                teachedComp = std::pair<Competency,double>(tmpComp, 1.0);
+                magVal = pb.cfg_magnitudeMin().value() + ( (double)rand()/RAND_MAX) * ( pb.cfg_magnitudeMax().value() - pb.cfg_magnitudeMin().value()) ;
+                Competency cpt = Competency::build(magVal,tmpComp.c_name());
+                teachedComp = std::pair<Competency,double>(cpt, 1.0);
                 pb.unlocked_coursesCatalogue().at(i).addTeachedComp(teachedComp);
             }
         }
@@ -307,8 +384,12 @@ int CSDVP::CSDVP_COUNTER = 0;
             for(int j = 0; j < x; j++)
             {
                 tmpComp = queue.front();
-                queue.pop(); queue.push(tmpComp);
-                pb.unlocked_coursesCatalogue().at(i).addPrerequisite(tmpComp);
+                queue.pop();
+                //we change mag value for prereq
+                magVal = pb.cfg_magnitudeMin().value() + ( (double)rand()/RAND_MAX) * ( pb.cfg_magnitudeMax().value() - pb.cfg_magnitudeMin().value()) ;
+                Competency cpt = Competency::build(magVal,tmpComp.c_name());
+                pb.unlocked_coursesCatalogue().at(i).addPrerequisite(cpt);
+                queue.push(tmpComp);
             }
         }
 

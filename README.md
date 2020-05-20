@@ -16,6 +16,8 @@ paradiseoPath> mkdir build && cd build && cmake ../ && make
 
 2. Correctly link CEAO to your paradiseo install (Optional: **iff** you manually build Paradiseo)
 
+Make sure that a folder cmake/module exists with a FindParadiseo.cmake file. It will be used to find your paradiseo install. Check e1124a07 for example.
+
 Next, you need to locate your paradiseo install while invoking cmake, in order to have the library availables while building CEAO.
 To do so, invoke cmake with the following option:
 

@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "competency.h"
+#include "problem.h"
 
 /**
  * A profession is a job sought by a student.
@@ -13,9 +14,27 @@
 class Profession
 {
     private:
-        std::vector<Competency> _prerequisites;
+        // ---------- CONFIGURATION ATTRIBUTES ---------
         std::string _name;
+
+        int _requiredECTS = -1;
+        int _minimalPrerequisites = -1;
+        int _maximalPrerequisites = -1;
+
+        Magnitude _minimalMagnitude;
+        Magnitude _maximalMagnitude;
+        // ---------- END CONFIGURATIONS ATTRIBUTES ----------
+        
+        // ---------- PROFESSION SPECIFIC ATTRIBUTES ----------
+        std::vector<Competency> _prerequisites;
+        // ---------- END PROFESSION SPECIFIC ATTRIBUTES
+
         int _id;
+        int _seed;
+
+        /// Use to determine if Profession has been config by the user.
+        bool _isConfig;
+        bool _isECTSRandom =false;
 
         // === FUNC
         /** _duplicataProtection returns true if the value (2nd param) searched into (1st param) is found*/
@@ -24,18 +43,40 @@ class Profession
         // Static
         static int PROFESSION_COUNTER;
         static int assignID();
+        static void _randomlyGenerate(Profession & job, CSDVP & pb);
 
     public:
+        enum GenerationType
+        {
+            RANDOM
+            //PRESET
+        };
+        
         Profession();
         Profession(std::string name);
         Profession(std::vector<Competency> & p, std::string n = "");
         
+        /** Generates the profession configuration. ECTS still needs to be filled before calling this function.
+         * Nonetheless, progession _prerequisites are taken randomly in the problem
+         */ 
+        static void generateProfession(Profession & job, Profession::GenerationType type, CSDVP & csdvp, int seed = 0);
+
+        /**Checks the configuration of a profession, mostly before performing a generation.*/
+        bool checkConfig();
+
         // === GETTER
         const int id() const{return this->_id;}
+        const int seed() const{return this->_seed;}
+        const int requiredECTS() const{return this->_requiredECTS;}
         const std::string name() const{return this->_name;}
         const std::vector<Competency> & prerequisites() const{return this->_prerequisites;}
         /// return a modifiable reference to _prerequisite;
         std::vector<Competency> & unlocked_prerequisites(){return this->_prerequisites;}
+
+        const int cfg_minimalPrerequisites() const{return this->_minimalPrerequisites;}
+        const int cfg_maximalPrerequisites() const{return this->_maximalPrerequisites;}
+        const Magnitude cfg_minimalMagnitude() const{return this->_minimalMagnitude;}
+        const Magnitude cfg_maximalMagnitude() const{return this->_maximalMagnitude;}
 
         // === MUTATOR
             // SETTER
@@ -43,9 +84,15 @@ class Profession
             void setName(std::string name);
             /// Set the prerequisites of a profession. The old prereq is returned.
             std::vector<Competency> & setPrerequisites(std::vector<Competency> & v);
-
+            void setRequiredECTS(int ects);
+            void setRequiredECTS(Profession::GenerationType type);
             // ADDER
             bool addPrerequisite(Competency &);
+
+            void set_cfg_minimalPrerequisites(int nb);
+            void set_cfg_maximalPrerequisites(int nb);
+            void set_cfg_minimalMagnitude(double mag);
+            void set_cfg_maximalMagnitude(double mag);
 
 };
 

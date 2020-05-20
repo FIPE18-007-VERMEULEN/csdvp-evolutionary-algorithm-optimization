@@ -15,3 +15,5 @@ ADD_LIBRARY(lModel STATIC ${EXERCICE_SOURCES})
 
 add_subdirectory(exception)
 add_subdirectory(scale)
+add_subdirectory(ea)
+add_subdirectory(constraints)
