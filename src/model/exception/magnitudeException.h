@@ -27,10 +27,11 @@ class MagnitudeException : public std::exception
 
         virtual ~MagnitudeException() throw()
         {
-            //this->_triedValue must not be freed by ~this !
+            delete(this->_triedValue);
         }
 
         Magnitude & getMagnitude() const {return *(this->_triedValue);}
+
 
 };
 
