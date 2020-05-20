@@ -59,6 +59,12 @@ int main(int argc, char* argv[]){
     unsigned int MAXPRE = parser.createParam((unsigned int)(3), "maxPre", "maximal competency by course",'P',"Param").value();
     unsigned int CBYTF = parser.createParam((unsigned int)(2), "cbyTF", "course by time frame to pick",'A',"Param").value();
 
+    //PROFESSION PARAMETERS
+    unsigned int JOB_MINPRE = parser.createParam((unsigned int)(2), "jobMinPre" , "minimum competency prerequisite by a job", 'j', "Param").value();
+    unsigned int JOB_MAXPRE = parser.createParam((unsigned int)(4), "jobMaxPre" , "maximal competency prerequisite by a job", 'J', "Param").value();
+    double JOB_MINMAG = parser.createParam((double)(0.5), "jobMinMag" , "miminal magnitude for a job" , 'h', "Param").value();
+    double JOB_MAXMAG = parser.createParam((double)(0.95), "jobMaxMag" , "maxima magnitude for a job" , 'H', "Param").value();
+
     //EVOLUTION ENGINE PARAMETERS
     unsigned int POPSIZE = parser.createParam((unsigned int)(100), "popSize", "Population size", 'P', "Evolution Engine").value();
     double PMUT = parser.createParam((double)(0.5), "pMut", "mutation rate", 'x', "Evolution Engine").value();
@@ -89,10 +95,10 @@ int main(int argc, char* argv[]){
     assert(pb.checkConfig());
     
     job.setRequiredECTS(Profession::GenerationType::RANDOM);
-    job.set_cfg_minimalPrerequisites(2);
-    job.set_cfg_maximalPrerequisites(5);
-    job.set_cfg_minimalMagnitude(0.8);
-    job.set_cfg_maximalMagnitude(1.0);
+    job.set_cfg_minimalPrerequisites(JOB_MINPRE);
+    job.set_cfg_maximalPrerequisites(JOB_MAXPRE);
+    job.set_cfg_minimalMagnitude(JOB_MINMAG);
+    job.set_cfg_maximalMagnitude(JOB_MAXMAG);
 
     Profession::generateProfession(job, Profession::GenerationType::RANDOM, pb, 7777);
     assert(job.checkConfig());
