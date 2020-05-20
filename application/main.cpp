@@ -87,17 +87,28 @@ int main(int argc, char* argv[]){
 
     CSDVP::generateProblem(pb, CSDVP::GenerationType::RANDOM, 7777);
     assert(pb.checkConfig());
-      
-    job.setRequiredECTS(4 * 6);
-    Competency tmpC = pb.competencyCatalogue().at(0);
-    tmpC = Competency::buildTMP(0.8, tmpC.c_name());
-    job.addPrerequisite(tmpC);
-    tmpC = pb.competencyCatalogue().at(1);
-    tmpC = Competency::buildTMP(0.8, tmpC.c_name());
-    job.addPrerequisite(tmpC);
-    tmpC = pb.competencyCatalogue().at(2);
-    tmpC = Competency::buildTMP(0.8, tmpC.c_name());
-    job.addPrerequisite(tmpC);
+    
+    job.setRequiredECTS(Profession::GenerationType::RANDOM);
+    job.set_cfg_minimalPrerequisites(2);
+    job.set_cfg_maximalPrerequisites(5);
+    job.set_cfg_minimalMagnitude(0.8);
+    job.set_cfg_maximalMagnitude(1.0);
+
+    Profession::generateProfession(job, Profession::GenerationType::RANDOM, pb, 7777);
+    assert(job.checkConfig());
+    std::cout << "JOB IS : \n" << job << std::endl;
+
+    // job.setRequiredECTS(4 * 6);
+    // Competency tmpC = pb.competencyCatalogue().at(0);
+    // tmpC = Competency::buildTMP(0.8, tmpC.c_name());
+    // job.addPrerequisite(tmpC);
+    // tmpC = pb.competencyCatalogue().at(1);
+    // tmpC = Competency::buildTMP(0.8, tmpC.c_name());
+    // job.addPrerequisite(tmpC);
+    // tmpC = pb.competencyCatalogue().at(2);
+    // tmpC = Competency::buildTMP(0.8, tmpC.c_name());
+    // job.addPrerequisite(tmpC);
+
     //tmpC = Competency::build(0.5,"Wesh");
     //job.addPrerequisite(tmpC);
     //tmpC = pb.competencyCatalogue().at(8);
@@ -247,14 +258,6 @@ int main(int argc, char* argv[]){
     
     std::cout << "===== CURRENT POP =====" << std::endl;
     pop.best_element().printOn(std::cout);
-    std::cout << "=====             =====" << std::endl;
-
-    eoEasyEA<QUEEN> algo(cont,eval,select,transform,replace);
-
-    algo(pop);
-
-    std::cout << "===== BEST INDIVIDU =====" << std::endl;
-    pop.best_element().printOn(std::cout);
     std::cout << " fitness:" << pop.best_element().fitness() << std::endl;
     std::cout << "Stats & metrics: \n" << std::endl;
     std::pair<bool, double> resECTS = ctrECTS.integrityCheck(pop.best_element());
@@ -289,7 +292,48 @@ int main(int argc, char* argv[]){
     else
       std::cout << "failed";
     std::cout << " | value: " << resPrq.second << std::endl;
+    std::cout << "\n==========" << std::endl;
 
+    eoEasyEA<QUEEN> algo(cont,eval,select,transform,replace);
+
+    algo(pop);
+
+    std::cout << "\n===== BEST INDIVIDU =====" << std::endl;
+    pop.best_element().printOn(std::cout);
+    std::cout << " fitness:" << pop.best_element().fitness() << std::endl;
+    std::cout << "Stats & metrics: \n" << std::endl;
+    resECTS = ctrECTS.integrityCheck(pop.best_element());
+    resRep = ctrRep.integrityCheck(pop.best_element());
+    resJob = ctrJob.integrityCheck(pop.best_element());
+    resPrq = ctrPrq.integrityCheck(pop.best_element());
+    
+    std::cout << "ECTS: ";
+    if(resECTS.first)
+      std::cout << "succeed";
+    else
+      std::cout << "failed";
+    std::cout << " | value: " << resECTS.second << std::endl;
+
+    std::cout << "Repetition: ";
+    if(resRep.first)
+      std::cout << "succeed";
+    else
+      std::cout << "failed";
+    std::cout << " | value: " << resRep.second << std::endl;
+
+    std::cout << "Job: ";
+    if(resJob.first)
+      std::cout << "succeed";
+    else
+      std::cout << "failed";
+    std::cout << " | value: " << resJob.second << std::endl;
+
+    std::cout << "Prereq: ";
+    if(resPrq.first)
+      std::cout << "succeed";
+    else
+      std::cout << "failed";
+    std::cout << " | value: " << resPrq.second << std::endl;
 
     std::cout << "===============" << std::endl;
 
