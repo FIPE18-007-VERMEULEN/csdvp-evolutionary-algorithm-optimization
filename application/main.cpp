@@ -39,10 +39,13 @@ int main(int argc, char* argv[]){
     // ================================= CEAO ZONE ===================================
 
     //GENERAL PARAMATERS
-    eoValueParam<uint32_t>& _seedParam = parser.createParam(uint32_t(0), "seed", "Random number seed", 'S');
+    //eoValueParam<uint32_t>& _seedParam = parser.createParam(uint32_t(0), "seed", "Random number seed", 'S');
+    unsigned int _seedParam = parser.createParam((unsigned int)(0), "seed", "Random number seed", 'S').value();
     std::string _outputFile = parser.createParam(std::string("/scratch"), "outputfile", "", '\0', "Representation", true).value();
+    eo::rng.reseed(_seedParam);
 
     //PROBLEM PARAMETERS
+    unsigned int SEED = parser.createParam((unsigned int)(7777), "csdvpSeed", "Seed used for the CSDVP",'s',"Param").value();
     unsigned int NBCOURSES = parser.createParam((unsigned int)(15), "nbCourses", "Nb of courses available in the cursus",'C',"Param").value();
     unsigned int NBCOMP = parser.createParam((unsigned int)(10), "nbComp", "Nb of competencies available in the cursus",'c',"Param").value();
     unsigned int MINTF = parser.createParam((unsigned int)(1), "minTF", "id of the first time frame",'t',"Param").value();
@@ -60,6 +63,7 @@ int main(int argc, char* argv[]){
     unsigned int CBYTF = parser.createParam((unsigned int)(2), "cbyTF", "course by time frame to pick",'A',"Param").value();
 
     //PROFESSION PARAMETERS
+    unsigned int JOB_SEED = parser.createParam((unsigned int)(7777), "jobSeed", "Seed used for the Profession", 'g', "Param").value();
     unsigned int JOB_MINPRE = parser.createParam((unsigned int)(2), "jobMinPre" , "minimum competency prerequisite by a job", 'j', "Param").value();
     unsigned int JOB_MAXPRE = parser.createParam((unsigned int)(4), "jobMaxPre" , "maximal competency prerequisite by a job", 'J', "Param").value();
     double JOB_MINMAG = parser.createParam((double)(0.5), "jobMinMag" , "miminal magnitude for a job" , 'h', "Param").value();
@@ -70,7 +74,7 @@ int main(int argc, char* argv[]){
     double PMUT = parser.createParam((double)(0.5), "pMut", "mutation rate", 'x', "Evolution Engine").value();
     double PCROSS = parser.createParam((double)(0.5), "pCross", "crossover rate", 'X', "Evolution Engine").value();    
     unsigned int NBGEN = parser.createParam((unsigned int)(100), "nbGen", "Number of generation",'G',"Param").value();
-    unsigned int SIZET = parser.createParam((unsigned int)(7), "sizeT", "Tournament Size",'S',"Param").value();
+    unsigned int SIZET = parser.createParam((unsigned int)(7), "sizeT", "Tournament Size",'F',"Param").value();
         
     // ===== PB CONFIG ZONE =====
     CSDVP pb;
@@ -91,8 +95,11 @@ int main(int argc, char* argv[]){
     pb.set_cfg_maximalPrerequisiteByCourse(MAXPRE);
     pb.set_cfg_pickedCoursesByTimeFrame(CBYTF);
 
-    CSDVP::generateProblem(pb, CSDVP::GenerationType::RANDOM, 7777);
+    CSDVP::generateProblem(pb, CSDVP::GenerationType::RANDOM, SEED);
     assert(pb.checkConfig());
+    // std::cout << "CSDVP IS : \n" << pb << std::endl;
+    // for(int i = 0; i < pb.coursesCatalogue().size(); i++)
+    //   std::cout << pb.coursesCatalogue().at(i) << std::endl;
     
     job.setRequiredECTS(Profession::GenerationType::RANDOM);
     job.set_cfg_minimalPrerequisites(JOB_MINPRE);
@@ -100,9 +107,9 @@ int main(int argc, char* argv[]){
     job.set_cfg_minimalMagnitude(JOB_MINMAG);
     job.set_cfg_maximalMagnitude(JOB_MAXMAG);
 
-    Profession::generateProfession(job, Profession::GenerationType::RANDOM, pb, 7777);
+    Profession::generateProfession(job, Profession::GenerationType::RANDOM, pb, JOB_SEED);
     assert(job.checkConfig());
-    std::cout << "JOB IS : \n" << job << std::endl;
+    // std::cout << "JOB IS : \n" << job << std::endl;
 
     // job.setRequiredECTS(4 * 6);
     // Competency tmpC = pb.competencyCatalogue().at(0);
@@ -300,9 +307,11 @@ int main(int argc, char* argv[]){
     std::cout << " | value: " << resPrq.second << std::endl;
     std::cout << "\n==========" << std::endl;
 
+    // ---------- ALGO HERE
     eoEasyEA<QUEEN> algo(cont,eval,select,transform,replace);
 
     algo(pop);
+    // -------------------
 
     std::cout << "\n===== BEST INDIVIDU =====" << std::endl;
     pop.best_element().printOn(std::cout);
