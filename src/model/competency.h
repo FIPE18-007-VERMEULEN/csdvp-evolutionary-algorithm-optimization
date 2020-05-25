@@ -4,6 +4,8 @@
 #include <string>
 
 #include "magnitude.h"
+#include "decay.h"
+
 
 /**
  * Represents the notion of a competency (a.k.a. "non operationalisable" skill).
@@ -18,6 +20,11 @@ class Competency
         Magnitude _m;
         std::string _name;
         int _id;
+
+        //Decay related
+        Magnitude _undecayedMag;
+        bool _isDecaying;
+        int _howLongDecaying;
 
         //Constructor
         Competency(int, Magnitude, std::string);
@@ -64,6 +71,16 @@ class Competency
         // === SETTER
         void setMagnitude(Magnitude & m){this->_m = m;}
         void setName(std::string s){this->_name = s;}
+
+        // === DECAY
+        const bool isDecaying() const {return this->_isDecaying;}
+        void decayState(bool state) {this->_isDecaying = state;}
+        int increaseDecay(){this->_isDecaying = true; this->_howLongDecaying++; return this->_howLongDecaying;}
+        void resetDecay(){this->_isDecaying = false; this->_howLongDecaying = 0;}
+        void setTimeDecay(unsigned int time){this->_howLongDecaying = time;}
+        Magnitude getUndecayedMagnitude(){return this->_undecayedMag;}
+        double decay();
+        double decayAndReset(){this->decay(); this->resetDecay(); return this->_m.value();}
 
         // === OPERATOR
         /// A competency is equal to another iff their id are the same, or their name

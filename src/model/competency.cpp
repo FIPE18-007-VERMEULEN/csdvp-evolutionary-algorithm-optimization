@@ -61,7 +61,7 @@ Competency Competency::buildTMP(double d, std::string name)
 // === CONSTRUCTOR
 
 Competency::Competency(int id, Magnitude m, std::string s)
-    : _id(id), _m(m), _name(s)
+    : _id(id), _m(m), _undecayedMag(m), _name(s)
 {
 
 }
@@ -117,6 +117,23 @@ void Competency::evolveTowards(double d)
 
 const double Competency::competencyValue() const
 {
+    return this->_m.value();
+}
+
+double Competency::decay()
+{
+    if(!this->_isDecaying)
+        return this->_m.value();
+        
+    try
+    {
+        this->evolveTowards((-1) * DecayEngine::defaultDecay(this->_howLongDecaying));
+    }
+    catch(CompetencyEvolvingException & e)
+    {
+        //NTD
+    }
+
     return this->_m.value();
 }
 

@@ -10,6 +10,7 @@
 #include <model/magnitude.h>
 #include <model/tools.h>
 #include <model/competency.h>
+#include <model/decay.h>
 
 #include <model/ea/cursus.h>
 #include <model/ea/initializer.h>
@@ -355,6 +356,6 @@ int main(int argc, char* argv[]){
     std::cout << "cpt: " << cross.cpt << std::endl;
   
     // ================================= END RUN ZONE ===============================
- 
+
   return EXIT_SUCCESS;
 }
