@@ -46,6 +46,7 @@ std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
         {
             // HERE, VARIABLE DECAY CAN BE APPLIED!!!!!!!!
             compByTF.at(currentTF).push_back(compByTF.at(currentTF-1).at(j));
+            compByTF.at(currentTF).at(compByTF.at(currentTF).size()-1).increaseDecay();
         }
 
         // Then, we explore the current TF for new Comp
@@ -83,6 +84,7 @@ std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
 	      //std::cout << currentCompetency.c_name() << " already exists" <<std::endl;
                 try
                 {
+                    compByTF.at(currentTF).at(alreadyExists.first).saveDecay();
                     compByTF.at(currentTF).at(alreadyExists.first).evolveTowards(currentCompetency.magnitude());
                 }
                 catch(CompetencyEvolvingException & e) //if CEE is thrown, then magnitude has been auto rebased
@@ -101,15 +103,15 @@ std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
         }
     }
 
-    //std::cout << "==EXPLORING COMP BY TF" << std::endl;
-    for(int i = 0; i < compByTF.size(); i++)
-    {
-      //std::cout << "TF#" << std::to_string(i) << std::endl;
-        for(int j = 0; j < compByTF.at(i).size() ; j++)
-        {
-	  //std::cout << compByTF.at(i).at(j) << std::endl;
-        }
-    }
+    // //std::cout << "==EXPLORING COMP BY TF" << std::endl;
+    // for(int i = 0; i < compByTF.size(); i++)
+    // {
+    //   //std::cout << "TF#" << std::to_string(i) << std::endl;
+    //     for(int j = 0; j < compByTF.at(i).size() ; j++)
+    //     {
+	//   //std::cout << compByTF.at(i).at(j) << std::endl;
+    //     }
+    // }
 
     bool isOK = ((notFound == 0) && (notRespected == 0));
     /*
@@ -156,7 +158,7 @@ std::pair<int, int> ConstraintsPrerequisites::_prereqsInPreviousTF(std::vector<C
             if(prereqs.at(i)==cInTF.at(j))
             {
                 found = true;
-                if(prereqs.at(i).c_magnitude().value() > cInTF.at(j).c_magnitude().value())
+                if(prereqs.at(i).c_magnitude().value() > cInTF.at(j).decay())
                  notRespected++;
             }
         }

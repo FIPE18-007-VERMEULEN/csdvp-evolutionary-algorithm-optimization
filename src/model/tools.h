@@ -10,6 +10,7 @@
 
 static const int ID_RANGE_FOR_OBJECT = 10000;
 static const int ID_RANGE_FOR_TEMPORARY_OBJECT = std::numeric_limits<int>::max();
+static unsigned int RATIO_RANDOM_VS_BEST;
 
 template<typename T>
 /** Searches into vec the element findMe. The class T must have T() defined ( T()=default; is OK) */

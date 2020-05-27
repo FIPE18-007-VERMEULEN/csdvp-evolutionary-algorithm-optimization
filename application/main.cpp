@@ -76,7 +76,8 @@ int main(int argc, char* argv[]){
     double PCROSS = parser.createParam((double)(0.5), "pCross", "crossover rate", 'X', "Evolution Engine").value();    
     unsigned int NBGEN = parser.createParam((unsigned int)(100), "nbGen", "Number of generation",'G',"Param").value();
     unsigned int SIZET = parser.createParam((unsigned int)(7), "sizeT", "Tournament Size",'F',"Param").value();
-        
+    RATIO_RANDOM_VS_BEST = parser.createParam((unsigned int)(75), "ratioBest", "Ratio between full random and best while prereq check fails in mutation",'B',"Param").value();
+
     // ===== PB CONFIG ZONE =====
     CSDVP pb;
     Profession job;
@@ -264,6 +265,7 @@ int main(int argc, char* argv[]){
 	std::cout << pb.coursesCatalogue().at(i) << std::endl;
       }
     */
+    std::cout << job << std::endl;
     // ======================== TEST ZONE END========================
 
 

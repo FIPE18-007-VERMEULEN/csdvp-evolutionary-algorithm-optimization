@@ -79,8 +79,13 @@ class Competency
         void resetDecay(){this->_isDecaying = false; this->_howLongDecaying = 0;}
         void setTimeDecay(unsigned int time){this->_howLongDecaying = time;}
         Magnitude getUndecayedMagnitude(){return this->_undecayedMag;}
+        /**Returns the new magnitude of this affected by the current competency's decay.
+         * Note that the decay **IS NOT** saved in the magnitude. Use saveDecay instead.
+        */
         double decay();
-        double decayAndReset(){this->decay(); this->resetDecay(); return this->_m.value();}
+        /** Save the new magnitude value according to the decay of this. The function reset the decay of this by setting it to FALSE. Therefore, the decay restart to 0.
+         */ 
+        void saveDecay();
 
         // === OPERATOR
         /// A competency is equal to another iff their id are the same, or their name

@@ -61,7 +61,7 @@ Competency Competency::buildTMP(double d, std::string name)
 // === CONSTRUCTOR
 
 Competency::Competency(int id, Magnitude m, std::string s)
-    : _id(id), _m(m), _undecayedMag(m), _name(s)
+    : _id(id), _m(m), _undecayedMag(m), _name(s), _howLongDecaying(0), _isDecaying(false)
 {
 
 }
@@ -124,17 +124,22 @@ double Competency::decay()
 {
     if(!this->_isDecaying)
         return this->_m.value();
-        
-    try
-    {
-        this->evolveTowards((-1) * DecayEngine::defaultDecay(this->_howLongDecaying));
-    }
-    catch(CompetencyEvolvingException & e)
-    {
-        //NTD
-    }
 
-    return this->_m.value();
+    double val = this->_m.value();    
+    val -= DecayEngine::defaultDecay(this->_howLongDecaying);
+    //std::cout << "before:" << this->_m.value() << " vs. after: " << val << std::endl;
+    return val < 0 ? 0 : val > 1 ? 1 : val;
+}
+
+void Competency::saveDecay()
+{
+    double val = this->decay();
+    //std::cout << "inS&D:" << val << std::endl;
+    this->_howLongDecaying = 0;
+    this->_isDecaying = false;
+    
+    this->_m.set(val);
+    
 }
 
 // === OPERATOR
