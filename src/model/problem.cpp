@@ -292,7 +292,7 @@ int CSDVP::CSDVP_COUNTER = 0;
 
                 while(!insertRez)//if duplicataProtection (i.e. course already in this semester)
                 {
-                    rndIdx = CSDVP::_randomizeIn(0, pb._quantityAvailableCourses);
+                    rndIdx = CSDVP::_randomizeIn(0, pb._quantityAvailableCourses - 1 );
                     insertRez = tmpCourses.at(rndIdx).addTemporalFrame(pb.timeFrames().at(i));
                 }
                 idxCoursesCounter++;
