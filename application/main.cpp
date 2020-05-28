@@ -59,8 +59,8 @@ int main(int argc, char* argv[]){
     double MAXMAGN = parser.createParam((double)(0.75), "maxMagn", "maximal magnitude", 'M', "Param").value();
     unsigned int MINCBYC = parser.createParam((unsigned int)(1), "minCbyC", "minimal competency by course",'r',"Param").value();
     unsigned int MAXCBYC = parser.createParam((unsigned int)(5), "maxCbyC", "maximal competency by course",'R',"Param").value();
-    unsigned int MINPRE = parser.createParam((unsigned int)(0), "minPre", "minimal competency by course",'p',"Param").value();
-    unsigned int MAXPRE = parser.createParam((unsigned int)(3), "maxPre", "maximal competency by course",'P',"Param").value();
+    unsigned int MINPRE = parser.createParam((unsigned int)(0), "minPre", "minimal competency by course",'q',"Param").value();
+    unsigned int MAXPRE = parser.createParam((unsigned int)(3), "maxPre", "maximal competency by course",'Q',"Param").value();
     unsigned int CBYTF = parser.createParam((unsigned int)(2), "cbyTF", "course by time frame to pick",'A',"Param").value();
 
     //PROFESSION PARAMETERS
