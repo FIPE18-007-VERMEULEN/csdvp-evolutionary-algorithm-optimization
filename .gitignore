@@ -3,4 +3,4 @@ build/
 howto.pdf
 .vscode/
 .cmake/
-
+results/

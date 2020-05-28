@@ -49,6 +49,13 @@ include_directories(${PARADISEO_INCLUDE_DIR})
 # the user should choose the build type on windows environments,excepted under cygwin (default=none)
 set(CMAKE_DEFAULT_BUILD_TYPE "Release" CACHE STRING "Variable that stores the default CMake build type" FORCE)
 
+
+add_definitions(-DDEPRECATED_MESSAGES)
+set(CMAKE_CXX_FLAGS_DEBUG  "-Wunknown-pragmas -O0 -g -fPIC -Wall -Wextra -ansi -pedantic -std=c++11" CACHE STRING "" FORCE)
+set(CMAKE_CXX_FLAGS_RELEASE  "-Wunknown-pragmas -O2 -fPIC -std=c++11" CACHE STRING "" FORCE)
+
+
+
 find_program(MEMORYCHECK_COMMAND
     NAMES purify valgrind
     PATHS

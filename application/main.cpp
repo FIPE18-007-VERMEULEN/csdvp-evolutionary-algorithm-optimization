@@ -271,7 +271,13 @@ int main(int argc, char* argv[]){
 
     
     // ================================= RUN ZONE ===============================
-    
+
+    std::string filename=_outputFile + "/bestsol.";
+    std::ostringstream oss;
+    oss << _seedParam;
+    filename+=oss.str();
+    std::ofstream outputfile(filename.c_str(), std::ios::app);
+
     std::cout << "===== CURRENT POP =====" << std::endl;
     pop.best_element().printOn(std::cout);
     std::cout << " fitness:" << pop.best_element().fitness() << std::endl;
@@ -314,6 +320,11 @@ int main(int argc, char* argv[]){
     eoEasyEA<QUEEN> algo(cont,eval,select,transform,replace);
 
     algo(pop);
+
+    pop.best_element().printOn(outputfile);
+
+    outputfile.close();
+    
     // -------------------
 
     std::cout << "\n===== BEST INDIVIDU =====" << std::endl;
