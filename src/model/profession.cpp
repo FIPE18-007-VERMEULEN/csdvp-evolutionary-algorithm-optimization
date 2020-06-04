@@ -112,7 +112,7 @@ std::ostream & operator<<(std::ostream & Stream, const Profession & p)
 {
     std::string s = "Profession\n\tid:"+std::to_string(p.id())+"\n\tName:"+p.name()+"\n\tECTS: " + std::to_string(p.requiredECTS()) +"\n\t#Prereq:"+std::to_string(p.prerequisites().size())+"\n\t===Details:===\n\t";
     Stream << s ;
-    for(int i = 0; i < p.prerequisites().size(); i++)
+    for(unsigned int i = 0; i < p.prerequisites().size(); i++)
         Stream << "("<< i<< "th) " << p.prerequisites().at(i) << "\n\t";
     Stream << "==========" << std::endl;
     return Stream;
@@ -170,7 +170,7 @@ void Profession::_randomlyGenerate(Profession & job, CSDVP & pb)
     std::random_shuffle(tmpComp.begin(), tmpComp.end());
 
     int i;
-    for(i = 0; i < tmpComp.size() && i < howManyPrereq; i++)
+    for(i = 0; i < (int)tmpComp.size() && i < howManyPrereq; i++)
     {
         magVal = job.cfg_minimalMagnitude().value() + ( (double)rand()/RAND_MAX) * ( job.cfg_maximalMagnitude().value() - job.cfg_minimalMagnitude().value()) ;
         ctmp = Competency::buildTMP(magVal,tmpComp.at(i).name());
@@ -196,7 +196,7 @@ void Profession::_randomlyGenerate(Profession & job, CSDVP & pb)
     
     // ects = pb.timeFrames().size()  * 30; //30 is the default european value 
 
-    for(i = 0; i < pb.timeFrames().size(); i++)
+    for(i = 0; i < (int)pb.timeFrames().size(); i++)
     {
         for(int j = 0; j < pb.cfg_pickedCoursesByTimeFrame(); j++)
         {

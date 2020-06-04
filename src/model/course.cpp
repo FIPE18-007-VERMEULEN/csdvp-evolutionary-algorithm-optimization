@@ -239,10 +239,10 @@ bool Course::_lazyEquality(const Course & c) const
 }
 
 ///@todo
-bool Course::_fullEquality(const Course & c) const
-{
-    throw NotImplementedException("Course::_fullEquality");
-}
+// bool Course::_fullEquality(const Course & c) const
+// {
+//     throw NotImplementedException("Course::_fullEquality");
+// }
 
 // === OPERATOR
 std::ostream& operator<<(std::ostream& Stream, const Course & c)
@@ -251,20 +251,20 @@ std::ostream& operator<<(std::ostream& Stream, const Course & c)
     std::string tf;
     if(c.timeFrame().size() > 0)
     {
-        for(int i = 0; i < c.timeFrame().size()-1; i++)
+        for(unsigned int i = 0; i < c.timeFrame().size()-1; i++)
             tf+=std::to_string(c.timeFrame().at(i))+" ; ";
         tf+=std::to_string(c.timeFrame().at(c.timeFrame().size()-1));
         s+="\n\tTimeFrames: ["+tf+"]";
     }
 
     s+="\n\tRequirement: [";
-    for(int i = 0; i < c.prerequisites().size(); i++)
+    for(unsigned int i = 0; i < c.prerequisites().size(); i++)
     {
         s+="" + c.prerequisites().at(i).c_name()+ "("+ std::to_string(c.prerequisites().at(i).c_magnitude().value()) + ") ; ";
     }
     s+="]";
     s+="\n\tTeaches: [";
-    for(int i = 0 ; i < c.teachedCompetenciesWeighted().size(); i++)
+    for(unsigned int i = 0 ; i < c.teachedCompetenciesWeighted().size(); i++)
     {
         s+= "" + c.teachedCompetenciesWeighted().at(i).first.c_name() + "("+ std::to_string(c.teachedCompetenciesWeighted().at(i).first.c_magnitude().value())+") ; ";
     }
@@ -308,9 +308,9 @@ std::vector<std::vector<Course>> Course::organiseByTF(std::vector<Course> course
     std::vector<std::vector<Course>> coursesByTF(timeFrames.size());
     
     int tmpIdx;
-    for(int i = 0; i < courses.size(); i++)
+    for(unsigned int i = 0; i < courses.size(); i++)
     {
-        for(int j = 0; j < courses.at(i).timeFrame().size(); j++)
+        for(unsigned int j = 0; j < courses.at(i).timeFrame().size(); j++)
         {
             tmpIdx = courses.at(i).timeFrame().at(j) - timeFrames.at(0);
             coursesByTF.at(tmpIdx).push_back(courses.at(i));

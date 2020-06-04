@@ -80,9 +80,9 @@ int CSDVP::CSDVP_COUNTER = 0;
         void CSDVP::setTimeFrames(std::vector<int> & v)
             {this->_timeFrames = v;}
         void CSDVP::setCoursesCatalogue(std::vector<Course> & c)
-            {this->_availableCourses;}
+            {this->_availableCourses = c;}
         void CSDVP::setCompetenciesCatalogue(std::vector<Competency> & c)
-            {this->_availableCompentecies;}
+            {this->_availableCompentecies = c;}
         // ADDER
         bool CSDVP::addTimeFrame(int tF)
         {
@@ -167,13 +167,13 @@ int CSDVP::CSDVP_COUNTER = 0;
     void CSDVP::_makeCoursesSortedByTF()
     {
         //Init the vector of the size of the time frames
-        for(int i = 0; i < this->_timeFrames.size(); i++)
+        for(unsigned int i = 0; i < this->_timeFrames.size(); i++)
             this->_coursesSortedByTF.push_back(std::vector<Course>());
         
         int tmpIdx;
-        for(int i = 0; i < this->_availableCourses.size(); i++)
+        for(unsigned int i = 0; i < this->_availableCourses.size(); i++)
         {
-            for(int j = 0; j < this->_availableCourses.at(i).timeFrame().size(); j++)
+            for(unsigned int j = 0; j < this->_availableCourses.at(i).timeFrame().size(); j++)
             {
                 tmpIdx = this->_availableCourses.at(i).timeFrame().at(j) - this->_minimalTimeFrame;
                 this->_coursesSortedByTF.at(tmpIdx).push_back(this->_availableCourses.at(i));
@@ -182,7 +182,7 @@ int CSDVP::CSDVP_COUNTER = 0;
     }
     int CSDVP::mapCourseToPosition(const Course & c)
     {
-        for(int i = 0; i < this->coursesCatalogue().size(); i++)
+        for(unsigned int i = 0; i < this->coursesCatalogue().size(); i++)
             if(c == this->coursesCatalogue().at(i))
                 return i;
         return -1;
@@ -217,10 +217,10 @@ int CSDVP::CSDVP_COUNTER = 0;
         return min + ( rand() % (max - min + 1) );
     }
 
-    double CSDVP::_randomizeIn(const double min, const double max)
-    {
-        throw NotImplementedException("CSDVP::_randomizeIn");
-    }
+    // double CSDVP::_randomizeIn(const double min, const double max)
+    // {
+    //     throw NotImplementedException("CSDVP::_randomizeIn");
+    // }
 
     void CSDVP::randomizeProblem(CSDVP & pb, int seed)
     {
@@ -266,10 +266,10 @@ int CSDVP::CSDVP_COUNTER = 0;
          */
         std::vector<int> idxCourses;
         std::vector<int> nbCoursesByTF;
-        for(int i = 0 ; i < pb.timeFrames().size(); i++)
+        for(unsigned int i = 0 ; i < pb.timeFrames().size(); i++)
             nbCoursesByTF.push_back(CSDVP::_randomizeIn(pb._minimalCoursesByTimeFrame, pb._maximalCoursesByTimeFrame));
         int idxCoursesCounter = 0;
-        for(int i = 0; i < nbCoursesByTF.size(); i++)
+        for(unsigned int i = 0; i < nbCoursesByTF.size(); i++)
         {
             for(int j = 0; j < nbCoursesByTF.at(i); j++)
             {
@@ -282,12 +282,11 @@ int CSDVP::CSDVP_COUNTER = 0;
         bool insertRez;
         int rndIdx;
         idxCoursesCounter = 0;
-        for(int i = 0; i < pb.timeFrames().size(); i++)
+        for(unsigned int i = 0; i < pb.timeFrames().size(); i++)
         {
             for(int j = 0; j < nbCoursesByTF.at(i); j++)
             {
                 insertRez = true;
-                int cc = idxCourses.at(idxCoursesCounter);
                 insertRez = tmpCourses.at(idxCourses.at(idxCoursesCounter)).addTemporalFrame(pb.timeFrames().at(i));
 
                 while(!insertRez)//if duplicataProtection (i.e. course already in this semester)
@@ -319,7 +318,7 @@ int CSDVP::CSDVP_COUNTER = 0;
         //     }
         // }
 
-        for(int i = 0; i < tmpCourses.size(); i++)
+        for(unsigned int i = 0; i < tmpCourses.size(); i++)
             if(tmpCourses.at(i).timeFrame().size() > 0)
                 pb.addCourseToCatalogue(tmpCourses.at(i));
         
@@ -349,14 +348,14 @@ int CSDVP::CSDVP_COUNTER = 0;
         std::vector<Competency> randomVec(pb.competencyCatalogue());
         std::random_shuffle(randomVec.begin(), randomVec.end());
         std::queue<Competency> queue;
-        for(int i = 0 ; i < randomVec.size(); i++)
+        for(unsigned int i = 0 ; i < randomVec.size(); i++)
             queue.push(randomVec.at(i));
         
         int x;
         Competency tmpComp;
         std::pair<Competency, double> teachedComp;
 
-        for(int i = 0; i < pb.coursesCatalogue().size(); i++)
+        for(unsigned int i = 0; i < pb.coursesCatalogue().size(); i++)
         {
             x = _randomizeIn(pb.cfg_competencyByCourseMin(), pb.cfg_competencyByCourseMax());
             for(int j = 0; j < x; j++)
@@ -375,10 +374,10 @@ int CSDVP::CSDVP_COUNTER = 0;
          */
         std::random_shuffle(randomVec.begin(), randomVec.end());
         queue = std::queue<Competency>();
-        for(int i = 0 ; i < randomVec.size(); i++)
+        for(unsigned int i = 0 ; i < randomVec.size(); i++)
             queue.push(randomVec.at(i));
         
-        for(int i = 0; i < pb.coursesCatalogue().size(); i++)
+        for(unsigned int i = 0; i < pb.coursesCatalogue().size(); i++)
         {
             x = _randomizeIn(pb.cfg_prerequisiteByCourseMin(), pb.cfg_prerequisiteByCourseMax());
             for(int j = 0; j < x; j++)

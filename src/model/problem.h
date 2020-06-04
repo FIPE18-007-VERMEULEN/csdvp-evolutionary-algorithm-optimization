@@ -102,21 +102,21 @@ class CSDVP
         static void generateProblem(CSDVP & csdvp, CSDVP::GenerationType type, int seed= -1 );
 
         // === GETTER
-        const int id() const{return this->_id;}
-        const int seed() const{return this->_seed;}
-        const int cfg_quantityCompetencies() const{return this->_quantityAvailableCompetencies;}
-        const int cfg_quantityCourses() const{return this->_quantityAvailableCourses;}
-        const int cfg_minimalTimeFrame() const{return this->_minimalTimeFrame;}
-        const int cfg_maximalTimeFrame() const{return this->_maximalTimeFrame;}
-        const int cfg_ectsMax() const{return this->_maximalECTSValue;}
-        const int cfg_ectsMin() const{return this->_minimalECTSValue;}
-        const int cfg_courseByTFMax() const{return this->_maximalCoursesByTimeFrame;}
-        const int cfg_courseByTFMin() const{return this->_minimalCoursesByTimeFrame;}
-        const int cfg_competencyByCourseMin() const {return this->_minimalCompetencyByCourse;}
-        const int cfg_competencyByCourseMax() const {return this->_maximalCompetencyByCourse;}
-        const int cfg_prerequisiteByCourseMin() const {return this->_minimalPrerequisiteByCourse;}
-        const int cfg_prerequisiteByCourseMax() const {return this->_maximalPrerequisiteByCourse;}
-        const int cfg_pickedCoursesByTimeFrame() const {return this->_pickedCoursesByTimeFrame;}
+        int id() const{return this->_id;}
+        int seed() const{return this->_seed;}
+        int cfg_quantityCompetencies() const{return this->_quantityAvailableCompetencies;}
+        int cfg_quantityCourses() const{return this->_quantityAvailableCourses;}
+        int cfg_minimalTimeFrame() const{return this->_minimalTimeFrame;}
+        int cfg_maximalTimeFrame() const{return this->_maximalTimeFrame;}
+        int cfg_ectsMax() const{return this->_maximalECTSValue;}
+        int cfg_ectsMin() const{return this->_minimalECTSValue;}
+        int cfg_courseByTFMax() const{return this->_maximalCoursesByTimeFrame;}
+        int cfg_courseByTFMin() const{return this->_minimalCoursesByTimeFrame;}
+        int cfg_competencyByCourseMin() const {return this->_minimalCompetencyByCourse;}
+        int cfg_competencyByCourseMax() const {return this->_maximalCompetencyByCourse;}
+        int cfg_prerequisiteByCourseMin() const {return this->_minimalPrerequisiteByCourse;}
+        int cfg_prerequisiteByCourseMax() const {return this->_maximalPrerequisiteByCourse;}
+        int cfg_pickedCoursesByTimeFrame() const {return this->_pickedCoursesByTimeFrame;}
         const Magnitude & cfg_magnitudeMin() const{return this->_minimalMagnitude;}
         const Magnitude & cfg_magnitudeMax() const{return this->_maximalMagnitude;}
 
@@ -131,7 +131,7 @@ class CSDVP
         std::vector<Course> & unlocked_coursesCatalogue(){return this->_availableCourses;}
         std::vector<Competency> & unlocked_competenciesCatalogue(){return this->_availableCompentecies;}
         
-        const int getQuantityCoursesToPick() const{
+        int getQuantityCoursesToPick() const{
             if(this->_isConfig)
                 return this->_timeFrames.size() * this->_pickedCoursesByTimeFrame;
             return -1;//if not config

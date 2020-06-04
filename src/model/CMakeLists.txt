@@ -9,6 +9,7 @@ SET (EXERCICE_SOURCES
   course.cpp
   profession.cpp
   problem.cpp
+  decay.cpp
 )
 
 ADD_LIBRARY(lModel STATIC ${EXERCICE_SOURCES})
