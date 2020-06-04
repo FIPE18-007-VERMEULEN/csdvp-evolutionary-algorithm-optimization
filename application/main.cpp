@@ -44,6 +44,7 @@ int main(int argc, char* argv[]){
     unsigned int _seedParam = parser.createParam((unsigned int)(0), "seed", "Random number seed", 'S').value();
     std::string _outputFile = parser.createParam(std::string("/scratch"), "outputfile", "", '\0', "Representation", true).value();
     eo::rng.reseed(_seedParam);
+    unsigned int localDisplay = parser.createParam((unsigned int)(0), "localDisplay", "whether or not display on local output", 'd', "Param").value();
 
     //PROBLEM PARAMETERS
     unsigned int SEED = parser.createParam((unsigned int)(7777), "csdvpSeed", "Seed used for the CSDVP",'s',"Param").value();
@@ -301,46 +302,52 @@ int main(int argc, char* argv[]){
     filename+=oss.str();
     std::ofstream outputfile4(filename.c_str(), std::ios::app);
 
+    std::pair<bool, double> resECTS;
+    std::pair<bool, double> resRep ;
+    std::pair<bool, double> resJob ;
+    std::pair<bool, double> resPrq ;
 
+    if(localDisplay)
+    {
+      std::cout << "===== CURRENT POP =====" << std::endl;
+      pop.best_element().printOn(std::cout);
+      std::cout << " fitness:" << pop.best_element().fitness() << std::endl;
+      std::cout << "Stats & metrics: \n" << std::endl;
+      resECTS = ctrECTS.integrityCheck(pop.best_element());
+      resRep = ctrRep.integrityCheck(pop.best_element());
+      resJob = ctrJob.integrityCheck(pop.best_element());
+      resPrq = ctrPrq.integrityCheck(pop.best_element());
+      
+      std::cout << "ECTS: ";
+      if(resECTS.first)
+        std::cout << "succeed";
+      else
+        std::cout << "failed";
+      std::cout << " | value: " << resECTS.second << std::endl;
 
-    /*std::cout << "===== CURRENT POP =====" << std::endl;
-    pop.best_element().printOn(std::cout);
-    std::cout << " fitness:" << pop.best_element().fitness() << std::endl;
-    std::cout << "Stats & metrics: \n" << std::endl;
-    std::pair<bool, double> resECTS = ctrECTS.integrityCheck(pop.best_element());
-    std::pair<bool, double> resRep = ctrRep.integrityCheck(pop.best_element());
-    std::pair<bool, double> resJob = ctrJob.integrityCheck(pop.best_element());
-    std::pair<bool, double> resPrq = ctrPrq.integrityCheck(pop.best_element());
+      std::cout << "Repetition: ";
+      if(resRep.first)
+        std::cout << "succeed";
+      else
+        std::cout << "failed";
+      std::cout << " | value: " << resRep.second << std::endl;
+
+      std::cout << "Job: ";
+      if(resJob.first)
+        std::cout << "succeed";
+      else
+        std::cout << "failed";
+      std::cout << " | value: " << resJob.second << std::endl;
+
+      std::cout << "Prereq: ";
+      if(resPrq.first)
+        std::cout << "succeed";
+      else
+        std::cout << "failed";
+      std::cout << " | value: " << resPrq.second << std::endl;
+      std::cout << "\n==========" << std::endl;
+    }
     
-    std::cout << "ECTS: ";
-    if(resECTS.first)
-      std::cout << "succeed";
-    else
-      std::cout << "failed";
-    std::cout << " | value: " << resECTS.second << std::endl;
-
-    std::cout << "Repetition: ";
-    if(resRep.first)
-      std::cout << "succeed";
-    else
-      std::cout << "failed";
-    std::cout << " | value: " << resRep.second << std::endl;
-
-    std::cout << "Job: ";
-    if(resJob.first)
-      std::cout << "succeed";
-    else
-      std::cout << "failed";
-    std::cout << " | value: " << resJob.second << std::endl;
-
-    std::cout << "Prereq: ";
-    if(resPrq.first)
-      std::cout << "succeed";
-    else
-      std::cout << "failed";
-    std::cout << " | value: " << resPrq.second << std::endl;
-    std::cout << "\n==========" << std::endl;
-    */
 
     // ---------- ALGO HERE
     eoEasyEA<QUEEN> algo(cont,eval,select,transform,replace);
@@ -389,48 +396,49 @@ int main(int argc, char* argv[]){
     
     // -------------------
 
-    /*
-    std::cout << "\n===== BEST INDIVIDU =====" << std::endl;
-    pop.best_element().printOn(std::cout);
-    std::cout << " fitness:" << pop.best_element().fitness() << std::endl;
-    std::cout << "Stats & metrics: \n" << std::endl;
-    resECTS = ctrECTS.integrityCheck(pop.best_element());
-    resRep = ctrRep.integrityCheck(pop.best_element());
-    resJob = ctrJob.integrityCheck(pop.best_element());
-    resPrq = ctrPrq.integrityCheck(pop.best_element());
+    if(localDisplay)
+    {
+      std::cout << "\n===== BEST INDIVIDU =====" << std::endl;
+      pop.best_element().printOn(std::cout);
+      std::cout << " fitness:" << pop.best_element().fitness() << std::endl;
+      std::cout << "Stats & metrics: \n" << std::endl;
+      resECTS = ctrECTS.integrityCheck(pop.best_element());
+      resRep = ctrRep.integrityCheck(pop.best_element());
+      resJob = ctrJob.integrityCheck(pop.best_element());
+      resPrq = ctrPrq.integrityCheck(pop.best_element());
+      
+      std::cout << "ECTS: ";
+      if(resECTS.first)
+        std::cout << "succeed";
+      else
+        std::cout << "failed";
+      std::cout << " | value: " << resECTS.second << std::endl;
+
+      std::cout << "Repetition: ";
+      if(resRep.first)
+        std::cout << "succeed";
+      else
+        std::cout << "failed";
+      std::cout << " | value: " << resRep.second << std::endl;
+
+      std::cout << "Job: ";
+      if(resJob.first)
+        std::cout << "succeed";
+      else
+        std::cout << "failed";
+      std::cout << " | value: " << resJob.second << std::endl;
+
+      std::cout << "Prereq: ";
+      if(resPrq.first)
+        std::cout << "succeed";
+      
+      else
+        std::cout << "failed";
+      std::cout << " | value: " << resPrq.second << std::endl;
+
+      std::cout << "===============" << std::endl;
+    }
     
-    std::cout << "ECTS: ";
-    if(resECTS.first)
-      std::cout << "succeed";
-    else
-      std::cout << "failed";
-    std::cout << " | value: " << resECTS.second << std::endl;
-
-    std::cout << "Repetition: ";
-    if(resRep.first)
-      std::cout << "succeed";
-    else
-      std::cout << "failed";
-    std::cout << " | value: " << resRep.second << std::endl;
-
-    std::cout << "Job: ";
-    if(resJob.first)
-      std::cout << "succeed";
-    else
-      std::cout << "failed";
-    std::cout << " | value: " << resJob.second << std::endl;
-
-    std::cout << "Prereq: ";
-    if(resPrq.first)
-      std::cout << "succeed";
-    
-    else
-      std::cout << "failed";
-    std::cout << " | value: " << resPrq.second << std::endl;
-
-    std::cout << "===============" << std::endl;
-
-    */
     // ================================= END RUN ZONE ===============================
 
   return EXIT_SUCCESS;
