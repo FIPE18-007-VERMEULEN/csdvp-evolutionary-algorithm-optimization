@@ -373,6 +373,7 @@ int main(int argc, char* argv[]){
 
     //WRITE FINAL POP
     pop.best_element().printOn(outputfile);
+    outputfile << std::endl;
     pop.best_element().printOn(outputfile4);
     outputfile4 << " " << ctrECTS.integrityCheck(pop.best_element()).second << " " << ctrRep.integrityCheck(pop.best_element()).second << " " << ctrJob.integrityCheck(pop.best_element()).second << " " << ctrPrq.integrityCheck(pop.best_element()).second << std::endl;
 
