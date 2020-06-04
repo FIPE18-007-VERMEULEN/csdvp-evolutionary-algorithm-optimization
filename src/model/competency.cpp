@@ -115,7 +115,7 @@ void Competency::evolveTowards(double d)
     }
 }
 
-const double Competency::competencyValue() const
+double Competency::competencyValue() const
 {
     return this->_m.value();
 }

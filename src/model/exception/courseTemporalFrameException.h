@@ -30,7 +30,7 @@ class CourseTemporalFrameException : public std::exception
         }
 
         Course & getCourse() const{return *(this->_course);}
-        const int getTime() const{return this->_time;}
+        int getTime() const{return this->_time;}
 };
 
 #endif // SRC_MODEL_EXCEPTION_COURSE_TEMPORAL_FRAME_EXCEPTION_H_

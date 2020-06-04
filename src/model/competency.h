@@ -17,14 +17,13 @@
 class Competency
 {
     private:
-        Magnitude _m;
-        std::string _name;
         int _id;
-
-        //Decay related
-        Magnitude _undecayedMag;
-        bool _isDecaying;
-        int _howLongDecaying;
+        Magnitude _m;
+        Magnitude _undecayedMag; //Decay related
+        std::string _name;
+        int _howLongDecaying; //Decay related
+        bool _isDecaying; //Decay related
+        
 
         //Constructor
         Competency(int, Magnitude, std::string);
@@ -58,7 +57,7 @@ class Competency
 
         // === GETTER
             ///Retrieves the magnitude/mastery value of the competency
-        const double competencyValue() const;
+        double competencyValue() const;
             ///Retrieves the magnitude of the compentecy
         const Magnitude c_magnitude() const {return this->_m;}
         Magnitude & magnitude(){return this->_m;}
@@ -66,14 +65,14 @@ class Competency
         const std::string c_name() const {return this->_name;}
         std::string & name() {return this->_name;}
 
-        const int id() const {return this->_id;}
+        int id() const {return this->_id;}
 
         // === SETTER
         void setMagnitude(Magnitude & m){this->_m = m;}
         void setName(std::string s){this->_name = s;}
 
         // === DECAY
-        const bool isDecaying() const {return this->_isDecaying;}
+        bool isDecaying() const {return this->_isDecaying;}
         void decayState(bool state) {this->_isDecaying = state;}
         int increaseDecay(){this->_isDecaying = true; this->_howLongDecaying++; return this->_howLongDecaying;}
         void resetDecay(){this->_isDecaying = false; this->_howLongDecaying = 0;}

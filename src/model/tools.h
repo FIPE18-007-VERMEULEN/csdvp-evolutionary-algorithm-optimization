@@ -22,7 +22,7 @@ static std::pair<int, T> findInVector(std::vector<T> & vec, T & findMe)
     if(it == vec.end())
     {
         res.first = -1;
-        res.second; //NTD, -1 SHOULD BE USED TO DETECT THAT NOTHING HAS BEEN FOUND
+        //res.second; //NTD, -1 SHOULD BE USED TO DETECT THAT NOTHING HAS BEEN FOUND
     }
     else
     {
