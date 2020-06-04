@@ -66,6 +66,7 @@ int main(int argc, char* argv[]){
     CursusEval::WEIGHT_REPETION = parser.createParam((double)(1.0), "wREP", "Weight of Repetition in the fitness value", 'v', "Param").value();
     CursusEval::WEIGHT_JOB = parser.createParam((double)(1.0), "wJob", "Weight of profession in the fitness value", 'w', "Param").value();
     CursusEval::WEIGHT_PREREQ = parser.createParam((double)(1.0), "wPrereq", "Weight of prerequisites in the fitness value", 'W', "Param").value();
+    DecayEngine::IS_DECAY_DEACTIVATED = parser.createParam((int)(0), "decayDeactivated", "Wether or not the decay is deactivated", 'D', "Param").value();
 
     //PROFESSION PARAMETERS
     unsigned int JOB_SEED = parser.createParam((unsigned int)(7777), "jobSeed", "Seed used for the Profession", 'g', "Param").value();
