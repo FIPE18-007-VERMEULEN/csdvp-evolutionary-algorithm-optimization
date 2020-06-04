@@ -1,14 +1,21 @@
 #include "evaluator.h"
 
+#include "../tools.h"
+
+double CursusEval::WEIGHT_ECTS = 1;
+double CursusEval::WEIGHT_REPETION = 1;
+double CursusEval::WEIGHT_JOB = 1;
+double CursusEval::WEIGHT_PREREQ = 1;
+
 void CursusEval::operator()(Cursus & _cursus){
   double fit=0.0;
 
-  int pCE, pCP, pCR, pCPR;
+  double pCE, pCP, pCR, pCPR;
 
-  pCE=1;
-  pCR=1;
-  pCP=1;
-  pCPR=1;
+  pCE = WEIGHT_ECTS;
+  pCR = WEIGHT_REPETION;
+  pCP = WEIGHT_JOB;
+  pCPR= WEIGHT_PREREQ;
   
   std::pair<bool, double> resCE;
   std::pair<bool, double> resCP;

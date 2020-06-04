@@ -62,6 +62,10 @@ int main(int argc, char* argv[]){
     unsigned int MINPRE = parser.createParam((unsigned int)(0), "minPre", "minimal competency by course",'q',"Param").value();
     unsigned int MAXPRE = parser.createParam((unsigned int)(3), "maxPre", "maximal competency by course",'Q',"Param").value();
     unsigned int CBYTF = parser.createParam((unsigned int)(2), "cbyTF", "course by time frame to pick",'A',"Param").value();
+    CursusEval::WEIGHT_ECTS = parser.createParam((double)(1.0), "wECTS", "Weight of ECTS in the fitness value", 'V', "Param").value();
+    CursusEval::WEIGHT_REPETION = parser.createParam((double)(1.0), "wREP", "Weight of Repetition in the fitness value", 'v', "Param").value();
+    CursusEval::WEIGHT_JOB = parser.createParam((double)(1.0), "wJob", "Weight of profession in the fitness value", 'w', "Param").value();
+    CursusEval::WEIGHT_PREREQ = parser.createParam((double)(1.0), "wPrereq", "Weight of prerequisites in the fitness value", 'W', "Param").value();
 
     //PROFESSION PARAMETERS
     unsigned int JOB_SEED = parser.createParam((unsigned int)(7777), "jobSeed", "Seed used for the Profession", 'g', "Param").value();
