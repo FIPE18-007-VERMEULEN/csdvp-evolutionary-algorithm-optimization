@@ -9,11 +9,10 @@ class crossCSDVP: public eoQuadOp<EOT>
 
  public:
   
- crossCSDVP(CSDVP& _pb, ConstraintsRepetition& _ctr, CursusInitConstraint& _init):pb(_pb),ctr(_ctr), init(_init), cpt(0){}
+ crossCSDVP(CSDVP& _pb, ConstraintsRepetition& _ctr, CursusInitConstraint& _init):pb(_pb),ctr(_ctr), init(_init){}
 
   
   virtual bool operator()(EOT& _chrom1, EOT& _chrom2){
-    cpt++;
     //Integrity Check BEFORE CROSS
     std::pair<bool, double> ctrRes1= ctr.integrityCheck(_chrom1);
     std::pair<bool, double> ctrRes2= ctr.integrityCheck(_chrom2);
@@ -137,7 +136,6 @@ class crossCSDVP: public eoQuadOp<EOT>
     }
   }
 
-  int cpt;
  private:
   
   CSDVP pb;

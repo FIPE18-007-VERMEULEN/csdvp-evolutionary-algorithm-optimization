@@ -154,7 +154,8 @@ int main(int argc, char* argv[]){
     eoSGATransform<Cursus> transform(cross, PCROSS, mut, PMUT);
     eoDetTournamentSelect<Cursus> selectOne(SIZET);
     eoSelectPerc<Cursus> select(selectOne);
-    eoGenerationalReplacement<Cursus> replace;
+    eoGenerationalReplacement<Cursus> genReplace;
+    eoWeakElitistReplacement<Cursus> replace(genReplace);
 
     //POPULATION INITIALISATION
     eoPop<Cursus> pop;
@@ -265,7 +266,6 @@ int main(int argc, char* argv[]){
 	std::cout << pb.coursesCatalogue().at(i) << std::endl;
       }
     */
-    std::cout << job << std::endl;
     // ======================== TEST ZONE END========================
 
 
@@ -277,8 +277,28 @@ int main(int argc, char* argv[]){
     oss << _seedParam;
     filename+=oss.str();
     std::ofstream outputfile(filename.c_str(), std::ios::app);
+    
+    oss.str("");
+    filename=_outputFile + "/pop.";
+    oss << _seedParam;
+    filename+=oss.str();
+    std::ofstream outputfile2(filename.c_str(), std::ios::app);
 
-    std::cout << "===== CURRENT POP =====" << std::endl;
+    oss.str("");
+    filename=_outputFile + "/req.";
+    oss << _seedParam;
+    filename+=oss.str();
+    std::ofstream outputfile3(filename.c_str(), std::ios::app);
+
+    oss.str("");
+    filename=_outputFile + "/solsstats.";
+    oss << _seedParam;
+    filename+=oss.str();
+    std::ofstream outputfile4(filename.c_str(), std::ios::app);
+
+
+
+    /*std::cout << "===== CURRENT POP =====" << std::endl;
     pop.best_element().printOn(std::cout);
     std::cout << " fitness:" << pop.best_element().fitness() << std::endl;
     std::cout << "Stats & metrics: \n" << std::endl;
@@ -315,18 +335,56 @@ int main(int argc, char* argv[]){
       std::cout << "failed";
     std::cout << " | value: " << resPrq.second << std::endl;
     std::cout << "\n==========" << std::endl;
+    */
 
     // ---------- ALGO HERE
     eoEasyEA<QUEEN> algo(cont,eval,select,transform,replace);
+    
+    //WRITE CURRENT POP
+    pop.best_element().printOn(outputfile4);
+    outputfile4 << " " << ctrECTS.integrityCheck(pop.best_element()).second << " " << ctrRep.integrityCheck(pop.best_element()).second << " " << ctrJob.integrityCheck(pop.best_element()).second << " " << ctrPrq.integrityCheck(pop.best_element()).second << std::endl;
 
+    
+    outputfile2 << pop.size() << std::endl;
+    outputfile3 << pop.size() << std::endl;
+    for(int i=0; i<pop.size();i++){
+      //Write pop + prerequires values 
+      pop[i].printOn(outputfile2);
+      outputfile2 << " " << ctrECTS.integrityCheck(pop[i]).second << " " << ctrRep.integrityCheck(pop[i]).second << " " << ctrJob.integrityCheck(pop[i]).second << " " << ctrPrq.integrityCheck(pop[i]).second << std::endl;
+
+      //Write prerequires values
+      outputfile3 << ctrECTS.integrityCheck(pop[i]).second << " " << ctrRep.integrityCheck(pop[i]).second << " " << ctrJob.integrityCheck(pop[i]).second << " " << ctrPrq.integrityCheck(pop[i]).second << std::endl;
+    }
+
+    //RUN ALGO
     algo(pop);
 
+    //WRITE FINAL POP
     pop.best_element().printOn(outputfile);
+    pop.best_element().printOn(outputfile4);
+    outputfile4 << " " << ctrECTS.integrityCheck(pop.best_element()).second << " " << ctrRep.integrityCheck(pop.best_element()).second << " " << ctrJob.integrityCheck(pop.best_element()).second << " " << ctrPrq.integrityCheck(pop.best_element()).second << std::endl;
+
+    outputfile2 << pop.size() << std::endl;
+    outputfile3 << pop.size() << std::endl;
+
+    for(int i=0; i<pop.size();i++){
+      //Write pop + prerequires values 
+      pop[i].printOn(outputfile2);
+      outputfile2 << " " << ctrECTS.integrityCheck(pop[i]).second << " " << ctrRep.integrityCheck(pop[i]).second << " " << ctrJob.integrityCheck(pop[i]).second << " " << ctrPrq.integrityCheck(pop[i]).second << std::endl;
+
+      //Write prerequires values
+      outputfile3 << ctrECTS.integrityCheck(pop[i]).second << " " << ctrRep.integrityCheck(pop[i]).second << " " << ctrJob.integrityCheck(pop[i]).second << " " << ctrPrq.integrityCheck(pop[i]).second << std::endl;
+    }
+
 
     outputfile.close();
+    outputfile2.close();
+    outputfile3.close();
+    outputfile4.close();
     
     // -------------------
 
+    /*
     std::cout << "\n===== BEST INDIVIDU =====" << std::endl;
     pop.best_element().printOn(std::cout);
     std::cout << " fitness:" << pop.best_element().fitness() << std::endl;
@@ -360,14 +418,14 @@ int main(int argc, char* argv[]){
     std::cout << "Prereq: ";
     if(resPrq.first)
       std::cout << "succeed";
+    
     else
       std::cout << "failed";
     std::cout << " | value: " << resPrq.second << std::endl;
 
     std::cout << "===============" << std::endl;
 
-    std::cout << "cpt: " << cross.cpt << std::endl;
-  
+    */
     // ================================= END RUN ZONE ===============================
 
   return EXIT_SUCCESS;
