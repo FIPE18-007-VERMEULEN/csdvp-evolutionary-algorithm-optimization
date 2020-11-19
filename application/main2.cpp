@@ -16,6 +16,7 @@
 #include <model/ea/initializer.h>
 #include <model/ea/initConstraint.h>
 #include <model/ea/mutation.h>
+#include <model/ea/bestFitStat.h>
 #include <model/ea/crossover.h>
 #include <model/ea/evaluator.h>
 
@@ -87,7 +88,6 @@ int main(int argc, char* argv[]){
     // ===== PB CONFIG ZONE =====
     CSDVP pb;
     Profession job;
-    std::cout << "nb cours: ---> " << NBCOURSES << std::endl;
     pb.set_cfg_quantityCourses(NBCOURSES);
     pb.set_cfg_quantityCompetencies(NBCOMP);
     pb.set_cfg_minimalTimeFrames(MINTF);
@@ -157,7 +157,11 @@ int main(int argc, char* argv[]){
     CursusMutation mut(pb, ctrRep);
     
     //PROBLEM INDEPENDANT OPERATOR
-    eoGenContinue<Cursus> cont(NBGEN);
+    std::string file=_outputFile + "/convergence";
+    eoGenContinue<Cursus> cont2(NBGEN);
+    eoCheckPoint<Cursus> cont(cont2);
+    bestFitStat<Cursus> stat(100, file);
+    cont.add(stat);
     eoSGATransform<Cursus> transform(cross, PCROSS, mut, PMUT);
     eoDetTournamentSelect<Cursus> selectOne(SIZET);
     eoSelectPerc<Cursus> select(selectOne);
@@ -278,7 +282,7 @@ int main(int argc, char* argv[]){
 
     
     // ================================= RUN ZONE ===============================
-
+    /*
     std::string filename=_outputFile + "/bestsol.";
     std::ostringstream oss;
     oss << _seedParam;
@@ -302,7 +306,7 @@ int main(int argc, char* argv[]){
     oss << _seedParam;
     filename+=oss.str();
     std::ofstream outputfile4(filename.c_str(), std::ios::app);
-
+    */
     std::pair<bool, double> resECTS;
     std::pair<bool, double> resRep ;
     std::pair<bool, double> resJob ;
@@ -354,25 +358,31 @@ int main(int argc, char* argv[]){
     eoEasyEA<Cursus> algo(cont,eval,select,transform,replace);
     
     //WRITE CURRENT POP
+    /*
     pop.best_element().printOn(outputfile4);
     outputfile4 << " " << ctrECTS.integrityCheck(pop.best_element()).second << " " << ctrRep.integrityCheck(pop.best_element()).second << " " << ctrJob.integrityCheck(pop.best_element()).second << " " << ctrPrq.integrityCheck(pop.best_element()).second << std::endl;
 
     
     outputfile2 << pop.size() << std::endl;
     outputfile3 << pop.size() << std::endl;
+
+    
     for(int i=0; i<pop.size();i++){
       //Write pop + prerequires values 
       pop[i].printOn(outputfile2);
-      outputfile2 << " " << ctrECTS.integrityCheck(pop[i]).second << " " << ctrRep.integrityCheck(pop[i]).second << " " << ctrJob.integrityCheck(pop[i]).second << " " << ctrPrq.integrityCheck(pop[i]).second << std::endl;
+            outputfile2 << " " << ctrECTS.integrityCheck(pop[i]).second << " " << ctrRep.integrityCheck(pop[i]).second << " " << ctrJob.integrityCheck(pop[i]).second << " " << ctrPrq.integrityCheck(pop[i]).second << std::endl;
 
       //Write prerequires values
       outputfile3 << ctrECTS.integrityCheck(pop[i]).second << " " << ctrRep.integrityCheck(pop[i]).second << " " << ctrJob.integrityCheck(pop[i]).second << " " << ctrPrq.integrityCheck(pop[i]).second << std::endl;
     }
+    */
+
 
     //RUN ALGO
     algo(pop);
 
     //WRITE FINAL POP
+    /*
     pop.best_element().printOn(outputfile);
     outputfile << std::endl;
     pop.best_element().printOn(outputfile4);
@@ -395,7 +405,7 @@ int main(int argc, char* argv[]){
     outputfile2.close();
     outputfile3.close();
     outputfile4.close();
-    
+    */
     // -------------------
 
     if(localDisplay)

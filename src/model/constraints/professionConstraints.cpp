@@ -23,10 +23,24 @@ std::pair<bool, double> ConstraintsProfession::integrityCheck(Cursus indiv)
     Competency currentComp;
     std::pair<int, Competency> posFound;
 
+    bool changedTF = false;
+    int currentTF = 0;
 
     for(int i = 0 ; i < indiv.size(); i++)
     {
         current = this->_pb.coursesCatalogue().at(indiv.at(i));
+        
+        if(currentTF != i / this->_pb.cfg_pickedCoursesByTimeFrame())
+            changedTF = true;
+        else
+            changedTF = false;
+        currentTF = i / this->_pb.cfg_pickedCoursesByTimeFrame();
+
+        for(int j = 0; j < compToAnswer.size(); j++)
+        {
+            compToAnswer.at(j).increaseDecay();
+        }
+
         for(int j = 0 ; j < current.teachedCompetenciesWeighted().size() ; j++)
         {
             currentComp = current.teachedCompetenciesWeighted().at(j).first;
@@ -36,6 +50,7 @@ std::pair<bool, double> ConstraintsProfession::integrityCheck(Cursus indiv)
             {
                 try
                 {
+                    compToAnswer.at(posFound.first).saveDecay();
                     compToAnswer.at(posFound.first).evolveTowards(currentComp.magnitude());
                 }
                 catch(CompetencyEvolvingException & e) //if CEE is thrown, then magnitude has been auto rebased
@@ -46,6 +61,12 @@ std::pair<bool, double> ConstraintsProfession::integrityCheck(Cursus indiv)
                 }
             }
         }
+    }
+
+    for(int i = 0; i < compToAnswer.size(); i++)
+    {
+        compToAnswer.at(i).saveDecay();
+        //std::cout << compToAnswer.at(i) << std::endl;
     }
 
     //Now that we have evolve all the tmp competency, we compate their mag to the requirement. We count how many is not met to define the metric

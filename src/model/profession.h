@@ -65,16 +65,16 @@ class Profession
         bool checkConfig();
 
         // === GETTER
-        const int id() const{return this->_id;}
-        const int seed() const{return this->_seed;}
-        const int requiredECTS() const{return this->_requiredECTS;}
+        int id() const{return this->_id;}
+        int seed() const{return this->_seed;}
+        int requiredECTS() const{return this->_requiredECTS;}
         const std::string name() const{return this->_name;}
         const std::vector<Competency> & prerequisites() const{return this->_prerequisites;}
         /// return a modifiable reference to _prerequisite;
         std::vector<Competency> & unlocked_prerequisites(){return this->_prerequisites;}
 
-        const int cfg_minimalPrerequisites() const{return this->_minimalPrerequisites;}
-        const int cfg_maximalPrerequisites() const{return this->_maximalPrerequisites;}
+        int cfg_minimalPrerequisites() const{return this->_minimalPrerequisites;}
+        int cfg_maximalPrerequisites() const{return this->_maximalPrerequisites;}
         const Magnitude cfg_minimalMagnitude() const{return this->_minimalMagnitude;}
         const Magnitude cfg_maximalMagnitude() const{return this->_maximalMagnitude;}
 

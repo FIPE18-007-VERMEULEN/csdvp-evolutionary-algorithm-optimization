@@ -20,7 +20,6 @@ template <class EOT>
 class mutCSDVP: public eoMonOp<EOT>
 {
  public:
-  
  mutCSDVP(CSDVP& _pb, ConstraintsRepetition& _ctr):pb(_pb),ctr(_ctr){}
 
   //_CourseID subastraction from _chrom
@@ -178,9 +177,9 @@ class mutCSDVP: public eoMonOp<EOT>
         std::random_shuffle(gfiCourse.begin(), gfiCourse.end());
         _chrom[rngCourseToSwap] = pb.mapCourseToPosition(gfiCourse.at(0));        
       }
-      else //least constraint courses in 60% of the cases, otherwise full rand
+      else //least constraint courses in 25% of the cases, otherwise full rand
       {
-        if(eo::rng.random(100) > 60)
+        if(eo::rng.random(100) > RATIO_RANDOM_VS_BEST)
         {
           fbBestCourse = coursesOfTF.at(0);
           for(i = 1; i < coursesOfTF.size(); i++)
@@ -228,9 +227,26 @@ class mutCSDVP: public eoMonOp<EOT>
     bool addStatus = false;
     int pos=0;
 
+    bool changedTF = false;
+    int currentTF = 0;
+
     for(int i = 0; i < _chrom.size() && (i / nbCbyTF < TF); i++)
     {
-      currentCourse = catalogue.at(_chrom.at(i));  
+      currentCourse = catalogue.at(_chrom.at(i));
+
+      if(currentTF != i / nbCbyTF)
+        changedTF = true;
+      else
+        changedTF = false;
+      currentTF = i / nbCbyTF;
+
+      if(changedTF) //if we have changed of tf, lets improve decay for all comp
+      {
+        for(int j = 0; j < tmpCourse.prerequisites().size(); j++)
+        {
+          tmpCourse.unlocked_prerequisites().at(j).increaseDecay();
+        }
+      }
 
       for(int j = 0; j < currentCourse.teachedCompetenciesWeighted().size(); j++)
       {
@@ -246,7 +262,7 @@ class mutCSDVP: public eoMonOp<EOT>
           try
           {
             Magnitude mag = currentCourse.teachedCompetenciesWeighted().at(j).first.c_magnitude();
-    
+            //tmpCourse.unlocked_prerequisites().at(pos).saveDecay();
             tmpCourse.unlocked_prerequisites().at(pos).evolveTowards(mag);
           }
           catch(CompetencyEvolvingException & e)
@@ -259,6 +275,9 @@ class mutCSDVP: public eoMonOp<EOT>
     }
 
     compStatus = tmpCourse.prerequisites();
+    for(int i = 0; i < compStatus.size(); i++)
+      compStatus.at(i).saveDecay();
+
     return compStatus;
   }
 
@@ -287,7 +306,7 @@ class mutCSDVP: public eoMonOp<EOT>
         {
           if(checkCmp == state.at(itState))
           {
-            if(checkCmp.c_magnitude().value() > state.at(itState).c_magnitude().value())
+            if(checkCmp.c_magnitude().value() > state.at(itState).decay())
             { stop = true; found = false; }
             else
             { stop = true; found = true;  }

@@ -17,6 +17,10 @@ public:
   
     void operator()(Cursus & _cursus);
 
+   static double WEIGHT_ECTS;
+   static double WEIGHT_REPETION;
+   static double WEIGHT_JOB;
+   static double WEIGHT_PREREQ;
 
  private:
     ConstraintsPrerequisites cpr;

@@ -30,6 +30,7 @@ class Course
         // std::vector<double> diffusionWeight;
         
         // === OTHER
+        int _id;
         /// European Credit Transfer and Accumulation System
         int _ects;
         /** Timeframe availablity of a course.
@@ -38,7 +39,7 @@ class Course
          */ 
         std::vector<int> _temporalAvailability;
         std::string _name;
-        int _id;
+        
 
         // === FUNC
         /// _duplicataProtection returns true if the value (2nd param) searched into (1st param) is found
@@ -73,9 +74,9 @@ class Course
         Course() = default;
 
         // === GETTER
-        const int id() const{return this->_id;};
+        int id() const{return this->_id;};
         const std::string name() const{return this->_name;};
-        const int ects() const{return this->_ects;}
+        int ects() const{return this->_ects;}
         const std::vector<Competency> prerequisites() const {return this->_prerequisites;}
         std::vector<Competency>& unlocked_prerequisites() {return this->_prerequisites;}
         const std::vector<int> timeFrame() const {return this->_temporalAvailability;}
