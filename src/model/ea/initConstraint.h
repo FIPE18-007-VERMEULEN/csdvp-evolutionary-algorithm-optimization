@@ -23,10 +23,14 @@ class eoInitConstraintCSDVP: public eoInit<EOT>
  eoInitConstraintCSDVP(CSDVP& _pb): pb(_pb){
     std::vector<int> tmp;
     chromSize=pb.getQuantityCoursesToPick();
+
+    std::cout << "nombre de cours à prendre: " << chromSize << std::endl;
     maxVal=pb.coursesCatalogue().size();
+    std::cout << "nb Cours total dans le catalogue: " << maxVal << std::endl;
     seed=pb.seed();
     TF = pb.timeFrames();
-    nbTF=TF.size();
+    nbTF=TF.size(); 
+    std::cout << "nb de Semestres" << nbTF << std::endl;
     sizeTF=chromSize/nbTF;
     catalogue = pb.coursesCatalogue();
     possibleIDbyTF.resize(nbTF);
@@ -36,22 +40,22 @@ class eoInitConstraintCSDVP: public eoInit<EOT>
 	possibleIDbyTF[tmp[j]-pb.cfg_minimalTimeFrame()].push_back(i);
       }
     }
-  //   for(int i=0; i<possibleIDbyTF.size(); i++){
-  //     std::cout << "Possible course in TF " << i+pb.cfg_minimalTimeFrame() << ": ";
-  //     for(int j=0; j<possibleIDbyTF[i].size(); j++){
-	// std::cout << possibleIDbyTF[i][j] << " ";
-  //     }
-  //     std::cout << std::endl;
-  //   }
+     for(int i=0; i<possibleIDbyTF.size(); i++){
+       std::cout << "Possible course in TF " << i+pb.cfg_minimalTimeFrame() << ": ";
+       for(int j=0; j<possibleIDbyTF[i].size(); j++){
+	 std::cout << possibleIDbyTF[i][j] << " ";
+       }
+       std::cout << std::endl;
+     }
   }
   
   virtual void operator()(EOT& chrom){
     int cpt=0;
-    //std::cout << "Enter init" << std::endl;
+    std::cout << "Enter init" << std::endl;
     unsigned int r=eo::rng.random(possibleIDbyTF[0].size());
     chrom.resize(0);
     chrom.push_back(possibleIDbyTF[0][r]);
-    //std::cout << "push " << possibleIDbyTF[0][r] << std::endl;
+    std::cout << "push " << possibleIDbyTF[0][r] << std::endl;
     for(int i = 1; i < chromSize; i++){
       cpt=0;
       r=eo::rng.random(possibleIDbyTF[i/sizeTF].size());

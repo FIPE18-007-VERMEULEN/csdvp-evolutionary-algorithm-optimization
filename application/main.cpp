@@ -87,6 +87,7 @@ int main(int argc, char* argv[]){
     // ===== PB CONFIG ZONE =====
     CSDVP pb;
     Profession job;
+    std::cout << "nb cours: ---> " << NBCOURSES << std::endl;
     pb.set_cfg_quantityCourses(NBCOURSES);
     pb.set_cfg_quantityCompetencies(NBCOMP);
     pb.set_cfg_minimalTimeFrames(MINTF);
@@ -350,7 +351,7 @@ int main(int argc, char* argv[]){
     
 
     // ---------- ALGO HERE
-    eoEasyEA<QUEEN> algo(cont,eval,select,transform,replace);
+    eoEasyEA<Cursus> algo(cont,eval,select,transform,replace);
     
     //WRITE CURRENT POP
     pop.best_element().printOn(outputfile4);

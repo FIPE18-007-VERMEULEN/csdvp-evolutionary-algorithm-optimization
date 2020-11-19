@@ -258,7 +258,6 @@ int CSDVP::CSDVP_COUNTER = 0;
         {
             tmpCourses.push_back(Course::build(CSDVP::_randomizeIn(pb.cfg_ectsMin(), pb.cfg_ectsMax())));
         }
-
         /* We obtain how many courses n by semester s
          * then we create an idxCourses vector of size n * s
          * then we shuffle it
@@ -266,13 +265,22 @@ int CSDVP::CSDVP_COUNTER = 0;
          */
         std::vector<int> idxCourses;
         std::vector<int> nbCoursesByTF;
-        for(unsigned int i = 0 ; i < pb.timeFrames().size(); i++)
+	int somme=0;
+        for(unsigned int i = 0 ; i < pb.timeFrames().size(); i++){
             nbCoursesByTF.push_back(CSDVP::_randomizeIn(pb._minimalCoursesByTimeFrame, pb._maximalCoursesByTimeFrame));
+	    somme+=nbCoursesByTF[i];
+	}
+	while(somme<tmpCourses.size()){
+	  int r=CSDVP::_randomizeIn(0, pb.timeFrames().size()-1);
+	  nbCoursesByTF[r]++;
+	  somme++;
+	}
+
         int idxCoursesCounter = 0;
         for(unsigned int i = 0; i < nbCoursesByTF.size(); i++)
         {
             for(int j = 0; j < nbCoursesByTF.at(i); j++)
-            {
+            {	      
                 idxCourses.push_back(idxCoursesCounter % pb._quantityAvailableCourses);
                 idxCoursesCounter++;
             }
@@ -318,10 +326,11 @@ int CSDVP::CSDVP_COUNTER = 0;
         //     }
         // }
 
-        for(unsigned int i = 0; i < tmpCourses.size(); i++)
+        for(unsigned int i = 0; i < tmpCourses.size(); i++){
             if(tmpCourses.at(i).timeFrame().size() > 0)
                 pb.addCourseToCatalogue(tmpCourses.at(i));
-        
+	}
+
         //From here, coursesCatalogue can still be < to minCourseTF * nbTF (due to the fact that a same course can belongs to )
         pb._makeCoursesSortedByTF();
 

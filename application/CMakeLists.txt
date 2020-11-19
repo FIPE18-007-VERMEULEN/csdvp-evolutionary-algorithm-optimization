@@ -5,6 +5,7 @@ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src)
 # 2) Define targets: executable and dependencies
 
 ADD_EXECUTABLE(ceao main.cpp)
+ADD_EXECUTABLE(ceao2 main2.cpp)
 ADD_EXECUTABLE(ceao_competency ceao_competency.cpp)
 ADD_EXECUTABLE(ceao_course ceao_course.cpp)
 ADD_EXECUTABLE(ceao_profession ceao_profession.cpp)
@@ -16,6 +17,7 @@ ADD_EXECUTABLE(tryCrossover tryCrossover.cpp)
 ADD_EXECUTABLE(tryEval tryEval.cpp)
 
 ADD_DEPENDENCIES(ceao lQueen lModel lEA lCstr)
+ADD_DEPENDENCIES(ceao2 lQueen lModel lEA lCstr)
 ADD_DEPENDENCIES(ceao_competency lQueen lModel)
 ADD_DEPENDENCIES(ceao_course lQueen lModel)
 ADD_DEPENDENCIES(ceao_profession lQueen lModel)
@@ -29,6 +31,7 @@ ADD_DEPENDENCIES(tryEval lQueen)
 # 3) Link the librairies for your executable
 
 TARGET_LINK_LIBRARIES(ceao ${PARADISEO_LIBRARIES} lQueen lModel lEA lCstr) 
+TARGET_LINK_LIBRARIES(ceao2 ${PARADISEO_LIBRARIES} lQueen lModel lEA lCstr) 
 TARGET_LINK_LIBRARIES(ceao_competency ${PARADISEO_LIBRARIES} lQueen lModel)
 TARGET_LINK_LIBRARIES(ceao_course ${PARADISEO_LIBRARIES} lQueen lModel)
 TARGET_LINK_LIBRARIES(ceao_profession ${PARADISEO_LIBRARIES} lQueen lModel)

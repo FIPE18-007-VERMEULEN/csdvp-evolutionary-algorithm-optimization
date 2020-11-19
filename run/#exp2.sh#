@@ -1,0 +1,12 @@
+${cbyTF}_${minCbyTF}_${maxCbyTF}_${nbGen}"
+				
+				sbatch --array=1-${run} --job-name=${RESDIR} --output=${RESDIR}.out --export=C=$nbCours,c=$nbComps,R=$maxCbyC,Q=$maxPre,A=$cbyTF,n=$minCbyTF,N=$maxCbyTF,r=1,q=0,O=$RESDIR,B=20,x=0.75,X=0.75,F=3,G=$nbGen job.sh
+				echo "-C=${nbCours} -c=${nbComps} -R=${maxCbyC} -Q=${maxPre} -A=${cbyTF} -n=${minCbyTF} -N=${maxCbyTF} -r=1 -q=0" >> case
+			    done
+			done
+		    done
+		done
+	    done
+	done
+    done
+done
