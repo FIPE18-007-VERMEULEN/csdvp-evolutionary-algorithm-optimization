@@ -7,7 +7,7 @@ do
 	do
 	    for maxPre in 3 
 	    do
-		for nbGen in 1000
+		for nbGen in 10000
 		do
 		    nbComps=400
 		    RESDIR="../results/${nbCours}_${nbComps}_${maxCbyC}_${maxPre}_${cbyTF}_${nbGen}"
