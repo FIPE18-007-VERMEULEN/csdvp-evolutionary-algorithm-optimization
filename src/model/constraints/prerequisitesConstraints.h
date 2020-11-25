@@ -34,6 +34,7 @@ class ConstraintsPrerequisites
         std::tuple<int,int, double, int> _prereqsInPreviousTF(std::vector<Competency> cInTF, std::vector<Competency> prereqs);
     public:
         static int DISCRETE_METRIC;
+        static int INTEGRITY_CHECK;
 
         ConstraintsPrerequisites(const CSDVP & csdvp, const Profession & job)
             : _pb(csdvp), _job(job) {}
@@ -42,7 +43,12 @@ class ConstraintsPrerequisites
          * Returns a std::pair. First is a boolean set to true when the indiv passes the test and therefore is compilant with the constraint, false otherwise. Second is the associated metric, mostly usable during fitness calcul.
          * @todo Decay competency magnitude
          */
-        std::pair<bool, double> integrityCheck(Cursus indiv); 
+        std::pair<bool, double> integrityCheck(Cursus indiv);
+
+        /**
+         * 2nd version of integrity check. Supposed to be more reliable and faster
+         */
+        std::pair<bool, double> integrityCheck2(Cursus indiv);
 };
 
 #endif // SRC_MODEL_CONSTRAINTS_PREREQUISITES_CONSTRAINTS_H_

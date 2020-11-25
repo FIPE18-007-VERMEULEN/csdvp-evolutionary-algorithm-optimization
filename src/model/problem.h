@@ -2,6 +2,7 @@
 #define SRC_PROBLEM_H_
 
 #include <vector>
+#include <tuple>
 
 #include "course.h"
 #include "competency.h"
@@ -56,7 +57,11 @@ class CSDVP
         std::vector<Course> _availableCourses;
         std::vector<std::vector<Course>> _coursesSortedByTF; //sorted by standard index. e.g. TF[4;6] -> [0]=4; [1]=5 ; [2] = 6
         std::vector<Competency> _availableCompentecies; //The competency's magnitude should not be used here. 
-
+        
+        // This array is index aligned with the compCatalogue of the problem. It represents the current compentecies distrib in the pb. Mostly used during configuratioin.
+        // -1 : not assigned ; [0;1] the ith comp at the indice i in the cmpCatalogue as been assigned, with a value of x € [0;1].
+        std::vector<double> _distributedCompetencies; 
+        
         ///@todo implements a decay politics
         //DecayPolitics 
         // --------- END PROBLEM SPECIFIC ATTRIBUTES ---------
@@ -81,6 +86,10 @@ class CSDVP
         /// It sources _coursesSortedByTF, which is another view of _availableCourses, sorted by TF
         void _makeCoursesSortedByTF();
 
+        // This fuction creates a new tmpComp with mag and add it the comp teached by the course idx of the catalogue
+        // Using the sourcing function keeps the _distributedCompetencies up to date
+        void _sourceCourseTeachedComp(CSDVP & pb, unsigned int idx, Competency & c);
+        void _updateDistribComp(CSDVP & pb, Competency & cpt);
     public:
         // --------- GENERATION RELATED FUNCTION ---------
         /// allows a random attribution of pb's attributes
@@ -140,7 +149,21 @@ class CSDVP
          * returns the index of the course within the coursesCatalogue [0;size[  ; otherwise return -1 if the course is not found.
          */
         int mapCourseToPosition(const Course & c);
+        /** Maps a competency into its position inside the this->competencyCatalogue().
+         * returns the index of the competency within the competencyCatalogue [0;size[  ; otherwise return -1 if the competency is not found.
+         */
+        int mapCompToPosition(const Competency & comp);
         ///@todo getDecayPolitic
+
+        // === Competency Distribution related
+            void const displayDistribution();
+            /* Retrieves some stats regarding the comp distrib
+             * First element is the nb of unassigned comp
+             * Second element is the nb of comp above 0.5
+             * Third element is the mean (all unassigned elm excluded)
+             * Fourth element is the median (idem)
+             */
+            std::tuple<int, int, double, double> distributionStats();
 
         // === MUTATOR
             // SETTER

@@ -71,7 +71,8 @@ int main(int argc, char* argv[]){
     DecayEngine::IS_DECAY_DEACTIVATED = parser.createParam((int)(0), "decayDeactivated", "Wether or not the decay is deactivated", 'D', "Param").value();
 
     ConstraintsProfession::DISCRETE_METRIC = parser.createParam((unsigned int)(1), "jobEvalDiscrete" , "What type of metric to use between discret and continue with mag", 'k', "Param").value();
-    ConstraintsPrerequisites::DISCRETE_METRIC = parser.createParam((unsigned int)(1), "prqEvalDiscrete" , "What type of metric to use between discret and continue with mag", 'K', "Param").value();
+    ConstraintsPrerequisites::DISCRETE_METRIC = parser.createParam((unsigned int)(1), "prqEvalDiscrete" , "What type of metric to use between discret and continue with mag constraints", 'K', "Param").value();
+    ConstraintsPrerequisites::INTEGRITY_CHECK = parser.createParam((unsigned int)(1), "prqCheckFunc" , "Dev. option: switching between prereqCheck func 1 and 2", 'O', "Param").value();
 
     //PROFESSION PARAMETERS
     unsigned int JOB_SEED = parser.createParam((unsigned int)(7777), "jobSeed", "Seed used for the Profession", 'g', "Param").value();
@@ -314,6 +315,7 @@ int main(int argc, char* argv[]){
 
     if(localDisplay)
     {
+      pb.displayDistribution();
       std::cout << pb << std::endl;
       std::cout << job << std::endl;
 
@@ -330,7 +332,17 @@ int main(int argc, char* argv[]){
       resECTS = ctrECTS.integrityCheck(pop.best_element());
       resRep = ctrRep.integrityCheck(pop.best_element());
       resJob = ctrJob.integrityCheck(pop.best_element());
-      resPrq = ctrPrq.integrityCheck(pop.best_element());
+      
+      switch (ConstraintsPrerequisites::INTEGRITY_CHECK)
+      {
+      case 2:
+        resPrq = ctrPrq.integrityCheck2(pop.best_element());
+        break;
+      
+      default:
+        resPrq = ctrPrq.integrityCheck(pop.best_element());
+        break;
+      }
       
       std::cout << "ECTS: ";
       if(resECTS.first)
@@ -420,7 +432,16 @@ int main(int argc, char* argv[]){
       resECTS = ctrECTS.integrityCheck(pop.best_element());
       resRep = ctrRep.integrityCheck(pop.best_element());
       resJob = ctrJob.integrityCheck(pop.best_element());
-      resPrq = ctrPrq.integrityCheck(pop.best_element());
+      switch (ConstraintsPrerequisites::INTEGRITY_CHECK)
+      {
+      case 2:
+        resPrq = ctrPrq.integrityCheck2(pop.best_element());
+        break;
+      
+      default:
+        resPrq = ctrPrq.integrityCheck(pop.best_element());
+        break;
+      }
       
       std::cout << "ECTS: ";
       if(resECTS.first)

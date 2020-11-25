@@ -11,6 +11,7 @@
 #include "model/exception/competencyEvolvingException.h"
 
 int ConstraintsPrerequisites::DISCRETE_METRIC = 1;
+int ConstraintsPrerequisites::INTEGRITY_CHECK = 1;
 
 std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
 {
@@ -133,7 +134,7 @@ std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
     switch (ConstraintsPrerequisites::DISCRETE_METRIC)
     {
     case 0/* constant-expression */:
-        std::cout << "MagDiff: " << magDiff << " for " << (double)magDivisor << " prereqs. (1 - " << ( magDiff / (double)magDivisor ) << std::endl;
+        // std::cout << "MagDiff: " << magDiff << " for " << (double)magDivisor << " prereqs. (1 - " << ( magDiff / (double)magDivisor ) << std::endl;
         assert(magDivisor != 0);
         return std::pair<bool, double>(isOK, 1 - ( magDiff / (double)magDivisor ) );    
     default:
@@ -184,7 +185,7 @@ std::tuple<int, int, double, int> ConstraintsPrerequisites::_prereqsInPreviousTF
                 {
                     notRespected++;
                     magDiff += ( prereqs.at(i).c_magnitude().value() - cInTF.at(j).decay() ) / prereqs.at(i).c_magnitude().value();
-                    std::cout << "\tMag diff: " << prereqs.at(i).c_magnitude().value() - cInTF.at(j).decay()  << "\t Ratio:" << magDiff << std::endl;
+                    // std::cout << "\tMag diff: " << prereqs.at(i).c_magnitude().value() - cInTF.at(j).decay()  << "\t Ratio:" << magDiff << std::endl;
                 }
             }
         }
@@ -196,4 +197,159 @@ std::tuple<int, int, double, int> ConstraintsPrerequisites::_prereqsInPreviousTF
     divisor = (notFound + nbFound);
     //std::cout << "NF: " << std::to_string(notFound) << " | NR: " << std::to_string(notRespected) << std::endl;
     return std::tuple<int, int, double, int>(notFound, notRespected, magDiff, divisor);
+}
+
+std::pair<bool, double> ConstraintsPrerequisites::integrityCheck2(Cursus indiv)
+{
+    std::pair<bool, double> res;
+
+    std::vector<std::vector<double>> compDistribyTF; //each i contains an vector representing the magnitique of each comp existing, according to the path followed. [0;1] 
+
+    // === init
+    for(unsigned int i = 0; i < this->_pb.timeFrames().size(); i++)
+    {
+        std::vector<double> tmp;
+        for(unsigned int j = 0; j < this->_pb.competencyCatalogue().size(); j++)
+        {
+            tmp.push_back(0);
+        }
+        compDistribyTF.push_back(tmp);
+    }
+
+    // === fill each double vector of each tf according to comp seen
+    int currentTF = 0;
+    Course currentCourse;
+    std::vector<std::pair<Competency, double>> teachedComps;
+    unsigned int idx;
+
+    for(int i = 0; i < indiv.size(); i++)
+    {
+        currentTF = i / this->_pb.cfg_pickedCoursesByTimeFrame();
+        currentCourse = this->_pb.coursesCatalogue().at(indiv.at(i));
+        teachedComps = currentCourse.teachedCompetenciesWeighted();
+        
+        for(int j = 0; j < teachedComps.size(); j++)
+        {
+            idx = this->_pb.mapCompToPosition(teachedComps.at(j).first);
+            assert(idx >= 0);
+            compDistribyTF.at(currentTF).at(idx) += teachedComps.at(j).first.magnitude().value();
+
+            if(compDistribyTF.at(currentTF).at(idx) > 1) //can't exceed 1 in a signle TF
+                compDistribyTF.at(currentTF).at(idx) = 1;
+        }
+    }
+
+    // === sum for t of all t-i
+    for(int i = 1; i < this->_pb.timeFrames().size() ; i++)
+    {
+        for(int j = 0; j < i; j++)
+        {
+            for(int k = 0; k < this->_pb.competencyCatalogue().size() ; k++)
+            {
+                compDistribyTF.at(i).at(k) += compDistribyTF.at(j).at(k);
+                // if(compDistribyTF.at(i).at(k) > 1) //commented because decay
+                //     compDistribyTF.at(i).at(k) = 1;
+            }
+        }
+    }
+
+    // === apply decay
+    std::vector<double> tmpDiff;
+    std::vector<int> decayClock(this->_pb.competencyCatalogue().size());
+    double decayVal = 0; double delta = 0;
+
+    for(int i = 1; i < compDistribyTF.size(); i++) //starts to 1 because 0 does not have decay
+    {
+        for(int j = 0; j < compDistribyTF.at(0).size(); j++) //0 because we do not care which, they all have the same size == this->_pb.competencyCatalogue().size()
+        {
+            decayVal = 0; delta = 0;
+
+            tmpDiff.push_back(compDistribyTF.at(i).at(j) - compDistribyTF.at(i-1).at(j));
+
+            if(tmpDiff.at(j) == 0) //if 0->comp stagnation therefore decay
+            {
+                decayClock.at(j)++;
+            }
+            else
+            {
+                if(decayClock.at(j)>0)
+                    decayVal = DecayEngine::defaultDecay(decayClock.at(j)-1);
+                // storing the delta of the mag in i-1 ; i
+                delta = compDistribyTF.at(i).at(j) - compDistribyTF.at(i-1).at(j);
+
+                compDistribyTF.at(i).at(j) = delta + ( compDistribyTF.at(i-1).at(j) - decayVal );
+
+                decayClock.at(j) = 0;
+            }
+        }
+    }
+
+    // === checking courses prerequisite
+    int notFound = 0; int notRespected = 0; int nbPrereq = 0;
+    double magDiff = 0; int magDivisor = 0;
+
+    for(int i = 0; i < indiv.size(); i++)
+    {
+        currentTF = i / this->_pb.cfg_pickedCoursesByTimeFrame();
+
+        assert(indiv.at(i) < this->_pb.coursesCatalogue().size());
+        currentCourse = this->_pb.coursesCatalogue().at(indiv.at(i));
+
+        // std::cout << currentCourse << std::endl;
+
+        for(int j = 0; j < currentCourse.prerequisites().size(); j++)
+        {
+            nbPrereq++;
+
+            idx = this->_pb.mapCompToPosition(currentCourse.prerequisites().at(j));
+
+            if( currentTF == 0 || //if we have prereq at tf 0 -> automatically fails !
+                compDistribyTF.at(currentTF-1).at(idx) < currentCourse.prerequisites().at(j).c_magnitude().value())
+            {
+                // PREREQ KO !
+                if(currentTF == 0 || compDistribyTF.at(currentTF-1).at(idx) == 0)
+                {
+                    magDiff += currentCourse.prerequisites().at(j).c_magnitude().value(); //not exists so full value in diff here
+                    notFound++;
+                }
+                else
+                {
+
+                    magDiff += ( currentCourse.prerequisites().at(j).c_magnitude().value() - compDistribyTF.at(currentTF-1).at(idx) ) / currentCourse.prerequisites().at(j).c_magnitude().value(); // percentage of diff in [0;1]
+                    notRespected++;
+                }
+
+            }
+            else
+            {
+                // PREREQ OK !                
+            }
+        }
+    }
+
+    bool isOK = ((notFound == 0) && (notRespected == 0));
+
+    switch (ConstraintsPrerequisites::DISCRETE_METRIC)
+    {
+    case 0/* constant-expression */:
+        // std::cout << "MagDiff: " << magDiff << " for " << (double)nbPrereq << " prereqs. (1 - " << ( magDiff / (double)nbPrereq ) << std::endl;
+        // assert(magDivisor != 0);
+        return std::pair<bool, double>(isOK, 1 - ( magDiff / (double)nbPrereq ) );    
+    default:
+        double metric = 0;
+        if(nbPrereq > 0)
+        {
+            metric = 1.0 - ( (((double)2 * (double)notFound) + (double)notRespected ) / (2 * (double) nbPrereq) );
+        }
+        else //can't divide by 0
+        {
+            if(isOK)
+                metric = 1;
+            else
+                metric = 0;
+        }
+        //std::cout << "Metric: " << std::to_string(metric) << std::endl;
+        //std::cout << "====================" << std::endl;
+        return std::pair<bool, double>(isOK, metric);
+    }
 }

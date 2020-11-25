@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <queue>
 #include <cassert>
+#include <tuple>
 
 #include "problem.h"
 #include "tools.h"
@@ -188,6 +189,16 @@ int CSDVP::CSDVP_COUNTER = 0;
                 return i;
         return -1;
     }
+
+    int CSDVP::mapCompToPosition(const Competency & comp)
+    {
+        for(unsigned int i = 0; i < this->competencyCatalogue().size();i++)
+        {
+            if(comp == this->competencyCatalogue().at(i))
+                return i;
+        }
+        return -1;
+    }
 // === END FUNC
 
 // === STATIC
@@ -342,6 +353,14 @@ int CSDVP::CSDVP_COUNTER = 0;
             assert(c == pb.competencyCatalogue().at(pb.competencyCatalogue().size()-1));
         }
 
+        /* Creating _distributedCompetencies array for assignation */
+        for(int i = 0; i < pb.competencyCatalogue().size(); i++)
+        {
+            pb._distributedCompetencies.push_back(-1);
+        }
+
+        assert (pb._distributedCompetencies.size() == pb.competencyCatalogue().size());
+
         /* Assigning Hierachy Level (HL) for each comp
          * HL is used to improve the average quality of the course catalogue compared to random
          */
@@ -387,10 +406,7 @@ int CSDVP::CSDVP_COUNTER = 0;
             {
                 // tmpComp = queue.front();
                 tmpComp = HLComp.at(j);
-                magVal = pb.cfg_magnitudeMin().value() + ( (double)rand()/RAND_MAX) * ( pb.cfg_magnitudeMax().value() - pb.cfg_magnitudeMin().value()) ;
-                Competency cpt = Competency::build(magVal,tmpComp.c_name());
-                teachedComp = std::pair<Competency,double>(cpt, 1.0);
-                pb.unlocked_coursesCatalogue().at(i).addTeachedComp(teachedComp);
+                pb._sourceCourseTeachedComp(pb, i, tmpComp);
             }
         }
 
@@ -445,9 +461,86 @@ int CSDVP::CSDVP_COUNTER = 0;
         }
 
     }
+
+    void CSDVP::_sourceCourseTeachedComp(CSDVP & pb, unsigned int idx, Competency & c)
+    {
+        double magVal;
+        magVal = pb.cfg_magnitudeMin().value() + ( (double)rand()/RAND_MAX) * ( pb.cfg_magnitudeMax().value() - pb.cfg_magnitudeMin().value()) ;
+        Competency cpt = Competency::build(magVal,c.c_name());
+        std::pair<Competency, double> teachedComp = std::pair<Competency,double>(cpt, 1.0);
+        pb.unlocked_coursesCatalogue().at(idx).addTeachedComp(teachedComp);
+        _updateDistribComp(pb, cpt);
+    }
+
+    void CSDVP::_updateDistribComp(CSDVP & pb, Competency & cpt)
+    {
+        int idx = pb.mapCompToPosition(cpt);
+        assert (idx >= 0);
+
+        if(pb._distributedCompetencies.at(idx) == -1) //not yet assigned? Then first 0
+            pb._distributedCompetencies.at(idx) = 0;
+        pb._distributedCompetencies.at(idx) += cpt.magnitude().value();
+        if(pb._distributedCompetencies.at(idx) > 1) //if range overflow --> rebase to one
+            pb._distributedCompetencies.at(idx) = 1;
+    }
     // --------- END GENERATION RELATED FUNCTIONS ---------
 
 // === END STATIC
+
+void const CSDVP::displayDistribution(){
+    std::cout << "------------------------------" << std::endl;
+    std::cout << "| PB Competency distribution |" << std::endl;
+    std::cout << "------------------------------" << std::endl;
+
+    std::tuple<int, int, double, double> stats = this->distributionStats();
+    std::cout << "Stats: " << std::endl ;
+    std::cout << "\n\t# of Comp: " << this->_distributedCompetencies.size();
+    std::cout << "\n\t# of Unassigned: " << std::get<0>(stats);
+    std::cout << "\n\t# of above 0.5: " << std::get<1>(stats);
+    std::cout << "\n\tDistrib mean: " << std::get<2>(stats);
+    std::cout << "\n\tDistrib median: " << std::get<3>(stats) << std::endl;
+    std::cout << "\n\tUnassigned in HL#" << -1 << std::endl;
+
+    std::cout << "Distrib:" << std::endl;
+    std::cout << "[";
+    for(int i = 0; i < this->_distributedCompetencies.size(); i++)
+    {
+        std::cout << this->_distributedCompetencies.at(i);
+        if(i < this->_distributedCompetencies.size() -1 )
+            std::cout << "|";
+    }
+    std::cout << "]" << std::endl;
+    std::cout << "------------------------------" << std::endl << std::endl;
+}
+
+std::tuple<int, int, double, double> CSDVP::distributionStats()
+{
+    std::tuple<int, int, double, double> stats;
+    int unassigned = 0;
+    int aboveFive = 0;// >= 0.5
+    double mean = 0;
+    double median = 0;
+
+    for(int i = 0; i < this->_distributedCompetencies.size(); i++)
+    {
+        if(this->_distributedCompetencies.at(i) == -1)
+            unassigned++;
+        else
+        {
+            mean += this->_distributedCompetencies.at(i);
+            if(this->_distributedCompetencies.at(i) >= 0.5)
+                aboveFive++;
+        }
+    }
+
+    mean = mean / ( (double)(this->_distributedCompetencies.size() - unassigned));
+
+    std::get<0>(stats) = unassigned;
+    std::get<1>(stats) = aboveFive; 
+    std::get<2>(stats) = mean; //todo
+    std::get<3>(stats) = -1; //todo
+    return stats;
+}
 
 // === OPERATOR
     std::ostream & operator<<(std::ostream & Stream, const CSDVP & c)
