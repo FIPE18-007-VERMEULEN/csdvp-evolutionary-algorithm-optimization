@@ -10,6 +10,7 @@
 #include <model/magnitude.h>
 #include <model/tools.h>
 #include <model/competency.h>
+#include <model/competencyDistribution.h>
 #include <model/decay.h>
 
 #include <model/ea/cursus.h>
@@ -75,7 +76,8 @@ int main(int argc, char* argv[]){
     unsigned int JOB_MAXPRE = parser.createParam((unsigned int)(4), "jobMaxPre" , "maximal competency prerequisite by a job", 'J', "Param").value();
     double JOB_MINMAG = parser.createParam((double)(0.5), "jobMinMag" , "miminal magnitude for a job" , 'h', "Param").value();
     double JOB_MAXMAG = parser.createParam((double)(0.95), "jobMaxMag" , "maxima magnitude for a job" , 'H', "Param").value();
-
+    Profession::JOB_SELECTION_TYPE = parser.createParam((unsigned int)(0), "jobSelectType" , "Which type to use to select job", 'z', "Param").value();
+    Profession::JOB_EVAL_DISCRETE = parser.createParam((unsigned int)(1), "jobEvalDiscrete" , "What type of metric to use between discret and continue with mag", 'Z', "Param").value();
     //EVOLUTION ENGINE PARAMETERS
     unsigned int POPSIZE = parser.createParam((unsigned int)(100), "popSize", "Population size", 'P', "Evolution Engine").value();
     double PMUT = parser.createParam((double)(0.5), "pMut", "mutation rate", 'x', "Evolution Engine").value();
@@ -309,7 +311,16 @@ int main(int argc, char* argv[]){
 
     if(localDisplay)
     {
+      std::cout << pb << std::endl;
+      std::cout << job << std::endl;
+
+      std::vector<Competency> compHL = CompetencyDistribution::upToHLevel(pb,2);
+      std::cout << "HL GTTING" << std::endl;
+      for(int i = 0 ; i < compHL.size(); i++)
+        std::cout << compHL[i] << std::endl;
+
       std::cout << "===== CURRENT POP =====" << std::endl;
+      // pop.printOn(std::cout);
       pop.best_element().printOn(std::cout);
       std::cout << " fitness:" << pop.best_element().fitness() << std::endl;
       std::cout << "Stats & metrics: \n" << std::endl;

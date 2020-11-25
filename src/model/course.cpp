@@ -53,6 +53,15 @@ Course::Course(int id, int ects, std::string name)
 
 // === GETTER
     //cf. course.h
+
+    const int Course::lastTimeFrame() const
+    {
+        int max  = this->_temporalAvailability[0];
+        for(int i = 1; i < this->_temporalAvailability.size(); i++)
+            if(max < this->_temporalAvailability[i])
+                max = this->_temporalAvailability[i];
+        return max;
+    }
 // === END GETTER
 
 // === MUTATOR

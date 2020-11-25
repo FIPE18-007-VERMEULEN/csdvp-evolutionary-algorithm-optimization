@@ -8,6 +8,7 @@
 
 #include "problem.h"
 #include "tools.h"
+#include "competencyDistribution.h"
 
 #include "exception/csdvpOverlapingBoundaryException.h"
 #include "exception/notImplementedException.h"
@@ -340,6 +341,13 @@ int CSDVP::CSDVP_COUNTER = 0;
             pb.addCompetencyToCatalogue(c);
             assert(c == pb.competencyCatalogue().at(pb.competencyCatalogue().size()-1));
         }
+
+        /* Assigning Hierachy Level (HL) for each comp
+         * HL is used to improve the average quality of the course catalogue compared to random
+         */
+        CompetencyDistribution distr = CompetencyDistribution();
+        distr.linearDistribution(pb);
+
         /* COMPETENCY ASSIGNATION FOR TEACHED
          * For each course c, we roll x, the nb of competencies associated to c.
          * To assign a competency to c exhaustively, we create a tmp competency vector v, where the competencies are randomly sorted, then create a queue from it.
@@ -350,7 +358,17 @@ int CSDVP::CSDVP_COUNTER = 0;
         std::queue<Competency> queue;
         for(unsigned int i = 0 ; i < randomVec.size(); i++)
             queue.push(randomVec.at(i));
-        
+        /*
+         * ADDENDUM:
+         * We use the HierarchyLevel to condition the assignation of competency.
+         * A course at level i (defined by its biggest TF) cannot have a comp with HL > i*HLrange / NbTF 
+         */
+        int lastTF;
+        int nbTF = pb.timeFrames().size();
+        int hLevelR = CompetencyDistribution::HLevelRange(pb);
+        int maxLevel; //used to identify which HL are authorized;
+        std::vector<Competency> HLComp;
+
         int x;
         Competency tmpComp;
         std::pair<Competency, double> teachedComp;
@@ -358,10 +376,17 @@ int CSDVP::CSDVP_COUNTER = 0;
         for(unsigned int i = 0; i < pb.coursesCatalogue().size(); i++)
         {
             x = _randomizeIn(pb.cfg_competencyByCourseMin(), pb.cfg_competencyByCourseMax());
-            for(int j = 0; j < x; j++)
+            lastTF = pb.coursesCatalogue().at(i).lastTimeFrame();
+            maxLevel = lastTF * hLevelR / nbTF;
+            HLComp = CompetencyDistribution::upToHLevel(pb, maxLevel);
+            std::random_shuffle(HLComp.begin(), HLComp.end());
+
+            std::cout << "SIZE OF HLCOMP : " << HLComp.size() << std::endl;
+
+            for(int j = 0; j < x && HLComp.size() > 0 && j < HLComp.size(); j++)
             {
-                tmpComp = queue.front();
-                queue.pop();queue.push(tmpComp);
+                // tmpComp = queue.front();
+                tmpComp = HLComp.at(j);
                 magVal = pb.cfg_magnitudeMin().value() + ( (double)rand()/RAND_MAX) * ( pb.cfg_magnitudeMax().value() - pb.cfg_magnitudeMin().value()) ;
                 Competency cpt = Competency::build(magVal,tmpComp.c_name());
                 teachedComp = std::pair<Competency,double>(cpt, 1.0);
@@ -372,6 +397,24 @@ int CSDVP::CSDVP_COUNTER = 0;
         /* COMPETENCY ASSIGNATION FOR PREREQ
          * IDEM AS ABOVE
          */
+        /*
+         * ADDENDUM :
+         * Specific behavior for cour level 0: no prereq
+         * Prereq for level i only draw from HL-1
+         * 
+         * WARNING :
+         * Such a behavior induces a strong hypothesis on how courses draw their comp!
+         * 
+         */
+        /*
+         * NEXT TO DO :
+         * Array of boolean : true comp assignée ; évolution un tableau de -1 si pas assigné et [0;1] pour les magn des comp à chaque case puis assigné decay sur l'ensemble du tab -> utile pour borner les mag max du job
+         * POur prereq juste prendre les comp a true
+         * +
+         * Vecteur pour le HLevel en entree en % [20,30,10,10,30] (x cases) a passer en dur
+         * +
+         * Comp prereq metric comme job metric continue
+         */
         std::random_shuffle(randomVec.begin(), randomVec.end());
         queue = std::queue<Competency>();
         for(unsigned int i = 0 ; i < randomVec.size(); i++)
@@ -380,10 +423,19 @@ int CSDVP::CSDVP_COUNTER = 0;
         for(unsigned int i = 0; i < pb.coursesCatalogue().size(); i++)
         {
             x = _randomizeIn(pb.cfg_prerequisiteByCourseMin(), pb.cfg_prerequisiteByCourseMax());
-            for(int j = 0; j < x; j++)
+            lastTF = pb.coursesCatalogue().at(i).lastTimeFrame();
+            maxLevel = lastTF * hLevelR / nbTF;
+            HLComp = CompetencyDistribution::upToHLevel(pb, maxLevel-1);
+            std::random_shuffle(HLComp.begin(), HLComp.end());
+
+            if(x == 0)
+                std::cout << "X is 0! for " << pb.coursesCatalogue().at(i).name() << std::endl;
+            if(HLComp.size() == 0)
+                std::cout << "HLComp size is 0! for " << pb.coursesCatalogue().at(i).name() << std::endl;
+
+            for(int j = 0; j < x && HLComp.size() > 0 && j < HLComp.size(); j++)
             {
-                tmpComp = queue.front();
-                queue.pop();
+                tmpComp = HLComp.at(j);
                 //we change mag value for prereq
                 magVal = pb.cfg_magnitudeMin().value() + ( (double)rand()/RAND_MAX) * ( pb.cfg_magnitudeMax().value() - pb.cfg_magnitudeMin().value()) ;
                 Competency cpt = Competency::build(magVal,tmpComp.c_name());
@@ -400,12 +452,23 @@ int CSDVP::CSDVP_COUNTER = 0;
 // === OPERATOR
     std::ostream & operator<<(std::ostream & Stream, const CSDVP & c)
     {
-        std::string s = "--------------\n| Problem n°"+std::to_string(c.id())+"|\n---------------\n| Configuration:";
-        s+= "\n\tseed: "+std::to_string(c.seed())+"\n\tNb comp: "+std::to_string(c.cfg_quantityCompetencies())+"\n\tNb courses: "+std::to_string(c.cfg_quantityCourses())+"\n\tMin TimeF: "+std::to_string(c.cfg_minimalTimeFrame())+"\n\tMax TimeF: "+std::to_string(c.cfg_maximalTimeFrame());
-        s+= "\n\tECTS Min: "+std::to_string(c.cfg_ectsMin())+"\n\tECTS Max: "+std::to_string(c.cfg_ectsMax())+"\n\tCourse by TF min: "+std::to_string(c.cfg_courseByTFMin())+"\n\tCourse by TF max: "+std::to_string(c.cfg_courseByTFMax());
-        s+="\n\tMagnitude min: "+std::to_string(c.cfg_magnitudeMin().value())+"\n\tMagnitude max: "+std::to_string(c.cfg_magnitudeMax().value());
+        std::string s = "--------------\n| Problem n°"+std::to_string(c.id())+"|\n--------------\n| Configuration:";
+        s+= "\n|\tseed: "+std::to_string(c.seed())+"\n|\tNb comp: "+std::to_string(c.cfg_quantityCompetencies())+"\n|\tNb courses: "+std::to_string(c.cfg_quantityCourses())+"\n|\tMin TimeF: "+std::to_string(c.cfg_minimalTimeFrame())+"\n|\tMax TimeF: "+std::to_string(c.cfg_maximalTimeFrame());
+        s+= "\n|\tECTS Min: "+std::to_string(c.cfg_ectsMin())+"\n|\tECTS Max: "+std::to_string(c.cfg_ectsMax())+"\n|\tCourse by TF min: "+std::to_string(c.cfg_courseByTFMin())+"\n|\tCourse by TF max: "+std::to_string(c.cfg_courseByTFMax());
+        s+="\n|\tMagnitude min: "+std::to_string(c.cfg_magnitudeMin().value())+"\n|\tMagnitude max: "+std::to_string(c.cfg_magnitudeMax().value());
+        s+= "\n| Detail:\n";
 
         Stream << s;
+
+        std::vector<Course> courses = c.coursesCatalogue();
+        for(int i = 0; i < courses.size(); i++)
+            Stream << courses[i] << "\n";
+
+        Stream << "===Competencies:";
+        std::vector<Competency> comp = c.competencyCatalogue();
+        for(int i = 0; i < comp.size(); i++)
+            Stream << comp[i] << "\n";
+       
         return Stream;
     }
 // === END OPERATOR

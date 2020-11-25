@@ -72,16 +72,26 @@ std::pair<bool, double> ConstraintsProfession::integrityCheck(Cursus indiv)
     //Now that we have evolve all the tmp competency, we compate their mag to the requirement. We count how many is not met to define the metric
 
     int score = 0;
+    double magDiff = 0; // addendum from HL
     for(int i = 0; i < this->_job.prerequisites().size(); i++)
     {
         if(compToAnswer.at(i).magnitude().value() < this->_job.prerequisites().at(i).c_magnitude().value())
+        {
             score++;
+            magDiff += ( this->_job.prerequisites().at(i).c_magnitude().value() - compToAnswer.at(i).magnitude().value() ) / this->_job.prerequisites().at(i).c_magnitude().value() ;
+        }
+        
     }
 
     //std::cout << "Score: " << std::to_string(score) << std::endl;
     //std::cout << "Size: " << std::to_string(compToAnswer.size()) << std::endl;
     bool res = score == 0;
 
-
-    return std::pair<bool, double>(res, 1 - ( (double)score / (double)compToAnswer.size()));
+    switch (Profession::JOB_EVAL_DISCRETE) //whether we use discrete or continue metrics
+    {
+    case 0:
+        return std::pair<bool, double>(res, 1 - ( magDiff / (double)compToAnswer.size() ) );    
+    default:
+        return std::pair<bool, double>(res, 1 - ( (double)score / (double)compToAnswer.size()));
+    }
 }
