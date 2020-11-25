@@ -2,12 +2,15 @@
 
 #include <string>
 #include <utility>
+#include <tuple>
 
 #include "model/course.h"
 #include "model/competency.h"
 #include "model/tools.h"
 
 #include "model/exception/competencyEvolvingException.h"
+
+int ConstraintsPrerequisites::DISCRETE_METRIC = 1;
 
 std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
 {
@@ -17,12 +20,17 @@ std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
     int score = 0;
     int nbPrereq = 0;
 
+    int magDivisor = 0;
+    double magDiff = 0;
+
     //Each comp availble at a specific TF. Decay can be applied between i and i+1
     std::vector<std::vector<Competency>> compByTF(this->_pb.timeFrames().size());
 
     Course currentCourse;
     Competency currentCompetency;
-    std::pair<int, int> prereqFound; prereqFound.first = 0; prereqFound.second = 0;
+    std::tuple<int, int, double, int> prereqFound;
+        std::get<0>(prereqFound) = 0; std::get<1>(prereqFound) = 0;
+        std::get<2>(prereqFound) = 0; std::get<3>(prereqFound) = 0;
     std::pair<int, Competency> alreadyExists;
 
     bool changedTF = false;
@@ -67,8 +75,10 @@ std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
         {
             prereqFound = this->_prereqsInPreviousTF(std::vector<Competency>(0), currentCourse.prerequisites());
         }
-        notFound += prereqFound.first;
-        notRespected += prereqFound.second;
+        notFound        += std::get<0>(prereqFound);
+        notRespected    += std::get<1>(prereqFound);
+        magDiff         += std::get<2>(prereqFound);
+        magDivisor      += std::get<3>(prereqFound);
 
 
         // Handling teached comp
@@ -120,31 +130,42 @@ std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
     std::cout << "Not Respected: " << std::to_string(notRespected) << std::endl;
     std::cout << "Nb Prereq: " << std::to_string(nbPrereq) << std::endl;
     */
-    double metric = 0;
-    if(nbPrereq > 0)
+    switch (ConstraintsPrerequisites::DISCRETE_METRIC)
     {
-        metric = 1.0 - ( (((double)2 * (double)notFound) + (double)notRespected ) / (2 * (double) nbPrereq) );
+    case 0/* constant-expression */:
+        std::cout << "MagDiff: " << magDiff << " for " << (double)magDivisor << " prereqs. (1 - " << ( magDiff / (double)magDivisor ) << std::endl;
+        assert(magDivisor != 0);
+        return std::pair<bool, double>(isOK, 1 - ( magDiff / (double)magDivisor ) );    
+    default:
+        double metric = 0;
+        if(nbPrereq > 0)
+        {
+            metric = 1.0 - ( (((double)2 * (double)notFound) + (double)notRespected ) / (2 * (double) nbPrereq) );
+        }
+        else //can't divide by 0
+        {
+            if(isOK)
+                metric = 1;
+            else
+                metric = 0;
+        }
+        //std::cout << "Metric: " << std::to_string(metric) << std::endl;
+        //std::cout << "====================" << std::endl;
+        return std::pair<bool, double>(isOK, metric);
     }
-    else //can't divide by 0
-    {
-        if(isOK)
-            metric = 1;
-        else
-            metric = 0;
-    }
-    //std::cout << "Metric: " << std::to_string(metric) << std::endl;
-    //std::cout << "====================" << std::endl;
-    return std::pair<bool, double>(isOK, metric);
 }
 
-std::pair<int, int> ConstraintsPrerequisites::_prereqsInPreviousTF(std::vector<Competency> cInTF, std::vector<Competency> prereqs)
+std::tuple<int, int, double, int> ConstraintsPrerequisites::_prereqsInPreviousTF(std::vector<Competency> cInTF, std::vector<Competency> prereqs)
 {
     int notFound = 0;
     int notRespected = 0;
+    int nbFound = 0;
     bool found = false;
+    double magDiff = 0;
+    int divisor = 0;
 
     if(cInTF.size() == 0) //if empty, we'll find nothing
-        return std::pair<int, int>(prereqs.size(), 0);
+        return std::tuple<int, int, double, int>(prereqs.size(), 0, magDiff, divisor);
 
     for(int i = 0; i < prereqs.size(); i++)
     {
@@ -157,15 +178,22 @@ std::pair<int, int> ConstraintsPrerequisites::_prereqsInPreviousTF(std::vector<C
 
             if(prereqs.at(i)==cInTF.at(j))
             {
+                nbFound++;
                 found = true;
                 if(prereqs.at(i).c_magnitude().value() > cInTF.at(j).decay())
-                 notRespected++;
+                {
+                    notRespected++;
+                    magDiff += ( prereqs.at(i).c_magnitude().value() - cInTF.at(j).decay() ) / prereqs.at(i).c_magnitude().value();
+                    std::cout << "\tMag diff: " << prereqs.at(i).c_magnitude().value() - cInTF.at(j).decay()  << "\t Ratio:" << magDiff << std::endl;
+                }
             }
         }
 
         if(!found)
             notFound++;
     }
+
+    divisor = (notFound + nbFound);
     //std::cout << "NF: " << std::to_string(notFound) << " | NR: " << std::to_string(notRespected) << std::endl;
-    return std::pair<int, int>(notFound, notRespected);
+    return std::tuple<int, int, double, int>(notFound, notRespected, magDiff, divisor);
 }

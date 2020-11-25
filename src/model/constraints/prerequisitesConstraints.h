@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <utility>
+#include <tuple>
 
 #include <eo>
 
@@ -25,11 +26,15 @@ class ConstraintsPrerequisites
 
         /**
          * Checks the prerequisites prereqs in the competencies cInTF (generally, the competencies from the previous TF).
-         * It returns a std::pair, where the first element indicates how many prerequisites HAS NOT BEEN FOUND.
+         * It returns a std::tuple, where the first element indicates how many prerequisites HAS NOT BEEN FOUND.
          * The second elements indicates how many prerequisites has not enought mastery (BUT EXISTS in cInTF!)
+         * The third element is the continous metric calculated accordingly the difference of mag between cours prereqs and comp mag
+         * The fourth element is to be used to divide the third one (how many elements contributed to establish the mag diff) 
          */ 
-        std::pair<int,int> _prereqsInPreviousTF(std::vector<Competency> cInTF, std::vector<Competency> prereqs);
+        std::tuple<int,int, double, int> _prereqsInPreviousTF(std::vector<Competency> cInTF, std::vector<Competency> prereqs);
     public:
+        static int DISCRETE_METRIC;
+
         ConstraintsPrerequisites(const CSDVP & csdvp, const Profession & job)
             : _pb(csdvp), _job(job) {}
         

@@ -49,7 +49,6 @@ class Profession
 
     public:
         static unsigned int JOB_SELECTION_TYPE;
-        static unsigned int JOB_EVAL_DISCRETE;
 
         enum GenerationType
         {

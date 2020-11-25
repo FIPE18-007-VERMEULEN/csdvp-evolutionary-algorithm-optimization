@@ -9,6 +9,8 @@
 
 #include "model/exception/competencyEvolvingException.h"
 
+int ConstraintsProfession::DISCRETE_METRIC = 1;
+
 std::pair<bool, double> ConstraintsProfession::integrityCheck(Cursus indiv)
 {
     std::vector<Competency> compToAnswer;
@@ -87,7 +89,7 @@ std::pair<bool, double> ConstraintsProfession::integrityCheck(Cursus indiv)
     //std::cout << "Size: " << std::to_string(compToAnswer.size()) << std::endl;
     bool res = score == 0;
 
-    switch (Profession::JOB_EVAL_DISCRETE) //whether we use discrete or continue metrics
+    switch (ConstraintsProfession::DISCRETE_METRIC) //whether we use discrete or continue metrics
     {
     case 0:
         return std::pair<bool, double>(res, 1 - ( magDiff / (double)compToAnswer.size() ) );    

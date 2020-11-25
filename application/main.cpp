@@ -70,6 +70,9 @@ int main(int argc, char* argv[]){
     CursusEval::WEIGHT_PREREQ = parser.createParam((double)(1.0), "wPrereq", "Weight of prerequisites in the fitness value", 'W', "Param").value();
     DecayEngine::IS_DECAY_DEACTIVATED = parser.createParam((int)(0), "decayDeactivated", "Wether or not the decay is deactivated", 'D', "Param").value();
 
+    ConstraintsProfession::DISCRETE_METRIC = parser.createParam((unsigned int)(1), "jobEvalDiscrete" , "What type of metric to use between discret and continue with mag", 'k', "Param").value();
+    ConstraintsPrerequisites::DISCRETE_METRIC = parser.createParam((unsigned int)(1), "prqEvalDiscrete" , "What type of metric to use between discret and continue with mag", 'K', "Param").value();
+
     //PROFESSION PARAMETERS
     unsigned int JOB_SEED = parser.createParam((unsigned int)(7777), "jobSeed", "Seed used for the Profession", 'g', "Param").value();
     unsigned int JOB_MINPRE = parser.createParam((unsigned int)(2), "jobMinPre" , "minimum competency prerequisite by a job", 'j', "Param").value();
@@ -77,7 +80,7 @@ int main(int argc, char* argv[]){
     double JOB_MINMAG = parser.createParam((double)(0.5), "jobMinMag" , "miminal magnitude for a job" , 'h', "Param").value();
     double JOB_MAXMAG = parser.createParam((double)(0.95), "jobMaxMag" , "maxima magnitude for a job" , 'H', "Param").value();
     Profession::JOB_SELECTION_TYPE = parser.createParam((unsigned int)(0), "jobSelectType" , "Which type to use to select job", 'z', "Param").value();
-    Profession::JOB_EVAL_DISCRETE = parser.createParam((unsigned int)(1), "jobEvalDiscrete" , "What type of metric to use between discret and continue with mag", 'Z', "Param").value();
+    
     //EVOLUTION ENGINE PARAMETERS
     unsigned int POPSIZE = parser.createParam((unsigned int)(100), "popSize", "Population size", 'P', "Evolution Engine").value();
     double PMUT = parser.createParam((double)(0.5), "pMut", "mutation rate", 'x', "Evolution Engine").value();

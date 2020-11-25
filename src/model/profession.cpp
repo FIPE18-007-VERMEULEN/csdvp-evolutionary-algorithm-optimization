@@ -12,7 +12,6 @@
 
 int Profession::PROFESSION_COUNTER = 0;
 unsigned int Profession::JOB_SELECTION_TYPE = 0;
-unsigned int Profession::JOB_EVAL_DISCRETE = 1;
 
 // === FACTORY
     // No factory needed
