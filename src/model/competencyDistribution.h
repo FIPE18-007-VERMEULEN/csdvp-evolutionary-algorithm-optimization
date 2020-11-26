@@ -19,12 +19,21 @@
 class CompetencyDistribution
 {
     public:
+        static std::vector<int> HLEVEL;
+
         void linearDistribution(CSDVP &);
 
         // === STATIC
         static int HLevelRange(CSDVP &); //return the range max (starting from 0) of the HL
         static std::vector<Competency> getHLevel(CSDVP &, int); // returns all the competency of a given HL
         static std::vector<Competency> upToHLevel(CSDVP &, int); // retrieves all the comp comprised between [0;int] (and NOT [0;int[)
+        /*
+         * sanitizeHLEVEL performs two task:
+         * * it verifies that the sum of all HLEVEL is equal to 100
+         * * it resize the HLEVEL array, eliminating all unasigned value
+         */
+        static void sanitizeHLEVEL();
+        static void displayHLevel();
 };
 
 

@@ -69,10 +69,19 @@ int main(int argc, char* argv[]){
     CursusEval::WEIGHT_JOB = parser.createParam((double)(1.0), "wJob", "Weight of profession in the fitness value", 'w', "Param").value();
     CursusEval::WEIGHT_PREREQ = parser.createParam((double)(1.0), "wPrereq", "Weight of prerequisites in the fitness value", 'W', "Param").value();
     DecayEngine::IS_DECAY_DEACTIVATED = parser.createParam((int)(0), "decayDeactivated", "Wether or not the decay is deactivated", 'D', "Param").value();
-
     ConstraintsProfession::DISCRETE_METRIC = parser.createParam((unsigned int)(1), "jobEvalDiscrete" , "What type of metric to use between discret and continue with mag", 'k', "Param").value();
     ConstraintsPrerequisites::DISCRETE_METRIC = parser.createParam((unsigned int)(1), "prqEvalDiscrete" , "What type of metric to use between discret and continue with mag constraints", 'K', "Param").value();
     ConstraintsPrerequisites::INTEGRITY_CHECK = parser.createParam((unsigned int)(1), "prqCheckFunc" , "Dev. option: switching between prereqCheck func 1 and 2", 'O', "Param").value();
+    CompetencyDistribution::HLEVEL[0] = parser.createParam((int)(100), "hLevel0", "Comp Percentage in the HLevel 0", '0', "Param").value();
+    CompetencyDistribution::HLEVEL[1] = parser.createParam((int)(-1), "hLevel1", "Comp Percentage in the HLevel 1", '1', "Param").value();
+    CompetencyDistribution::HLEVEL[2] = parser.createParam((int)(-1), "hLevel2", "Comp Percentage in the HLevel 2", '2', "Param").value();
+    CompetencyDistribution::HLEVEL[3] = parser.createParam((int)(-1), "hLevel3", "Comp Percentage in the HLevel 3", '3', "Param").value();
+    CompetencyDistribution::HLEVEL[4] = parser.createParam((int)(-1), "hLevel4", "Comp Percentage in the HLevel 4", '4', "Param").value();
+    CompetencyDistribution::HLEVEL[5] = parser.createParam((int)(-1), "hLevel5", "Comp Percentage in the HLevel 5", '5', "Param").value();
+    CompetencyDistribution::HLEVEL[6] = parser.createParam((int)(-1), "hLevel6", "Comp Percentage in the HLevel 6", '6', "Param").value();
+    CompetencyDistribution::HLEVEL[7] = parser.createParam((int)(-1), "hLevel7", "Comp Percentage in the HLevel 7", '7', "Param").value();
+    CompetencyDistribution::HLEVEL[8] = parser.createParam((int)(-1), "hLevel8", "Comp Percentage in the HLevel 8", '8', "Param").value();
+    CompetencyDistribution::HLEVEL[9] = parser.createParam((int)(-1), "hLevel9", "Comp Percentage in the HLevel 9", '9', "Param").value();
 
     //PROFESSION PARAMETERS
     unsigned int JOB_SEED = parser.createParam((unsigned int)(7777), "jobSeed", "Seed used for the Profession", 'g', "Param").value();
@@ -91,6 +100,7 @@ int main(int argc, char* argv[]){
     RATIO_RANDOM_VS_BEST = parser.createParam((unsigned int)(75), "ratioBest", "Ratio between full random and best while prereq check fails in mutation",'B',"Param").value();
 
     // ===== PB CONFIG ZONE =====
+    CompetencyDistribution::sanitizeHLEVEL(); //Mandatory for HLevel
     CSDVP pb;
     Profession job;
     pb.set_cfg_quantityCourses(NBCOURSES);

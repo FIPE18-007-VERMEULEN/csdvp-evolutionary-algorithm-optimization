@@ -1,6 +1,9 @@
 #include <iostream>
+#include <assert.h>
 
 #include "competencyDistribution.h"
+
+std::vector<int> CompetencyDistribution::HLEVEL(10);
 
 void CompetencyDistribution::linearDistribution(CSDVP &pb)
 {
@@ -66,4 +69,33 @@ void CompetencyDistribution::linearDistribution(CSDVP &pb)
         }
 
         return res;
+    }
+
+    void CompetencyDistribution::sanitizeHLEVEL()
+    {
+        int sum = 0;
+        std::vector<int> tmp;
+
+        for(int i = 0; i < CompetencyDistribution::HLEVEL.size(); i++)
+        {
+            if(CompetencyDistribution::HLEVEL.at(i) >= 0) //ignoring all negative value
+            {
+                sum += CompetencyDistribution::HLEVEL.at(i);
+                tmp.push_back(CompetencyDistribution::HLEVEL.at(i));
+            }
+        }
+
+        assert(sum==100);
+
+        CompetencyDistribution::HLEVEL = tmp;
+    }
+
+    void CompetencyDistribution::displayHLevel()
+    {
+        std::cout << "HLEVEL:" << std::endl << "[";
+        for(int i = 0 ; i < CompetencyDistribution::HLEVEL.size()-1; i++)
+        {
+            std::cout << CompetencyDistribution::HLEVEL.at(i) << "|";
+        }
+        std::cout << CompetencyDistribution::HLEVEL.at(CompetencyDistribution::HLEVEL.size()-1) << "]" << std::endl << std::endl;
     }
