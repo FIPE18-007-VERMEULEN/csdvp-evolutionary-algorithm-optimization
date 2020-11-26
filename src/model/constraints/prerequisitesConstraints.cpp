@@ -200,6 +200,7 @@ std::tuple<int, int, double, int> ConstraintsPrerequisites::_prereqsInPreviousTF
     return std::tuple<int, int, double, int>(notFound, notRespected, magDiff, divisor);
 }
 
+// @todo repercuter les affections du decay sur tt les n+1
 std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
 {
     std::pair<bool, double> res;
@@ -257,28 +258,46 @@ std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
     // === apply decay
     std::vector<double> tmpDiff;
     std::vector<int> decayClock(this->_pb.competencyCatalogue().size());
-    double decayVal = 0; double delta = 0;
+    double decayVal = 0; double delta = 0; double decayed = 0;
+    int decaynb = 0;
 
     for(int i = 1; i < compDistribyTF.size(); i++) //starts to 1 because 0 does not have decay
     {
         for(int j = 0; j < compDistribyTF.at(0).size(); j++) //0 because we do not care which, they all have the same size == this->_pb.competencyCatalogue().size()
         {
-            decayVal = 0; delta = 0;
+            decayVal = 0; delta = 0; decayed = 0;
 
             tmpDiff.push_back(compDistribyTF.at(i).at(j) - compDistribyTF.at(i-1).at(j));
 
-            if(tmpDiff.at(j) == 0) //if 0->comp stagnation therefore decay
+            if(compDistribyTF.at(i).at(j) - compDistribyTF.at(i-1).at(j) == 0) //if 0->comp stagnation therefore decay
             {
                 decayClock.at(j)++;
             }
             else
             {
                 if(decayClock.at(j)>0)
-                    decayVal = DecayEngine::defaultDecay(decayClock.at(j)-1);
+                {
+                    decayVal = DecayEngine::defaultDecay(decayClock.at(j));
+                    decaynb++;
+                }
                 // storing the delta of the mag in i-1 ; i
                 delta = compDistribyTF.at(i).at(j) - compDistribyTF.at(i-1).at(j);
+                
+                decayed = compDistribyTF.at(i-1).at(j) - decayVal;
+                
+                if(decayed < 0)
+                    decayed = 0;
+                
+                compDistribyTF.at(i).at(j) = delta + decayed;
 
-                compDistribyTF.at(i).at(j) = delta + ( compDistribyTF.at(i-1).at(j) - decayVal );
+                // affecting the decay to this comp in upper TFs
+                if(decayed > 0)
+                {
+                    for(int k = i+1 ; k < compDistribyTF.size(); k++)
+                    {
+                        compDistribyTF.at(k).at(j) -= decayVal;
+                    }
+                }
 
                 decayClock.at(j) = 0;
             }
@@ -295,8 +314,6 @@ std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
 
         assert(indiv.at(i) < this->_pb.coursesCatalogue().size());
         currentCourse = this->_pb.coursesCatalogue().at(indiv.at(i));
-
-        // std::cout << currentCourse << std::endl;
 
         for(int j = 0; j < currentCourse.prerequisites().size(); j++)
         {
