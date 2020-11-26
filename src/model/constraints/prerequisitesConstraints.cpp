@@ -13,7 +13,8 @@
 int ConstraintsPrerequisites::DISCRETE_METRIC = 1;
 int ConstraintsPrerequisites::INTEGRITY_CHECK = 1;
 
-std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
+// @deprecated
+std::pair<bool, double> ConstraintsPrerequisites::old_integrityCheck(Cursus indiv)
 {
     int currentTF = 0;
     int notFound = 0;
@@ -199,7 +200,7 @@ std::tuple<int, int, double, int> ConstraintsPrerequisites::_prereqsInPreviousTF
     return std::tuple<int, int, double, int>(notFound, notRespected, magDiff, divisor);
 }
 
-std::pair<bool, double> ConstraintsPrerequisites::integrityCheck2(Cursus indiv)
+std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
 {
     std::pair<bool, double> res;
 

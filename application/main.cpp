@@ -332,17 +332,7 @@ int main(int argc, char* argv[]){
       resECTS = ctrECTS.integrityCheck(pop.best_element());
       resRep = ctrRep.integrityCheck(pop.best_element());
       resJob = ctrJob.integrityCheck(pop.best_element());
-      
-      switch (ConstraintsPrerequisites::INTEGRITY_CHECK)
-      {
-      case 2:
-        resPrq = ctrPrq.integrityCheck2(pop.best_element());
-        break;
-      
-      default:
-        resPrq = ctrPrq.integrityCheck(pop.best_element());
-        break;
-      }
+      resPrq = ctrPrq.integrityCheck(pop.best_element());
       
       std::cout << "ECTS: ";
       if(resECTS.first)
@@ -432,16 +422,7 @@ int main(int argc, char* argv[]){
       resECTS = ctrECTS.integrityCheck(pop.best_element());
       resRep = ctrRep.integrityCheck(pop.best_element());
       resJob = ctrJob.integrityCheck(pop.best_element());
-      switch (ConstraintsPrerequisites::INTEGRITY_CHECK)
-      {
-      case 2:
-        resPrq = ctrPrq.integrityCheck2(pop.best_element());
-        break;
-      
-      default:
-        resPrq = ctrPrq.integrityCheck(pop.best_element());
-        break;
-      }
+      resPrq = ctrPrq.integrityCheck(pop.best_element());
       
       std::cout << "ECTS: ";
       if(resECTS.first)

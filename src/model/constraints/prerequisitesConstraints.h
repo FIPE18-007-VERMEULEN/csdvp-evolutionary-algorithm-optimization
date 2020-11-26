@@ -41,14 +41,15 @@ class ConstraintsPrerequisites
         
         /** Integrity check is used to investigate wheteher or not one indiv respects the constraints represented by THIS.
          * Returns a std::pair. First is a boolean set to true when the indiv passes the test and therefore is compilant with the constraint, false otherwise. Second is the associated metric, mostly usable during fitness calcul.
+         * @deprecated
          * @todo Decay competency magnitude
          */
-        std::pair<bool, double> integrityCheck(Cursus indiv);
+        std::pair<bool, double> old_integrityCheck(Cursus indiv);
 
         /**
          * 2nd version of integrity check. Supposed to be more reliable and faster
          */
-        std::pair<bool, double> integrityCheck2(Cursus indiv);
+        std::pair<bool, double> integrityCheck(Cursus indiv);
 };
 
 #endif // SRC_MODEL_CONSTRAINTS_PREREQUISITES_CONSTRAINTS_H_
