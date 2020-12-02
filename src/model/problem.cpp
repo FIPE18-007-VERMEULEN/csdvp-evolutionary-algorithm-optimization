@@ -365,7 +365,8 @@ int CSDVP::CSDVP_COUNTER = 0;
          * HL is used to improve the average quality of the course catalogue compared to random
          */
         CompetencyDistribution distr = CompetencyDistribution();
-        distr.linearDistribution(pb);
+        //distr.linearDistribution(pb);
+        distr.distribute(pb);
 
         /* COMPETENCY ASSIGNATION FOR TEACHED
          * For each course c, we roll x, the nb of competencies associated to c.
@@ -499,7 +500,11 @@ void const CSDVP::displayDistribution(){
     std::cout << "\n\t# of above 0.5: " << std::get<1>(stats);
     std::cout << "\n\tDistrib mean: " << std::get<2>(stats);
     std::cout << "\n\tDistrib median: " << std::get<3>(stats) << std::endl;
-    std::cout << "\n\tUnassigned in HL#" << -1 << std::endl;
+
+    for(int i = 0; i < CompetencyDistribution::HLEVEL.size(); i++)
+    {
+        std::cout << "\tAssigned in HL#" << i <<": " << CompetencyDistribution::compsAtHLevel(*this, i).size() << std::endl;
+    }
 
     std::cout << "Distrib:" << std::endl;
     std::cout << "[";

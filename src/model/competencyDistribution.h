@@ -18,10 +18,17 @@
  */
 class CompetencyDistribution
 {
+    private:
+        static bool hlevelSanitized;
+
     public:
         static std::vector<int> HLEVEL;
 
         void linearDistribution(CSDVP &);
+        /**
+         * distribute realises the competency distribution according to the HLEVEL
+         */ 
+        void distribute(CSDVP &);
 
         // === STATIC
         static int HLevelRange(CSDVP &); //return the range max (starting from 0) of the HL
@@ -34,6 +41,7 @@ class CompetencyDistribution
          */
         static void sanitizeHLEVEL();
         static void displayHLevel();
+        static std::vector<Competency> compsAtHLevel(CSDVP &, int level);
 };
 
 

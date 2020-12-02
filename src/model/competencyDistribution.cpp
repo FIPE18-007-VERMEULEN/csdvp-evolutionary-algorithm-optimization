@@ -1,12 +1,57 @@
 #include <iostream>
 #include <assert.h>
+#include <algorithm>
 
 #include "competencyDistribution.h"
 
 std::vector<int> CompetencyDistribution::HLEVEL(10);
+bool CompetencyDistribution::hlevelSanitized = false;
+
+void CompetencyDistribution::distribute(CSDVP &pb)
+{
+    if(!hlevelSanitized)
+    {
+        std::cout << "WARNING! HLevel has not been progammatically sanitized; automatically doing it" << std::endl;
+        CompetencyDistribution::sanitizeHLEVEL();
+    }
+
+    std::vector<int> idxComp;
+    for(int i = 0 ; i < pb.cfg_quantityCompetencies(); i++)
+    {
+        idxComp.push_back(i);
+    }
+
+    std::random_shuffle(idxComp.begin(), idxComp.end());
+
+    int nbAffected=0;
+    
+    for(int i = 0; i < CompetencyDistribution::HLEVEL.size(); i++)
+    {
+        for(int j = 0; j < idxComp.size() &&  (j < (CompetencyDistribution::HLEVEL.at(i) * pb.cfg_quantityCompetencies()) / 100) ; j++)
+        {
+            pb.unlocked_competenciesCatalogue().at(idxComp.at(nbAffected)).setHL(i);
+            nbAffected++;
+        }
+    }
+
+    int notAffected = pb.cfg_quantityCompetencies() - nbAffected;
+
+    if(notAffected <= 0 )
+        return;
+    
+    int hl = 0;
+    for(int i = 0; i < notAffected; i++)
+    {
+        assert(nbAffected+i <= pb.cfg_quantityCompetencies());
+        pb.unlocked_competenciesCatalogue().at(nbAffected+i).setHL(hl%CompetencyDistribution::HLEVEL.size());
+        hl++;
+    }
+}
 
 void CompetencyDistribution::linearDistribution(CSDVP &pb)
 {
+    std::cout << "Linear distribution of competency is deprecated" << std::endl;
+    assert(false);
     int interval = CompetencyDistribution::HLevelRange(pb);
     if(pb.cfg_competencyByCourseMin() != 0) //if the min borne is not 0, we add another interval for comp with no prereq
         interval++;
@@ -88,6 +133,7 @@ void CompetencyDistribution::linearDistribution(CSDVP &pb)
         assert(sum==100);
 
         CompetencyDistribution::HLEVEL = tmp;
+        CompetencyDistribution::hlevelSanitized = true;
     }
 
     void CompetencyDistribution::displayHLevel()
@@ -98,4 +144,17 @@ void CompetencyDistribution::linearDistribution(CSDVP &pb)
             std::cout << CompetencyDistribution::HLEVEL.at(i) << "|";
         }
         std::cout << CompetencyDistribution::HLEVEL.at(CompetencyDistribution::HLEVEL.size()-1) << "]" << std::endl << std::endl;
+    }
+
+    std::vector<Competency> CompetencyDistribution::compsAtHLevel(CSDVP & pb, int level)
+    {
+        std::vector<Competency> res;
+
+        for(int i = 0; i < pb.cfg_quantityCompetencies(); i++)
+        {
+            if(pb.competencyCatalogue().at(i).hLevel() == level)
+                res.push_back(pb.competencyCatalogue().at(i));
+        }
+
+        return res;
     }
