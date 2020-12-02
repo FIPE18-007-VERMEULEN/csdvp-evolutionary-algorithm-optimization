@@ -41,7 +41,6 @@ class CompetencyDistribution
          */
         static void sanitizeHLEVEL();
         static void displayHLevel();
-        static std::vector<Competency> compsAtHLevel(CSDVP &, int level);
 };
 
 

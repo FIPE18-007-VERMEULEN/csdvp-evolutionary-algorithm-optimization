@@ -503,7 +503,7 @@ void const CSDVP::displayDistribution(){
 
     for(int i = 0; i < CompetencyDistribution::HLEVEL.size(); i++)
     {
-        std::cout << "\tAssigned in HL#" << i <<": " << CompetencyDistribution::compsAtHLevel(*this, i).size() << std::endl;
+        std::cout << "\tAssigned in HL#" << i <<": " << CompetencyDistribution::getHLevel(*this, i).size() << std::endl;
     }
 
     std::cout << "Distrib:" << std::endl;

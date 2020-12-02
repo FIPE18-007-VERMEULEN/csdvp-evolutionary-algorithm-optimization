@@ -145,16 +145,3 @@ void CompetencyDistribution::linearDistribution(CSDVP &pb)
         }
         std::cout << CompetencyDistribution::HLEVEL.at(CompetencyDistribution::HLEVEL.size()-1) << "]" << std::endl << std::endl;
     }
-
-    std::vector<Competency> CompetencyDistribution::compsAtHLevel(CSDVP & pb, int level)
-    {
-        std::vector<Competency> res;
-
-        for(int i = 0; i < pb.cfg_quantityCompetencies(); i++)
-        {
-            if(pb.competencyCatalogue().at(i).hLevel() == level)
-                res.push_back(pb.competencyCatalogue().at(i));
-        }
-
-        return res;
-    }
