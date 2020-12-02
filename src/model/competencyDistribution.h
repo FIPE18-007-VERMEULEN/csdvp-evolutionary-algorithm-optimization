@@ -34,6 +34,8 @@ class CompetencyDistribution
         static int HLevelRange(CSDVP &); //return the range max (starting from 0) of the HL
         static std::vector<Competency> getHLevel(CSDVP &, int); // returns all the competency of a given HL
         static std::vector<Competency> upToHLevel(CSDVP &, int); // retrieves all the comp comprised between [0;int] (and NOT [0;int[)
+        static std::vector<Competency> unassignedAtHLevel(CSDVP &, int hlevel);
+        static std::vector<Competency> unassignedUpToHLevel(CSDVP &, int);
         /*
          * sanitizeHLEVEL performs two task:
          * * it verifies that the sum of all HLEVEL is equal to 100

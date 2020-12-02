@@ -139,7 +139,8 @@ class CSDVP
         std::vector<int> & unlocked_timeFrames(){return this->_timeFrames;}
         std::vector<Course> & unlocked_coursesCatalogue(){return this->_availableCourses;}
         std::vector<Competency> & unlocked_competenciesCatalogue(){return this->_availableCompentecies;}
-        
+        std::vector<double> & unlocked_distributedCompetencies(){return this->_distributedCompetencies;}
+
         int getQuantityCoursesToPick() const{
             if(this->_isConfig)
                 return this->_timeFrames.size() * this->_pickedCoursesByTimeFrame;

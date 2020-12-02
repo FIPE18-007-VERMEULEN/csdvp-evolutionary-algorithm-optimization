@@ -79,8 +79,9 @@ void CompetencyDistribution::linearDistribution(CSDVP &pb)
 // === STATIC
     int CompetencyDistribution::HLevelRange(CSDVP & pb)
     {
-        int interval = pb.cfg_competencyByCourseMax() - pb.cfg_competencyByCourseMin();
-        return interval;
+        assert(CompetencyDistribution::sanitizeHLEVEL);
+        // int interval = pb.cfg_competencyByCourseMax() - pb.cfg_competencyByCourseMin();
+        return CompetencyDistribution::HLEVEL.size();
     }
 
     std::vector<Competency> CompetencyDistribution::getHLevel(CSDVP & pb, int level)
@@ -111,6 +112,38 @@ void CompetencyDistribution::linearDistribution(CSDVP &pb)
             tmp = CompetencyDistribution::getHLevel(pb, start);
             for(int i = 0; i < tmp.size(); i++)
                 res.push_back(tmp[i]);
+        }
+
+        return res;
+    }
+
+    std::vector<Competency> CompetencyDistribution::unassignedUpToHLevel(CSDVP & pb, int level)
+    {
+        std::vector<Competency> res;
+        std::vector<Competency> tmp;
+
+        //assert(level < HLEVEL.size());
+
+        for(int i = 0; i <= level; i++)
+        {
+            tmp = CompetencyDistribution::unassignedAtHLevel(pb, i);
+            for(int j = 0; j < tmp.size(); j++)
+                res.push_back(tmp[j]);
+        }
+
+        return res;
+    }
+
+    std::vector<Competency> CompetencyDistribution::unassignedAtHLevel(CSDVP &pb, int hlevel)
+    {
+        assert(hlevel >= 0);
+
+        std::vector<Competency> res;
+        
+        for(int i = 0; i < pb.competencyCatalogue().size(); i++)
+        {
+            if(pb.competencyCatalogue().at(i).hLevel() == hlevel && pb.unlocked_distributedCompetencies().at(i) == -1)
+                res.push_back(pb.competencyCatalogue().at(i));
         }
 
         return res;

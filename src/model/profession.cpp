@@ -173,12 +173,12 @@ void Profession::_randomlyGenerate(Profession & job, CSDVP & pb)
 
     int i;
     std::vector<Competency> compHigherHL;
-
+    
     switch (Profession::JOB_SELECTION_TYPE)
     {
     case 1: //at least one comp in the higher HL
-        compHigherHL = CompetencyDistribution::getHLevel(pb, CompetencyDistribution::HLevelRange(pb));
-        std::cout << "compHigherHL size :" << compHigherHL.size() << std::endl;
+        compHigherHL = CompetencyDistribution::getHLevel(pb, CompetencyDistribution::HLevelRange(pb)-1);
+        // std::cout << "compHigherHL size :" << compHigherHL.size() << std::endl;
         std::random_shuffle(compHigherHL.begin(), compHigherHL.end());
         
         assert(compHigherHL.size() > 0); //if no comp retrieved in the higher hlevel (hhl), there is a pb here !
@@ -254,9 +254,11 @@ void Profession::_pickWithHLWeighting(int nbToPick, Profession & job, CSDVP & pb
     const int hLRange = CompetencyDistribution::HLevelRange(pb);
     std::vector<Competency> hlComp;
 
-    for(int i = 0; i <= hLRange ; i++)
+    for(int i = 0; i < hLRange ; i++)
     {
-        sumInterval+=i;
+        // sumInterval+=i;
+        // sumInterval = i * 2;
+        sumInterval = i * i;
         range.push_back(sumInterval);
     }
 
@@ -267,13 +269,13 @@ void Profession::_pickWithHLWeighting(int nbToPick, Profession & job, CSDVP & pb
 
         currentHL = 0;
 
-        std::cout << "sumInterval: " << sumInterval << " & x: " << x << std::endl;
+        // std::cout << "sumInterval: " << sumInterval << " & x: " << x << std::endl;
 
         while(x > range[currentHL] && currentHL < range.size())
         {
             currentHL++;
         }
-        std::cout << "I pick the prereq in the HL: " << currentHL << std::endl;
+        
         hlComp = CompetencyDistribution::getHLevel(pb, currentHL);//we get the correspond hl level
         assert(hlComp.size() > 0);
         std::random_shuffle(hlComp.begin(), hlComp.end());

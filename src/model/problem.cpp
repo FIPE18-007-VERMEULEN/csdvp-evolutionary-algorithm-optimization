@@ -398,10 +398,13 @@ int CSDVP::CSDVP_COUNTER = 0;
             x = _randomizeIn(pb.cfg_competencyByCourseMin(), pb.cfg_competencyByCourseMax());
             lastTF = pb.coursesCatalogue().at(i).lastTimeFrame();
             maxLevel = lastTF * hLevelR / nbTF;
-            HLComp = CompetencyDistribution::upToHLevel(pb, maxLevel);
+            HLComp = CompetencyDistribution::unassignedUpToHLevel(pb, maxLevel);
+            if(HLComp.size() == 0) //if there is no more HL unassigned, it doesnot matter which one we take
+                HLComp = CompetencyDistribution::upToHLevel(pb, maxLevel);
+
             std::random_shuffle(HLComp.begin(), HLComp.end());
 
-            std::cout << "SIZE OF HLCOMP : " << HLComp.size() << std::endl;
+            // std::cout << "SIZE OF HLCOMP : " << HLComp.size() << std::endl;
 
             for(int j = 0; j < x && HLComp.size() > 0 && j < HLComp.size(); j++)
             {
@@ -442,25 +445,24 @@ int CSDVP::CSDVP_COUNTER = 0;
             x = _randomizeIn(pb.cfg_prerequisiteByCourseMin(), pb.cfg_prerequisiteByCourseMax());
             lastTF = pb.coursesCatalogue().at(i).lastTimeFrame();
             maxLevel = lastTF * hLevelR / nbTF;
-            HLComp = CompetencyDistribution::upToHLevel(pb, maxLevel-1);
-            std::random_shuffle(HLComp.begin(), HLComp.end());
-
-            if(x == 0)
-                std::cout << "X is 0! for " << pb.coursesCatalogue().at(i).name() << std::endl;
-            if(HLComp.size() == 0)
-                std::cout << "HLComp size is 0! for " << pb.coursesCatalogue().at(i).name() << std::endl;
-
-            for(int j = 0; j < x && HLComp.size() > 0 && j < HLComp.size(); j++)
+            maxLevel--; // Logically, prerequisite can only be according to comp of lower HL
+            if(maxLevel > 0) // then this means we are dealing with at least a HL 1, so only HL below can serve as prereq
             {
-                tmpComp = HLComp.at(j);
-                //we change mag value for prereq
-                magVal = pb.cfg_magnitudeMin().value() + ( (double)rand()/RAND_MAX) * ( pb.cfg_magnitudeMax().value() - pb.cfg_magnitudeMin().value()) ;
-                Competency cpt = Competency::build(magVal,tmpComp.c_name());
-                pb.unlocked_coursesCatalogue().at(i).addPrerequisite(cpt);
-                queue.push(tmpComp);
+                HLComp = CompetencyDistribution::upToHLevel(pb, maxLevel);
+
+                std::random_shuffle(HLComp.begin(), HLComp.end());
+
+                for(int j = 0; j < x && HLComp.size() > 0 && j < HLComp.size(); j++)
+                {
+                    tmpComp = HLComp.at(j);
+                    //we change mag value for prereq
+                    magVal = pb.cfg_magnitudeMin().value() + ( (double)rand()/RAND_MAX) * ( pb.cfg_magnitudeMax().value() - pb.cfg_magnitudeMin().value()) ;
+                    Competency cpt = Competency::build(magVal,tmpComp.c_name());
+                    pb.unlocked_coursesCatalogue().at(i).addPrerequisite(cpt);
+                    queue.push(tmpComp);
+                }
             }
         }
-
     }
 
     void CSDVP::_sourceCourseTeachedComp(CSDVP & pb, unsigned int idx, Competency & c)
@@ -487,6 +489,7 @@ int CSDVP::CSDVP_COUNTER = 0;
         //     pb._distributedCompetencies.at(idx) = 1;
     }
     // --------- END GENERATION RELATED FUNCTIONS ---------
+
 
 // === END STATIC
 
