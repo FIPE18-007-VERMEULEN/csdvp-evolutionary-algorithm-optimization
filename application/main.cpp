@@ -464,6 +464,8 @@ int main(int argc, char* argv[]){
       std::cout << " | value: " << resPrq.second << std::endl;
 
       std::cout << "===============" << std::endl;
+
+      ctrPrq._displayDecayedArrays(pop.best_element());
     }
     
     // ================================= END RUN ZONE ===============================

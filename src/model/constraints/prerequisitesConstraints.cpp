@@ -1,5 +1,6 @@
 #include "prerequisitesConstraints.h"
 
+#include <iomanip>
 #include <string>
 #include <utility>
 #include <tuple>
@@ -244,14 +245,12 @@ std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
     // === sum for t of all t-i
     for(int i = 1; i < this->_pb.timeFrames().size() ; i++)
     {
-        for(int j = 0; j < i; j++)
+        for(int k = 0; k < this->_pb.competencyCatalogue().size() ; k++)
         {
-            for(int k = 0; k < this->_pb.competencyCatalogue().size() ; k++)
-            {
-                compDistribyTF.at(i).at(k) += compDistribyTF.at(j).at(k);
-                // if(compDistribyTF.at(i).at(k) > 1) //commented because decay
-                //     compDistribyTF.at(i).at(k) = 1;
-            }
+            compDistribyTF.at(i).at(k) += compDistribyTF.at(i-1).at(k);
+            
+            // if(compDistribyTF.at(i).at(k) > 1) //commented because decay ! warning it will make subsequent delta equal !! need to create a new tmp array
+            //     compDistribyTF.at(i).at(k) = 1;
         }
     }
 
@@ -263,25 +262,26 @@ std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
 
     for(int i = 1; i < compDistribyTF.size(); i++) //starts to 1 because 0 does not have decay
     {
-        for(int j = 0; j < compDistribyTF.at(0).size(); j++) //0 because we do not care which, they all have the same size == this->_pb.competencyCatalogue().size()
+        for(int j = 0; j < compDistribyTF.at(0).size(); j++) //cDTF[0] because we do not care which, they all have the same size == this->_pb.competencyCatalogue().size()
         {
             decayVal = 0; delta = 0; decayed = 0;
 
-            tmpDiff.push_back(compDistribyTF.at(i).at(j) - compDistribyTF.at(i-1).at(j));
+            // storing the delta of the mag in i-1 ; i
+            delta = compDistribyTF.at(i).at(j) - compDistribyTF.at(i-1).at(j);
 
-            if(compDistribyTF.at(i).at(j) - compDistribyTF.at(i-1).at(j) == 0) //if 0->comp stagnation therefore decay
+            if(delta == 0) //if 0 -->comp not mobilized here, thus stagnation therefore decay for the jth comp
             {
                 decayClock.at(j)++;
             }
             else
             {
-                if(decayClock.at(j)>0)
+                if(decayClock.at(j)>0) //if there is decay
                 {
                     decayVal = DecayEngine::defaultDecay(decayClock.at(j));
                     decaynb++;
                 }
-                // storing the delta of the mag in i-1 ; i
-                delta = compDistribyTF.at(i).at(j) - compDistribyTF.at(i-1).at(j);
+                
+                //delta = compDistribyTF.at(i).at(j) - compDistribyTF.at(i-1).at(j);
                 
                 decayed = compDistribyTF.at(i-1).at(j) - decayVal;
                 
@@ -296,6 +296,9 @@ std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
                     for(int k = i+1 ; k < compDistribyTF.size(); k++)
                     {
                         compDistribyTF.at(k).at(j) -= decayVal;
+
+                        if(compDistribyTF.at(k).at(j) < 0)
+                            compDistribyTF.at(k).at(j) = 0;
                     }
                 }
 
@@ -369,5 +372,152 @@ std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
         //std::cout << "Metric: " << std::to_string(metric) << std::endl;
         //std::cout << "====================" << std::endl;
         return std::pair<bool, double>(isOK, metric);
+    }
+}
+
+void ConstraintsPrerequisites::_displayDecayedArrays(Cursus indiv)
+{
+
+std::pair<bool, double> res;
+
+    std::vector<std::vector<double>> compDistribyTF; //each i contains an vector representing the magnitique of each comp existing, according to the path followed. [0;1] 
+
+    // === init
+    for(unsigned int i = 0; i < this->_pb.timeFrames().size(); i++)
+    {
+        std::vector<double> tmp;
+        for(unsigned int j = 0; j < this->_pb.competencyCatalogue().size(); j++)
+        {
+            tmp.push_back(0);
+        }
+        compDistribyTF.push_back(tmp);
+    }
+
+    // === fill each double vector of each tf according to comp seen
+    int currentTF = 0;
+    Course currentCourse;
+    std::vector<std::pair<Competency, double>> teachedComps;
+    unsigned int idx;
+
+    for(int i = 0; i < indiv.size(); i++)
+    {
+        currentTF = i / this->_pb.cfg_pickedCoursesByTimeFrame();
+        currentCourse = this->_pb.coursesCatalogue().at(indiv.at(i));
+        teachedComps = currentCourse.teachedCompetenciesWeighted();
+        
+        for(int j = 0; j < teachedComps.size(); j++)
+        {
+            idx = this->_pb.mapCompToPosition(teachedComps.at(j).first);
+            assert(idx >= 0);
+            compDistribyTF.at(currentTF).at(idx) += teachedComps.at(j).first.magnitude().value();
+
+            if(compDistribyTF.at(currentTF).at(idx) > 1) //can't exceed 1 in a signle TF
+                compDistribyTF.at(currentTF).at(idx) = 1;
+        }
+    }
+
+    // === Comp by TF display section
+    std::cout << "\n* Competency value by TF" << std::endl;
+    for(int i = 0 ; i < compDistribyTF.size(); i++)
+    {
+        std::cout << "TF#" << i << ": [";
+        for(int j = 0; j < compDistribyTF.at(i).size()-1; j++)
+        {
+            std::cout << std::setprecision(3) << compDistribyTF.at(i).at(j) << ";\t";
+        }
+        std::cout << compDistribyTF.at(i).at(compDistribyTF.at(i).size()-1) << "]" << std::endl;
+    }
+
+    // === sum for t of all t-i
+    for(int i = 1; i < this->_pb.timeFrames().size() ; i++)
+    {
+        // for(int j = 0; j < i; j++)
+        // {
+            for(int k = 0; k < this->_pb.competencyCatalogue().size() ; k++)
+            {
+                compDistribyTF.at(i).at(k) += compDistribyTF.at(i-1).at(k);
+                // if(compDistribyTF.at(i).at(k) > 1) //commented because decay
+                //     compDistribyTF.at(i).at(k) = 1;
+            }
+        // }
+    }
+
+    // === Summed display section
+    std::cout << "\n* Summed value by TF" << std::endl;
+    for(int i = 0 ; i < compDistribyTF.size(); i++)
+    {
+        std::cout << "TF#" << i << ": [";
+        for(int j = 0; j < compDistribyTF.at(i).size()-1; j++)
+        {
+            std::cout << std::setprecision(3) << compDistribyTF.at(i).at(j) << ";\t";
+        }
+        std::cout << compDistribyTF.at(i).at(compDistribyTF.at(i).size()-1) << "]" << std::endl;
+    }
+
+
+    // === apply decay
+    std::vector<double> tmpDiff;
+    std::vector<int> decayClock(this->_pb.competencyCatalogue().size());
+    double decayVal = 0; double delta = 0; double decayed = 0;
+    int decaynb = 0;
+
+    for(int i = 1; i < compDistribyTF.size(); i++) //starts to 1 because 0 does not have decay
+    {
+        for(int j = 0; j < compDistribyTF.at(0).size(); j++) //cDTF[0] because we do not care which, they all have the same size == this->_pb.competencyCatalogue().size()
+        {
+            decayVal = 0; delta = 0; decayed = 0;
+
+            // storing the delta of the mag in i-1 ; i
+            delta = compDistribyTF.at(i).at(j) - compDistribyTF.at(i-1).at(j);
+
+            if(delta == 0) //if 0 -->comp not mobilized here, thus stagnation therefore decay for the jth comp
+            {
+                decayClock.at(j)++;
+            }
+            else
+            {
+                if(decayClock.at(j)>0) //if there is decay
+                {
+                    decayVal = DecayEngine::defaultDecay(decayClock.at(j));
+                    decaynb++;
+                }
+                
+                //delta = compDistribyTF.at(i).at(j) - compDistribyTF.at(i-1).at(j);
+                
+                decayed = compDistribyTF.at(i-1).at(j) - decayVal;
+                
+                if(decayed < 0)
+                    decayed = 0;
+                
+                compDistribyTF.at(i).at(j) = delta + decayed;
+
+                // affecting the decay to this comp in upper TFs
+                if(decayed > 0)
+                {
+                    for(int k = i+1 ; k < compDistribyTF.size(); k++)
+                    {
+                        compDistribyTF.at(k).at(j) -= decayVal;
+
+                        if(compDistribyTF.at(k).at(j) < 0)
+                            compDistribyTF.at(k).at(j) = 0;
+                    }
+                }
+
+                decayClock.at(j) = 0;
+            }
+        }
+    }
+
+
+    //=== Decay Display Section
+    std::cout << "\n* Decayed value by TF" << std::endl;
+    for(int i = 0 ; i < compDistribyTF.size(); i++)
+    {
+        std::cout << "TF#" << i << ": [";
+        for(int j = 0; j < compDistribyTF.at(i).size()-1; j++)
+        {
+            std::cout << std::setprecision(3) << compDistribyTF.at(i).at(j) << ";\t";
+        }
+        std::cout << compDistribyTF.at(i).at(compDistribyTF.at(i).size()-1) << "]" << std::endl;
     }
 }

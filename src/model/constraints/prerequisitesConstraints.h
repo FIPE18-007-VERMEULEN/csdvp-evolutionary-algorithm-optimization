@@ -50,6 +50,12 @@ class ConstraintsPrerequisites
          * 2nd version of integrity check. Supposed to be more reliable and faster
          */
         std::pair<bool, double> integrityCheck(Cursus indiv);
+
+        /**
+         * Displayer debug purpose. Display decayed array and non decayed array
+         * This is mostly a duplicata of integrityCheck without the prerequisite check and display
+         */ 
+        void _displayDecayedArrays(Cursus indiv);
 };
 
 #endif // SRC_MODEL_CONSTRAINTS_PREREQUISITES_CONSTRAINTS_H_
