@@ -272,17 +272,14 @@ std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
             if(delta == 0) //if 0 -->comp not mobilized here, thus stagnation therefore decay for the jth comp
             {
                 decayClock.at(j)++;
-            }
-            else
-            {
+
                 if(decayClock.at(j)>0) //if there is decay
                 {
-                    decayVal = DecayEngine::defaultDecay(decayClock.at(j));
+                    //we take the diff between decay(j) and decay(j-1) since for each stagnation we instantly repercut the decay
+                    decayVal = DecayEngine::defaultDecay(decayClock.at(j)) - DecayEngine::defaultDecay(decayClock.at(j)-1);
                     decaynb++;
                 }
-                
-                //delta = compDistribyTF.at(i).at(j) - compDistribyTF.at(i-1).at(j);
-                
+
                 decayed = compDistribyTF.at(i-1).at(j) - decayVal;
                 
                 if(decayed < 0)
@@ -301,8 +298,37 @@ std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
                             compDistribyTF.at(k).at(j) = 0;
                     }
                 }
+            }
+            else
+            {
+                // if(decayClock.at(j)>0) //if there is decay
+                // {
+                //     decayVal = DecayEngine::defaultDecay(decayClock.at(j));
+                //     decaynb++;
+                // }
+                
+                // //delta = compDistribyTF.at(i).at(j) - compDistribyTF.at(i-1).at(j);
+                
+                // decayed = compDistribyTF.at(i-1).at(j) - decayVal;
+                
+                // if(decayed < 0)
+                //     decayed = 0;
+                
+                // compDistribyTF.at(i).at(j) = delta + decayed;
 
-                decayClock.at(j) = 0;
+                // // affecting the decay to this comp in upper TFs
+                // if(decayed > 0)
+                // {
+                //     for(int k = i+1 ; k < compDistribyTF.size(); k++)
+                //     {
+                //         compDistribyTF.at(k).at(j) -= decayVal;
+
+                //         if(compDistribyTF.at(k).at(j) < 0)
+                //             compDistribyTF.at(k).at(j) = 0;
+                //     }
+                // }
+
+                decayClock.at(j) = 0; //we just reset the decay counter since we found the comp at j
             }
         }
     }
@@ -473,17 +499,14 @@ std::pair<bool, double> res;
             if(delta == 0) //if 0 -->comp not mobilized here, thus stagnation therefore decay for the jth comp
             {
                 decayClock.at(j)++;
-            }
-            else
-            {
+
                 if(decayClock.at(j)>0) //if there is decay
                 {
-                    decayVal = DecayEngine::defaultDecay(decayClock.at(j));
+                    //we take the diff between decay(j) and decay(j-1) since for each stagnation we instantly repercut the decay
+                    decayVal = DecayEngine::defaultDecay(decayClock.at(j)) - DecayEngine::defaultDecay(decayClock.at(j)-1);
                     decaynb++;
                 }
-                
-                //delta = compDistribyTF.at(i).at(j) - compDistribyTF.at(i-1).at(j);
-                
+
                 decayed = compDistribyTF.at(i-1).at(j) - decayVal;
                 
                 if(decayed < 0)
@@ -502,8 +525,37 @@ std::pair<bool, double> res;
                             compDistribyTF.at(k).at(j) = 0;
                     }
                 }
+            }
+            else
+            {
+                // if(decayClock.at(j)>0) //if there is decay
+                // {
+                //     decayVal = DecayEngine::defaultDecay(decayClock.at(j));
+                //     decaynb++;
+                // }
+                
+                // //delta = compDistribyTF.at(i).at(j) - compDistribyTF.at(i-1).at(j);
+                
+                // decayed = compDistribyTF.at(i-1).at(j) - decayVal;
+                
+                // if(decayed < 0)
+                //     decayed = 0;
+                
+                // compDistribyTF.at(i).at(j) = delta + decayed;
 
-                decayClock.at(j) = 0;
+                // // affecting the decay to this comp in upper TFs
+                // if(decayed > 0)
+                // {
+                //     for(int k = i+1 ; k < compDistribyTF.size(); k++)
+                //     {
+                //         compDistribyTF.at(k).at(j) -= decayVal;
+
+                //         if(compDistribyTF.at(k).at(j) < 0)
+                //             compDistribyTF.at(k).at(j) = 0;
+                //     }
+                // }
+
+                decayClock.at(j) = 0; //we just reset the decay counter since we found the comp at j
             }
         }
     }
