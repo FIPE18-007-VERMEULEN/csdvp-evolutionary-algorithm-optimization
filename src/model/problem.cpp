@@ -481,8 +481,10 @@ int CSDVP::CSDVP_COUNTER = 0;
         if(pb._distributedCompetencies.at(idx) == -1) //not yet assigned? Then first 0
             pb._distributedCompetencies.at(idx) = 0;
         pb._distributedCompetencies.at(idx) += cpt.magnitude().value();
-        if(pb._distributedCompetencies.at(idx) > 1) //if range overflow --> rebase to one
-            pb._distributedCompetencies.at(idx) = 1;
+        
+        // Overflow in distributedCompetencies is not an issue since it tracks how many magnitude has been put into a comp
+        // if(pb._distributedCompetencies.at(idx) > 1) //if range overflow --> rebase to one
+        //     pb._distributedCompetencies.at(idx) = 1;
     }
     // --------- END GENERATION RELATED FUNCTIONS ---------
 
