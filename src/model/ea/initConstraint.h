@@ -30,9 +30,9 @@ class eoInitConstraintCSDVP: public eoInit<EOT>
     sizeTF=chromSize/nbTF;
     catalogue = pb.coursesCatalogue();
     possibleIDbyTF.resize(nbTF);
-    for(int i=0; i<maxVal; i++){
+    for(unsigned int i=0; i<maxVal; i++){
       tmp=catalogue[i].timeFrame();
-      for(int j=0; j<tmp.size(); j++){
+      for(unsigned int j=0; j<tmp.size(); j++){
 	possibleIDbyTF[tmp[j]-pb.cfg_minimalTimeFrame()].push_back(i);
       }
     }
@@ -46,13 +46,13 @@ class eoInitConstraintCSDVP: public eoInit<EOT>
   }
   
   virtual void operator()(EOT& chrom){
-    int cpt=0;
+    unsigned int cpt=0;
     //std::cout << "Enter init" << std::endl;
     unsigned int r=eo::rng.random(possibleIDbyTF[0].size());
     chrom.resize(0);
     chrom.push_back(possibleIDbyTF[0][r]);
     //std::cout << "push " << possibleIDbyTF[0][r] << std::endl;
-    for(int i = 1; i < chromSize; i++){
+    for(unsigned int i = 1; i < chromSize; i++){
       cpt=0;
       r=eo::rng.random(possibleIDbyTF[i/sizeTF].size());
       while(!notin(chrom, possibleIDbyTF[i/sizeTF][r], i) && cpt<maxVal){

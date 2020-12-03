@@ -25,9 +25,9 @@ void CompetencyDistribution::distribute(CSDVP &pb)
 
     int nbAffected=0;
     
-    for(int i = 0; i < CompetencyDistribution::HLEVEL.size(); i++)
+    for(unsigned int i = 0; i < CompetencyDistribution::HLEVEL.size(); i++)
     {
-        for(int j = 0; j < idxComp.size() &&  (j < (CompetencyDistribution::HLEVEL.at(i) * pb.cfg_quantityCompetencies()) / 100) ; j++)
+        for(unsigned int j = 0; j < idxComp.size() &&  (j < (CompetencyDistribution::HLEVEL.at(i) * pb.cfg_quantityCompetencies()) / 100) ; j++)
         {
             pb.unlocked_competenciesCatalogue().at(idxComp.at(nbAffected)).setHL(i);
             nbAffected++;
@@ -66,7 +66,7 @@ void CompetencyDistribution::linearDistribution(CSDVP &pb)
     }
 
     //Taking into account comp missed with the division
-    int diff = pb.cfg_quantityCompetencies() - nbCompByHL*interval;
+    //int diff = pb.cfg_quantityCompetencies() - nbCompByHL*interval;
     int idxInterval = 0;
 
     for(int i = pb.cfg_quantityCompetencies()-1; i >= nbCompByHL*interval; i--)
@@ -94,7 +94,7 @@ void CompetencyDistribution::linearDistribution(CSDVP &pb)
             return comp;
         
         std::vector<Competency> pbComp = pb.competencyCatalogue();
-        for(int i = 0; i < pbComp.size(); i++)
+        for(unsigned int i = 0; i < pbComp.size(); i++)
             if(pbComp[i].hLevel() == level)
                 comp.push_back(pbComp[i]);
         
@@ -110,7 +110,7 @@ void CompetencyDistribution::linearDistribution(CSDVP &pb)
         for(start = 0; start <= level ; start++)
         {
             tmp = CompetencyDistribution::getHLevel(pb, start);
-            for(int i = 0; i < tmp.size(); i++)
+            for(unsigned int i = 0; i < tmp.size(); i++)
                 res.push_back(tmp[i]);
         }
 
@@ -127,7 +127,7 @@ void CompetencyDistribution::linearDistribution(CSDVP &pb)
         for(int i = 0; i <= level; i++)
         {
             tmp = CompetencyDistribution::unassignedAtHLevel(pb, i);
-            for(int j = 0; j < tmp.size(); j++)
+            for(unsigned int j = 0; j < tmp.size(); j++)
                 res.push_back(tmp[j]);
         }
 
@@ -140,7 +140,7 @@ void CompetencyDistribution::linearDistribution(CSDVP &pb)
 
         std::vector<Competency> res;
         
-        for(int i = 0; i < pb.competencyCatalogue().size(); i++)
+        for(unsigned int i = 0; i < pb.competencyCatalogue().size(); i++)
         {
             if(pb.competencyCatalogue().at(i).hLevel() == hlevel && pb.unlocked_distributedCompetencies().at(i) == -1)
                 res.push_back(pb.competencyCatalogue().at(i));
@@ -154,7 +154,7 @@ void CompetencyDistribution::linearDistribution(CSDVP &pb)
         int sum = 0;
         std::vector<int> tmp;
 
-        for(int i = 0; i < CompetencyDistribution::HLEVEL.size(); i++)
+        for(unsigned int i = 0; i < CompetencyDistribution::HLEVEL.size(); i++)
         {
             if(CompetencyDistribution::HLEVEL.at(i) >= 0) //ignoring all negative value
             {
@@ -172,7 +172,7 @@ void CompetencyDistribution::linearDistribution(CSDVP &pb)
     void CompetencyDistribution::displayHLevel()
     {
         std::cout << "HLEVEL:" << std::endl << "[";
-        for(int i = 0 ; i < CompetencyDistribution::HLEVEL.size()-1; i++)
+        for(unsigned int i = 0 ; i < CompetencyDistribution::HLEVEL.size()-1; i++)
         {
             std::cout << CompetencyDistribution::HLEVEL.at(i) << "|";
         }

@@ -20,7 +20,7 @@ std::pair<bool, double> ConstraintsPrerequisites::old_integrityCheck(Cursus indi
     int currentTF = 0;
     int notFound = 0;
     int notRespected = 0;
-    int score = 0;
+    //int score = 0;
     int nbPrereq = 0;
 
     int magDivisor = 0;
@@ -39,7 +39,7 @@ std::pair<bool, double> ConstraintsPrerequisites::old_integrityCheck(Cursus indi
     bool changedTF = false;
 
     //std::cout << "=========START========" << std::endl;
-    for(int i = 0; i < indiv.size() ; i++)
+    for(unsigned int i = 0; i < indiv.size() ; i++)
     {
         if(currentTF != i / this->_pb.cfg_pickedCoursesByTimeFrame())
         {
@@ -53,7 +53,7 @@ std::pair<bool, double> ConstraintsPrerequisites::old_integrityCheck(Cursus indi
         //std::cout << "Current TF: " << std::to_string(currentTF) << std::endl;
         //If changedTF is set to true, then we have changed of TF, we need to make available all the Comp in TF-1 here in TF, in addition to the new that'll be discovered in TF 
 
-        for(int j = 0 ; changedTF && j < compByTF.at(currentTF-1).size(); j++)
+        for(unsigned int j = 0 ; changedTF && j < compByTF.at(currentTF-1).size(); j++)
         {
             // HERE, VARIABLE DECAY CAN BE APPLIED!!!!!!!!
             compByTF.at(currentTF).push_back(compByTF.at(currentTF-1).at(j));
@@ -85,7 +85,7 @@ std::pair<bool, double> ConstraintsPrerequisites::old_integrityCheck(Cursus indi
 
 
         // Handling teached comp
-        for(int j = 0; j < currentCourse.teachedCompetenciesWeighted().size() ; j++)
+        for(unsigned int j = 0; j < currentCourse.teachedCompetenciesWeighted().size() ; j++)
         {
             currentCompetency = currentCourse.teachedCompetenciesWeighted().at(j).first;
 
@@ -170,12 +170,12 @@ std::tuple<int, int, double, int> ConstraintsPrerequisites::_prereqsInPreviousTF
     if(cInTF.size() == 0) //if empty, we'll find nothing
         return std::tuple<int, int, double, int>(prereqs.size(), 0, magDiff, divisor);
 
-    for(int i = 0; i < prereqs.size(); i++)
+    for(unsigned int i = 0; i < prereqs.size(); i++)
     {
         found = false;
         //std::cout << "Looking for " << prereqs.at(i) << std::endl;
 
-        for(int j = 0 ; j < cInTF.size() && !found; j++)
+        for(unsigned int j = 0 ; j < cInTF.size() && !found; j++)
         {
 	  //std::cout << "\n\t" << cInTF.at(j) << std::endl;
 
@@ -223,15 +223,15 @@ std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
     int currentTF = 0;
     Course currentCourse;
     std::vector<std::pair<Competency, double>> teachedComps;
-    unsigned int idx;
+    int idx;
 
-    for(int i = 0; i < indiv.size(); i++)
+    for(unsigned int i = 0; i < indiv.size(); i++)
     {
         currentTF = i / this->_pb.cfg_pickedCoursesByTimeFrame();
         currentCourse = this->_pb.coursesCatalogue().at(indiv.at(i));
         teachedComps = currentCourse.teachedCompetenciesWeighted();
         
-        for(int j = 0; j < teachedComps.size(); j++)
+        for(unsigned int j = 0; j < teachedComps.size(); j++)
         {
             idx = this->_pb.mapCompToPosition(teachedComps.at(j).first);
             assert(idx >= 0);
@@ -243,9 +243,9 @@ std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
     }
 
     // === sum for t of all t-i
-    for(int i = 1; i < this->_pb.timeFrames().size() ; i++)
+    for(unsigned int i = 1; i < this->_pb.timeFrames().size() ; i++)
     {
-        for(int k = 0; k < this->_pb.competencyCatalogue().size() ; k++)
+        for(unsigned int k = 0; k < this->_pb.competencyCatalogue().size() ; k++)
         {
             compDistribyTF.at(i).at(k) += compDistribyTF.at(i-1).at(k);
             
@@ -260,9 +260,9 @@ std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
     double decayVal = 0; double delta = 0; double decayed = 0;
     int decaynb = 0;
 
-    for(int i = 1; i < compDistribyTF.size(); i++) //starts to 1 because 0 does not have decay
+    for(unsigned int i = 1; i < compDistribyTF.size(); i++) //starts to 1 because 0 does not have decay
     {
-        for(int j = 0; j < compDistribyTF.at(0).size(); j++) //cDTF[0] because we do not care which, they all have the same size == this->_pb.competencyCatalogue().size()
+        for(unsigned int j = 0; j < compDistribyTF.at(0).size(); j++) //cDTF[0] because we do not care which, they all have the same size == this->_pb.competencyCatalogue().size()
         {
             decayVal = 0; delta = 0; decayed = 0;
 
@@ -276,7 +276,8 @@ std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
                 if(decayClock.at(j)>0) //if there is decay
                 {
                     //we take the diff between decay(j) and decay(j-1) since for each stagnation we instantly repercut the decay
-                    decayVal = DecayEngine::defaultDecay(decayClock.at(j)) - DecayEngine::defaultDecay(decayClock.at(j)-1);
+                    //decayVal = DecayEngine::defaultDecay(decayClock.at(j)) - DecayEngine::defaultDecay(decayClock.at(j)-1);
+                    decayVal = DecayEngine::defaultDecay(decayClock.at(j));
                     decaynb++;
                 }
 
@@ -290,7 +291,7 @@ std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
                 // affecting the decay to this comp in upper TFs
                 if(decayed > 0)
                 {
-                    for(int k = i+1 ; k < compDistribyTF.size(); k++)
+                    for(unsigned int k = i+1 ; k < compDistribyTF.size(); k++)
                     {
                         compDistribyTF.at(k).at(j) -= decayVal;
 
@@ -335,16 +336,16 @@ std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
 
     // === checking courses prerequisite
     int notFound = 0; int notRespected = 0; int nbPrereq = 0;
-    double magDiff = 0; int magDivisor = 0;
+    double magDiff = 0; // int magDivisor = 0;
 
-    for(int i = 0; i < indiv.size(); i++)
+    for(unsigned int i = 0; i < indiv.size(); i++)
     {
         currentTF = i / this->_pb.cfg_pickedCoursesByTimeFrame();
 
         assert(indiv.at(i) < this->_pb.coursesCatalogue().size());
         currentCourse = this->_pb.coursesCatalogue().at(indiv.at(i));
 
-        for(int j = 0; j < currentCourse.prerequisites().size(); j++)
+        for(unsigned int j = 0; j < currentCourse.prerequisites().size(); j++)
         {
             nbPrereq++;
 
@@ -423,15 +424,15 @@ std::pair<bool, double> res;
     int currentTF = 0;
     Course currentCourse;
     std::vector<std::pair<Competency, double>> teachedComps;
-    unsigned int idx;
+    int idx;
 
-    for(int i = 0; i < indiv.size(); i++)
+    for(unsigned int i = 0; i < indiv.size(); i++)
     {
         currentTF = i / this->_pb.cfg_pickedCoursesByTimeFrame();
         currentCourse = this->_pb.coursesCatalogue().at(indiv.at(i));
         teachedComps = currentCourse.teachedCompetenciesWeighted();
         
-        for(int j = 0; j < teachedComps.size(); j++)
+        for(unsigned int j = 0; j < teachedComps.size(); j++)
         {
             idx = this->_pb.mapCompToPosition(teachedComps.at(j).first);
             assert(idx >= 0);
@@ -444,10 +445,10 @@ std::pair<bool, double> res;
 
     // === Comp by TF display section
     std::cout << "\n* Competency value by TF" << std::endl;
-    for(int i = 0 ; i < compDistribyTF.size(); i++)
+    for(unsigned int i = 0 ; i < compDistribyTF.size(); i++)
     {
         std::cout << "TF#" << i << ": [";
-        for(int j = 0; j < compDistribyTF.at(i).size()-1; j++)
+        for(unsigned int j = 0; j < compDistribyTF.at(i).size()-1; j++)
         {
             std::cout << std::setprecision(3) << compDistribyTF.at(i).at(j) << ";\t";
         }
@@ -455,11 +456,11 @@ std::pair<bool, double> res;
     }
 
     // === sum for t of all t-i
-    for(int i = 1; i < this->_pb.timeFrames().size() ; i++)
+    for(unsigned int i = 1; i < this->_pb.timeFrames().size() ; i++)
     {
         // for(int j = 0; j < i; j++)
         // {
-            for(int k = 0; k < this->_pb.competencyCatalogue().size() ; k++)
+            for(unsigned int k = 0; k < this->_pb.competencyCatalogue().size() ; k++)
             {
                 compDistribyTF.at(i).at(k) += compDistribyTF.at(i-1).at(k);
                 // if(compDistribyTF.at(i).at(k) > 1) //commented because decay
@@ -470,10 +471,10 @@ std::pair<bool, double> res;
 
     // === Summed display section
     std::cout << "\n* Summed value by TF" << std::endl;
-    for(int i = 0 ; i < compDistribyTF.size(); i++)
+    for(unsigned int i = 0 ; i < compDistribyTF.size(); i++)
     {
         std::cout << "TF#" << i << ": [";
-        for(int j = 0; j < compDistribyTF.at(i).size()-1; j++)
+        for(unsigned int j = 0; j < compDistribyTF.at(i).size()-1; j++)
         {
             std::cout << std::setprecision(3) << compDistribyTF.at(i).at(j) << ";\t";
         }
@@ -487,9 +488,9 @@ std::pair<bool, double> res;
     double decayVal = 0; double delta = 0; double decayed = 0;
     int decaynb = 0;
 
-    for(int i = 1; i < compDistribyTF.size(); i++) //starts to 1 because 0 does not have decay
+    for(unsigned int i = 1; i < compDistribyTF.size(); i++) //starts to 1 because 0 does not have decay
     {
-        for(int j = 0; j < compDistribyTF.at(0).size(); j++) //cDTF[0] because we do not care which, they all have the same size == this->_pb.competencyCatalogue().size()
+        for(unsigned int j = 0; j < compDistribyTF.at(0).size(); j++) //cDTF[0] because we do not care which, they all have the same size == this->_pb.competencyCatalogue().size()
         {
             decayVal = 0; delta = 0; decayed = 0;
 
@@ -503,7 +504,8 @@ std::pair<bool, double> res;
                 if(decayClock.at(j)>0) //if there is decay
                 {
                     //we take the diff between decay(j) and decay(j-1) since for each stagnation we instantly repercut the decay
-                    decayVal = DecayEngine::defaultDecay(decayClock.at(j)) - DecayEngine::defaultDecay(decayClock.at(j)-1);
+                    //decayVal = DecayEngine::defaultDecay(decayClock.at(j)) - DecayEngine::defaultDecay(decayClock.at(j)-1);
+                    decayVal = DecayEngine::defaultDecay(decayClock.at(j));
                     decaynb++;
                 }
 
@@ -517,7 +519,7 @@ std::pair<bool, double> res;
                 // affecting the decay to this comp in upper TFs
                 if(decayed > 0)
                 {
-                    for(int k = i+1 ; k < compDistribyTF.size(); k++)
+                    for(unsigned int k = i+1 ; k < compDistribyTF.size(); k++)
                     {
                         compDistribyTF.at(k).at(j) -= decayVal;
 
@@ -563,10 +565,10 @@ std::pair<bool, double> res;
 
     //=== Decay Display Section
     std::cout << "\n* Decayed value by TF" << std::endl;
-    for(int i = 0 ; i < compDistribyTF.size(); i++)
+    for(unsigned int i = 0 ; i < compDistribyTF.size(); i++)
     {
         std::cout << "TF#" << i << ": [";
-        for(int j = 0; j < compDistribyTF.at(i).size()-1; j++)
+        for(unsigned int j = 0; j < compDistribyTF.at(i).size()-1; j++)
         {
             std::cout << std::setprecision(3) << compDistribyTF.at(i).at(j) << ";\t";
         }

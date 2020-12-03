@@ -248,7 +248,7 @@ void Profession::_pickWithHLWeighting(int nbToPick, Profession & job, CSDVP & pb
 {
     std::vector<int> range;
     int sumInterval = 0;
-    int x; int currentHL;
+    int x; unsigned int currentHL;
     double magVal;
     Competency ctmp;
     const int hLRange = CompetencyDistribution::HLevelRange(pb);

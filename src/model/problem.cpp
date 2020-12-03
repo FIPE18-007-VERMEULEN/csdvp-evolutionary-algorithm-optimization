@@ -354,7 +354,7 @@ int CSDVP::CSDVP_COUNTER = 0;
         }
 
         /* Creating _distributedCompetencies array for assignation */
-        for(int i = 0; i < pb.competencyCatalogue().size(); i++)
+        for(unsigned int i = 0; i < pb.competencyCatalogue().size(); i++)
         {
             pb._distributedCompetencies.push_back(-1);
         }
@@ -406,7 +406,7 @@ int CSDVP::CSDVP_COUNTER = 0;
 
             // std::cout << "SIZE OF HLCOMP : " << HLComp.size() << std::endl;
 
-            for(int j = 0; j < x && HLComp.size() > 0 && j < HLComp.size(); j++)
+            for(unsigned int j = 0; j < x && HLComp.size() > 0 && j < HLComp.size(); j++)
             {
                 // tmpComp = queue.front();
                 tmpComp = HLComp.at(j);
@@ -452,7 +452,7 @@ int CSDVP::CSDVP_COUNTER = 0;
 
                 std::random_shuffle(HLComp.begin(), HLComp.end());
 
-                for(int j = 0; j < x && HLComp.size() > 0 && j < HLComp.size(); j++)
+                for(unsigned int j = 0; j < x && HLComp.size() > 0 && j < HLComp.size(); j++)
                 {
                     tmpComp = HLComp.at(j);
                     //we change mag value for prereq
@@ -506,14 +506,14 @@ void const CSDVP::displayDistribution(){
     std::cout << "\n\tDistrib mean: " << std::get<2>(stats);
     std::cout << "\n\tDistrib median: " << std::get<3>(stats) << std::endl;
 
-    for(int i = 0; i < CompetencyDistribution::HLEVEL.size(); i++)
+    for(unsigned int i = 0; i < CompetencyDistribution::HLEVEL.size(); i++)
     {
         std::cout << "\tAssigned in HL#" << i <<": " << CompetencyDistribution::getHLevel(*this, i).size() << std::endl;
     }
 
     std::cout << "Distrib:" << std::endl;
     std::cout << "[";
-    for(int i = 0; i < this->_distributedCompetencies.size(); i++)
+    for(unsigned int i = 0; i < this->_distributedCompetencies.size(); i++)
     {
         std::cout << this->_distributedCompetencies.at(i);
         if(i < this->_distributedCompetencies.size() -1 )
@@ -529,9 +529,9 @@ std::tuple<int, int, double, double> CSDVP::distributionStats()
     int unassigned = 0;
     int aboveFive = 0;// >= 0.5
     double mean = 0;
-    double median = 0;
+    double median = -1;
 
-    for(int i = 0; i < this->_distributedCompetencies.size(); i++)
+    for(unsigned int i = 0; i < this->_distributedCompetencies.size(); i++)
     {
         if(this->_distributedCompetencies.at(i) == -1)
             unassigned++;
@@ -547,8 +547,8 @@ std::tuple<int, int, double, double> CSDVP::distributionStats()
 
     std::get<0>(stats) = unassigned;
     std::get<1>(stats) = aboveFive; 
-    std::get<2>(stats) = mean; //todo
-    std::get<3>(stats) = -1; //todo
+    std::get<2>(stats) = mean;
+    std::get<3>(stats) = median; //@todo
     return stats;
 }
 
@@ -564,12 +564,12 @@ std::tuple<int, int, double, double> CSDVP::distributionStats()
         Stream << s;
 
         std::vector<Course> courses = c.coursesCatalogue();
-        for(int i = 0; i < courses.size(); i++)
+        for(unsigned int i = 0; i < courses.size(); i++)
             Stream << courses[i] << "\n";
 
         Stream << "===Competencies:";
         std::vector<Competency> comp = c.competencyCatalogue();
-        for(int i = 0; i < comp.size(); i++)
+        for(unsigned int i = 0; i < comp.size(); i++)
             Stream << comp[i] << "\n";
        
         return Stream;

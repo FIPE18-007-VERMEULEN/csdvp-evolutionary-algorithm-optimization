@@ -15,7 +15,7 @@ std::pair<bool, double> ConstraintsProfession::integrityCheck(Cursus indiv)
 {
     std::vector<Competency> compToAnswer;
 
-    for(int i = 0 ; i < this->_job.prerequisites().size(); i++)
+    for(unsigned int i = 0 ; i < this->_job.prerequisites().size(); i++)
     {
         std::string name = this->_job.prerequisites().at(i).c_name();
         compToAnswer.push_back(Competency::buildTMP(0, name)); //same name to exploit the Competency::operator== on name equality
@@ -28,7 +28,7 @@ std::pair<bool, double> ConstraintsProfession::integrityCheck(Cursus indiv)
     bool changedTF = false;
     int currentTF = 0;
 
-    for(int i = 0 ; i < indiv.size(); i++)
+    for(unsigned int i = 0 ; i < indiv.size(); i++)
     {
         current = this->_pb.coursesCatalogue().at(indiv.at(i));
         
@@ -38,12 +38,12 @@ std::pair<bool, double> ConstraintsProfession::integrityCheck(Cursus indiv)
             changedTF = false;
         currentTF = i / this->_pb.cfg_pickedCoursesByTimeFrame();
 
-        for(int j = 0; j < compToAnswer.size(); j++)
+        for(unsigned int j = 0; j < compToAnswer.size(); j++)
         {
             compToAnswer.at(j).increaseDecay();
         }
 
-        for(int j = 0 ; j < current.teachedCompetenciesWeighted().size() ; j++)
+        for(unsigned int j = 0 ; j < current.teachedCompetenciesWeighted().size() ; j++)
         {
             currentComp = current.teachedCompetenciesWeighted().at(j).first;
 
@@ -65,7 +65,7 @@ std::pair<bool, double> ConstraintsProfession::integrityCheck(Cursus indiv)
         }
     }
 
-    for(int i = 0; i < compToAnswer.size(); i++)
+    for(unsigned int i = 0; i < compToAnswer.size(); i++)
     {
         compToAnswer.at(i).saveDecay();
         //std::cout << compToAnswer.at(i) << std::endl;
@@ -75,7 +75,7 @@ std::pair<bool, double> ConstraintsProfession::integrityCheck(Cursus indiv)
 
     int score = 0;
     double magDiff = 0; // addendum from HL
-    for(int i = 0; i < this->_job.prerequisites().size(); i++)
+    for(unsigned int i = 0; i < this->_job.prerequisites().size(); i++)
     {
         if(compToAnswer.at(i).magnitude().value() < this->_job.prerequisites().at(i).c_magnitude().value())
         {

@@ -182,7 +182,7 @@ int main(int argc, char* argv[]){
     //POPULATION INITIALISATION
     eoPop<Cursus> pop;
     Cursus c1;
-    for(int i = 0; i < POPSIZE; i++){
+    for(unsigned int i = 0; i < POPSIZE; i++){
       init(c1);
       eval(c1);
       pop.push_back(c1);
@@ -331,7 +331,7 @@ int main(int argc, char* argv[]){
 
       std::vector<Competency> compHL = CompetencyDistribution::upToHLevel(pb,2);
       std::cout << "HL GTTING" << std::endl;
-      for(int i = 0 ; i < compHL.size(); i++)
+      for(unsigned int i = 0 ; i < compHL.size(); i++)
         std::cout << compHL[i] << std::endl;
 
       std::cout << "===== CURRENT POP =====" << std::endl;
@@ -385,7 +385,7 @@ int main(int argc, char* argv[]){
     
     outputfile2 << pop.size() << std::endl;
     outputfile3 << pop.size() << std::endl;
-    for(int i=0; i<pop.size();i++){
+    for(unsigned int i=0; i<pop.size();i++){
       //Write pop + prerequires values 
       pop[i].printOn(outputfile2);
       outputfile2 << " " << ctrECTS.integrityCheck(pop[i]).second << " " << ctrRep.integrityCheck(pop[i]).second << " " << ctrJob.integrityCheck(pop[i]).second << " " << ctrPrq.integrityCheck(pop[i]).second << std::endl;
@@ -406,7 +406,7 @@ int main(int argc, char* argv[]){
     outputfile2 << pop.size() << std::endl;
     outputfile3 << pop.size() << std::endl;
 
-    for(int i=0; i<pop.size();i++){
+    for(unsigned int i=0; i<pop.size();i++){
       //Write pop + prerequires values 
       pop[i].printOn(outputfile2);
       outputfile2 << " " << ctrECTS.integrityCheck(pop[i]).second << " " << ctrRep.integrityCheck(pop[i]).second << " " << ctrJob.integrityCheck(pop[i]).second << " " << ctrPrq.integrityCheck(pop[i]).second << std::endl;
