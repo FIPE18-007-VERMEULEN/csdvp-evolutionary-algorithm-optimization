@@ -73,6 +73,7 @@ int main(int argc, char* argv[]){
     ConstraintsProfession::DISCRETE_METRIC = parser.createParam((unsigned int)(1), "jobEvalDiscrete" , "What type of metric to use between discret and continue with mag", 'k', "Param").value();
     ConstraintsPrerequisites::DISCRETE_METRIC = parser.createParam((unsigned int)(1), "prqEvalDiscrete" , "What type of metric to use between discret and continue with mag constraints", 'K', "Param").value();
     ConstraintsPrerequisites::INTEGRITY_CHECK = parser.createParam((unsigned int)(1), "prqCheckFunc" , "Dev. option: switching between prereqCheck func 1 and 2", 'O', "Param").value();
+    ConstraintsPrerequisites::OVERFLOW_PERCENT= parser.createParam((int)(0), "overflow", "Overflow above 1 authorized during prerequisite calculation can be negative too", 'Y', "Param").value();
     CompetencyDistribution::HLEVEL[0] = parser.createParam((int)(50), "hLevel0", "Comp Percentage in the HLevel 0", '0', "Param").value();
     CompetencyDistribution::HLEVEL[1] = parser.createParam((int)(50), "hLevel1", "Comp Percentage in the HLevel 1", '1', "Param").value();
     CompetencyDistribution::HLEVEL[2] = parser.createParam((int)(-1), "hLevel2", "Comp Percentage in the HLevel 2", '2', "Param").value();

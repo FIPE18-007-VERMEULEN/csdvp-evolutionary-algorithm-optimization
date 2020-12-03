@@ -35,6 +35,7 @@ class ConstraintsPrerequisites
     public:
         static int DISCRETE_METRIC;
         static int INTEGRITY_CHECK;
+        static int OVERFLOW_PERCENT;
 
         ConstraintsPrerequisites(const CSDVP & csdvp, const Profession & job)
             : _pb(csdvp), _job(job) {}

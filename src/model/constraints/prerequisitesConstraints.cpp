@@ -13,6 +13,7 @@
 
 int ConstraintsPrerequisites::DISCRETE_METRIC = 1;
 int ConstraintsPrerequisites::INTEGRITY_CHECK = 1;
+int ConstraintsPrerequisites::OVERFLOW_PERCENT= 0;
 
 // @deprecated
 std::pair<bool, double> ConstraintsPrerequisites::old_integrityCheck(Cursus indiv)
@@ -204,9 +205,12 @@ std::tuple<int, int, double, int> ConstraintsPrerequisites::_prereqsInPreviousTF
 // @todo repercuter les affections du decay sur tt les n+1
 std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
 {
+    assert(ConstraintsPrerequisites::OVERFLOW_PERCENT >= -100 && ConstraintsPrerequisites::OVERFLOW_PERCENT <= 100);
+    
     std::pair<bool, double> res;
 
     std::vector<std::vector<double>> compDistribyTF; //each i contains an vector representing the magnitique of each comp existing, according to the path followed. [0;1] 
+    std::vector<std::vector<double>> compMagbyTF;
 
     // === init
     for(unsigned int i = 0; i < this->_pb.timeFrames().size(); i++)
@@ -217,6 +221,7 @@ std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
             tmp.push_back(0);
         }
         compDistribyTF.push_back(tmp);
+        compMagbyTF.push_back(tmp);
     }
 
     // === fill each double vector of each tf according to comp seen
@@ -239,25 +244,27 @@ std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
 
             if(compDistribyTF.at(currentTF).at(idx) > 1) //can't exceed 1 in a signle TF
                 compDistribyTF.at(currentTF).at(idx) = 1;
+
+            compMagbyTF.at(currentTF).at(idx) = compDistribyTF.at(currentTF).at(idx);
         }
     }
 
     // === sum for t of all t-i
-    for(unsigned int i = 1; i < this->_pb.timeFrames().size() ; i++)
-    {
-        for(unsigned int k = 0; k < this->_pb.competencyCatalogue().size() ; k++)
-        {
-            compDistribyTF.at(i).at(k) += compDistribyTF.at(i-1).at(k);
+    // for(unsigned int i = 1; i < this->_pb.timeFrames().size() ; i++)
+    // {
+    //     for(unsigned int k = 0; k < this->_pb.competencyCatalogue().size() ; k++)
+    //     {
+    //         compDistribyTF.at(i).at(k) += compDistribyTF.at(i-1).at(k);
             
-            // if(compDistribyTF.at(i).at(k) > 1) //commented because decay ! warning it will make subsequent delta equal !! need to create a new tmp array
-            //     compDistribyTF.at(i).at(k) = 1;
-        }
-    }
+    //         if(compDistribyTF.at(i).at(k) > 1) //commented because decay ! warning it will make subsequent delta equal !! need to create a new tmp array
+    //             compDistribyTF.at(i).at(k) = 1;
+    //     }
+    // }
 
     // === apply decay
     std::vector<double> tmpDiff;
     std::vector<int> decayClock(this->_pb.competencyCatalogue().size());
-    double decayVal = 0; double delta = 0; double decayed = 0;
+    double decayVal = 0; double delta = 0; double decayed = 0; double current = 0;
     int decaynb = 0;
 
     for(unsigned int i = 1; i < compDistribyTF.size(); i++) //starts to 1 because 0 does not have decay
@@ -268,37 +275,31 @@ std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
 
             // storing the delta of the mag in i-1 ; i
             delta = compDistribyTF.at(i).at(j) - compDistribyTF.at(i-1).at(j);
+            current = compMagbyTF.at(i).at(j);
 
-            if(delta == 0) //if 0 -->comp not mobilized here, thus stagnation therefore decay for the jth comp
+            if(current == 0) //if 0 -->comp not mobilized here, thus stagnation therefore decay for the jth comp
             {
                 decayClock.at(j)++;
 
-                if(decayClock.at(j)>0) //if there is decay
-                {
-                    //we take the diff between decay(j) and decay(j-1) since for each stagnation we instantly repercut the decay
-                    //decayVal = DecayEngine::defaultDecay(decayClock.at(j)) - DecayEngine::defaultDecay(decayClock.at(j)-1);
-                    decayVal = DecayEngine::defaultDecay(decayClock.at(j));
-                    decaynb++;
-                }
-
-                decayed = compDistribyTF.at(i-1).at(j) - decayVal;
                 
-                if(decayed < 0)
-                    decayed = 0;
+                // decayed = compDistribyTF.at(i-1).at(j) - decayVal;
                 
-                compDistribyTF.at(i).at(j) = delta + decayed;
+                // if(decayed < 0)
+                //     decayed = 0;
+                
+                // compDistribyTF.at(i).at(j) = delta + decayed;
 
-                // affecting the decay to this comp in upper TFs
-                if(decayed > 0)
-                {
-                    for(unsigned int k = i+1 ; k < compDistribyTF.size(); k++)
-                    {
-                        compDistribyTF.at(k).at(j) -= decayVal;
+                // // affecting the decay to this comp in upper TFs
+                // if(decayed > 0)
+                // {
+                //     for(unsigned int k = i+1 ; k < compDistribyTF.size(); k++)
+                //     {
+                //         compDistribyTF.at(k).at(j) -= decayVal;
 
-                        if(compDistribyTF.at(k).at(j) < 0)
-                            compDistribyTF.at(k).at(j) = 0;
-                    }
-                }
+                //         if(compDistribyTF.at(k).at(j) < 0)
+                //             compDistribyTF.at(k).at(j) = 0;
+                //     }
+                // }
             }
             else
             {
@@ -331,6 +332,39 @@ std::pair<bool, double> ConstraintsPrerequisites::integrityCheck(Cursus indiv)
 
                 decayClock.at(j) = 0; //we just reset the decay counter since we found the comp at j
             }
+
+            if(decayClock.at(j)>0) //if there is decay
+            {
+                //we take the diff between decay(j) and decay(j-1) since for each stagnation we instantly repercut the decay
+                //decayVal = DecayEngine::defaultDecay(decayClock.at(j)) - DecayEngine::defaultDecay(decayClock.at(j)-1);
+                decayVal = DecayEngine::defaultDecay(decayClock.at(j));
+                decaynb++;
+            }
+
+            // if(compMagbyTF.at(i-1).at(j) == 0) //if previous value was 0, no need to apply decay in fact
+            //     decayVal = 0;
+
+            compDistribyTF.at(i).at(j) = compMagbyTF.at(i).at(j) + compDistribyTF.at(i-1).at(j) - decayVal;
+            if(compDistribyTF.at(i).at(j) < 0)
+                compDistribyTF.at(i).at(j) = 0;
+            else if(compDistribyTF.at(i).at(j) > 1 + (double)ConstraintsPrerequisites::OVERFLOW_PERCENT/100)
+                compDistribyTF.at(i).at(j) = 1 + (double)ConstraintsPrerequisites::OVERFLOW_PERCENT/100;
+
+            // if(compDistribyTF.at(i-1).at(j) != 0) //if previous value was 0, no need to apply decay in fact
+            // {
+            //     compDistribyTF.at(i).at(j) -= decayVal;
+            //     if(compDistribyTF.at(i).at(j) <= 0)
+            //         compDistribyTF.at(i).at(j) = 0;
+                
+            //     //repercuting the decay to in the upper TF
+            //     for(unsigned int k = i + 1; k < compDistribyTF.size(); k++)
+            //     {
+            //         compDistribyTF.at(k).at(j) -= decayVal;
+
+            //         if(compDistribyTF.at(k).at(j) < 0)
+            //         compDistribyTF.at(k).at(j) = 0;  
+            //     }
+            // }
         }
     }
 
@@ -408,6 +442,7 @@ void ConstraintsPrerequisites::_displayDecayedArrays(Cursus indiv)
 std::pair<bool, double> res;
 
     std::vector<std::vector<double>> compDistribyTF; //each i contains an vector representing the magnitique of each comp existing, according to the path followed. [0;1] 
+    std::vector<std::vector<double>> compMagbyTF;
 
     // === init
     for(unsigned int i = 0; i < this->_pb.timeFrames().size(); i++)
@@ -418,6 +453,7 @@ std::pair<bool, double> res;
             tmp.push_back(0);
         }
         compDistribyTF.push_back(tmp);
+        compMagbyTF.push_back(tmp);
     }
 
     // === fill each double vector of each tf according to comp seen
@@ -440,6 +476,8 @@ std::pair<bool, double> res;
 
             if(compDistribyTF.at(currentTF).at(idx) > 1) //can't exceed 1 in a signle TF
                 compDistribyTF.at(currentTF).at(idx) = 1;
+            
+            compMagbyTF.at(currentTF).at(idx) = compDistribyTF.at(currentTF).at(idx);
         }
     }
 
@@ -456,18 +494,18 @@ std::pair<bool, double> res;
     }
 
     // === sum for t of all t-i
-    for(unsigned int i = 1; i < this->_pb.timeFrames().size() ; i++)
-    {
-        // for(int j = 0; j < i; j++)
-        // {
-            for(unsigned int k = 0; k < this->_pb.competencyCatalogue().size() ; k++)
-            {
-                compDistribyTF.at(i).at(k) += compDistribyTF.at(i-1).at(k);
-                // if(compDistribyTF.at(i).at(k) > 1) //commented because decay
-                //     compDistribyTF.at(i).at(k) = 1;
-            }
-        // }
-    }
+    // for(unsigned int i = 1; i < this->_pb.timeFrames().size() ; i++)
+    // {
+    //     // for(int j = 0; j < i; j++)
+    //     // {
+    //         for(unsigned int k = 0; k < this->_pb.competencyCatalogue().size() ; k++)
+    //         {
+    //             compDistribyTF.at(i).at(k) += compDistribyTF.at(i-1).at(k);
+    //             if(compDistribyTF.at(i).at(k) > 1) //commented because decay
+    //                 compDistribyTF.at(i).at(k) = 1;
+    //         }
+    //     // }
+    // }
 
     // === Summed display section
     std::cout << "\n* Summed value by TF" << std::endl;
@@ -485,7 +523,7 @@ std::pair<bool, double> res;
     // === apply decay
     std::vector<double> tmpDiff;
     std::vector<int> decayClock(this->_pb.competencyCatalogue().size());
-    double decayVal = 0; double delta = 0; double decayed = 0;
+    double decayVal = 0; double delta = 0; double decayed = 0; double current = 0;
     int decaynb = 0;
 
     for(unsigned int i = 1; i < compDistribyTF.size(); i++) //starts to 1 because 0 does not have decay
@@ -496,37 +534,32 @@ std::pair<bool, double> res;
 
             // storing the delta of the mag in i-1 ; i
             delta = compDistribyTF.at(i).at(j) - compDistribyTF.at(i-1).at(j);
+            current = compMagbyTF.at(i).at(j);
 
-            if(delta == 0) //if 0 -->comp not mobilized here, thus stagnation therefore decay for the jth comp
+            if(current == 0) //if 0 -->comp not mobilized here, thus stagnation therefore decay for the jth comp
             {
                 decayClock.at(j)++;
 
-                if(decayClock.at(j)>0) //if there is decay
-                {
-                    //we take the diff between decay(j) and decay(j-1) since for each stagnation we instantly repercut the decay
-                    //decayVal = DecayEngine::defaultDecay(decayClock.at(j)) - DecayEngine::defaultDecay(decayClock.at(j)-1);
-                    decayVal = DecayEngine::defaultDecay(decayClock.at(j));
-                    decaynb++;
-                }
-
-                decayed = compDistribyTF.at(i-1).at(j) - decayVal;
                 
-                if(decayed < 0)
-                    decayed = 0;
+
+                // decayed = compDistribyTF.at(i-1).at(j) - decayVal;
                 
-                compDistribyTF.at(i).at(j) = delta + decayed;
+                // if(decayed < 0)
+                //     decayed = 0;
+                
+                // compDistribyTF.at(i).at(j) = delta + decayed;
 
-                // affecting the decay to this comp in upper TFs
-                if(decayed > 0)
-                {
-                    for(unsigned int k = i+1 ; k < compDistribyTF.size(); k++)
-                    {
-                        compDistribyTF.at(k).at(j) -= decayVal;
+                // // affecting the decay to this comp in upper TFs
+                // if(decayed > 0)
+                // {
+                //     for(unsigned int k = i+1 ; k < compDistribyTF.size(); k++)
+                //     {
+                //         compDistribyTF.at(k).at(j) -= decayVal;
 
-                        if(compDistribyTF.at(k).at(j) < 0)
-                            compDistribyTF.at(k).at(j) = 0;
-                    }
-                }
+                //         if(compDistribyTF.at(k).at(j) < 0)
+                //             compDistribyTF.at(k).at(j) = 0;
+                //     }
+                // }
             }
             else
             {
@@ -559,6 +592,39 @@ std::pair<bool, double> res;
 
                 decayClock.at(j) = 0; //we just reset the decay counter since we found the comp at j
             }
+
+            if(decayClock.at(j)>0) //if there is decay
+            {
+                //we take the diff between decay(j) and decay(j-1) since for each stagnation we instantly repercut the decay
+                //decayVal = DecayEngine::defaultDecay(decayClock.at(j)) - DecayEngine::defaultDecay(decayClock.at(j)-1);
+                decayVal = DecayEngine::defaultDecay(decayClock.at(j));
+                decaynb++;
+            }
+
+            // if(compMagbyTF.at(i-1).at(j) == 0) //if previous value was 0, no need to apply decay in fact
+            //     decayVal = 0;
+
+            compDistribyTF.at(i).at(j) = compMagbyTF.at(i).at(j) + compDistribyTF.at(i-1).at(j) - decayVal;
+            if(compDistribyTF.at(i).at(j) < 0)
+                compDistribyTF.at(i).at(j) = 0;
+           else if(compDistribyTF.at(i).at(j) > 1 + (double)ConstraintsPrerequisites::OVERFLOW_PERCENT/100)
+                compDistribyTF.at(i).at(j) = 1 + (double)ConstraintsPrerequisites::OVERFLOW_PERCENT/100;
+
+            // if(compDistribyTF.at(i-1).at(j) != 0)
+            // {
+            //     compDistribyTF.at(i).at(j) -= decayVal;
+            //     if(compDistribyTF.at(i).at(j) <= 0)
+            //         compDistribyTF.at(i).at(j) = 0;
+                
+            //     //repercuting the decay to in the upper TF
+            //     for(unsigned int k = i + 1; k < compDistribyTF.size(); k++)
+            //     {
+            //         compDistribyTF.at(k).at(j) -= decayVal;
+
+            //         if(compDistribyTF.at(k).at(j) < 0)
+            //         compDistribyTF.at(k).at(j) = 0;  
+            //     }
+            // }
         }
     }
 
