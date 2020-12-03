@@ -440,11 +440,19 @@ int CSDVP::CSDVP_COUNTER = 0;
         for(unsigned int i = 0 ; i < randomVec.size(); i++)
             queue.push(randomVec.at(i));
         
+        int firstTF = 0; int randVal = 0;
+        int threshold = 30;
         for(unsigned int i = 0; i < pb.coursesCatalogue().size(); i++)
         {
             x = _randomizeIn(pb.cfg_prerequisiteByCourseMin(), pb.cfg_prerequisiteByCourseMax());
             lastTF = pb.coursesCatalogue().at(i).lastTimeFrame();
-            maxLevel = lastTF * hLevelR / nbTF;
+            firstTF = pb.coursesCatalogue().at(i).timeFrame().at(0);
+            randVal = rand() % (100);
+            if( x < threshold)
+                maxLevel = lastTF * hLevelR / nbTF;
+            else
+                maxLevel = firstTF * hLevelR / nbTF;
+            //maxLevel = lastTF * hLevelR / nbTF;
             maxLevel--; // Logically, prerequisite can only be according to comp of lower HL
             if(maxLevel >= 0) // then this means we are dealing with at least a HL 1, so only HL below can serve as prereq
             {
