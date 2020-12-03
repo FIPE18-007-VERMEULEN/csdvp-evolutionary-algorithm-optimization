@@ -446,7 +446,7 @@ int CSDVP::CSDVP_COUNTER = 0;
             lastTF = pb.coursesCatalogue().at(i).lastTimeFrame();
             maxLevel = lastTF * hLevelR / nbTF;
             maxLevel--; // Logically, prerequisite can only be according to comp of lower HL
-            if(maxLevel > 0) // then this means we are dealing with at least a HL 1, so only HL below can serve as prereq
+            if(maxLevel >= 0) // then this means we are dealing with at least a HL 1, so only HL below can serve as prereq
             {
                 HLComp = CompetencyDistribution::upToHLevel(pb, maxLevel);
 
