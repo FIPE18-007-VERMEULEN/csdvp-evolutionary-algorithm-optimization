@@ -40,12 +40,16 @@ class Profession
         /** _duplicataProtection returns true if the value (2nd param) searched into (1st param) is found*/
         bool _duplicataProtection(std::vector<Competency> *, Competency);
 
+        static void _pickWithHLWeighting(int nbToPick, Profession &, CSDVP &);
+
         // Static
         static int PROFESSION_COUNTER;
         static int assignID();
         static void _randomlyGenerate(Profession & job, CSDVP & pb);
 
     public:
+        static unsigned int JOB_SELECTION_TYPE;
+
         enum GenerationType
         {
             RANDOM

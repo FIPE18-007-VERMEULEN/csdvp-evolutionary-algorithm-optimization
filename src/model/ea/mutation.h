@@ -24,8 +24,8 @@ class mutCSDVP: public eoMonOp<EOT>
 
   //_CourseID subastraction from _chrom
   void notin(std::vector<int>& _courseID, std::vector<int>& _chrom){
-    int tmp;
-    for (int i=0; i<_chrom.size(); i++){
+    unsigned int tmp;
+    for (unsigned int i=0; i<_chrom.size(); i++){
       tmp=0;
       while(tmp<_courseID.size() && _chrom[i]!=_courseID[tmp])
 	tmp++;
@@ -230,7 +230,7 @@ class mutCSDVP: public eoMonOp<EOT>
     bool changedTF = false;
     int currentTF = 0;
 
-    for(int i = 0; i < _chrom.size() && (i / nbCbyTF < TF); i++)
+    for(unsigned int i = 0; i < _chrom.size() && (i / nbCbyTF < TF); i++)
     {
       currentCourse = catalogue.at(_chrom.at(i));
 
@@ -242,13 +242,13 @@ class mutCSDVP: public eoMonOp<EOT>
 
       if(changedTF) //if we have changed of tf, lets improve decay for all comp
       {
-        for(int j = 0; j < tmpCourse.prerequisites().size(); j++)
+        for(unsigned int j = 0; j < tmpCourse.prerequisites().size(); j++)
         {
           tmpCourse.unlocked_prerequisites().at(j).increaseDecay();
         }
       }
 
-      for(int j = 0; j < currentCourse.teachedCompetenciesWeighted().size(); j++)
+      for(unsigned int j = 0; j < currentCourse.teachedCompetenciesWeighted().size(); j++)
       {
         tmpComp = currentCourse.teachedCompetenciesWeighted().at(j).first;
         addStatus = tmpCourse.addPrerequisite(tmpComp);
@@ -275,7 +275,7 @@ class mutCSDVP: public eoMonOp<EOT>
     }
 
     compStatus = tmpCourse.prerequisites();
-    for(int i = 0; i < compStatus.size(); i++)
+    for(unsigned int i = 0; i < compStatus.size(); i++)
       compStatus.at(i).saveDecay();
 
     return compStatus;
@@ -292,7 +292,7 @@ class mutCSDVP: public eoMonOp<EOT>
 
     Competency checkCmp;
 
-    for(int i = 0; i < availableC.size(); i++)
+    for(unsigned int i = 0; i < availableC.size(); i++)
     {
       isPrereqOK = true;
 

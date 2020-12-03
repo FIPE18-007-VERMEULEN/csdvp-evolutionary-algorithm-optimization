@@ -10,6 +10,7 @@
 #include <model/magnitude.h>
 #include <model/tools.h>
 #include <model/competency.h>
+#include <model/competencyDistribution.h>
 #include <model/decay.h>
 
 #include <model/ea/cursus.h>
@@ -63,11 +64,26 @@ int main(int argc, char* argv[]){
     unsigned int MINPRE = parser.createParam((unsigned int)(0), "minPre", "minimal competency by course",'q',"Param").value();
     unsigned int MAXPRE = parser.createParam((unsigned int)(3), "maxPre", "maximal competency by course",'Q',"Param").value();
     unsigned int CBYTF = parser.createParam((unsigned int)(2), "cbyTF", "course by time frame to pick",'A',"Param").value();
+    unsigned int THRESHOLD_HLEVEL = parser.createParam((unsigned int)(30), "minMaxHLevelPrq", "Threshold under the one the HLevel max is used instead of min for prqs", 'y', "Param").value();
     CursusEval::WEIGHT_ECTS = parser.createParam((double)(1.0), "wECTS", "Weight of ECTS in the fitness value", 'V', "Param").value();
     CursusEval::WEIGHT_REPETION = parser.createParam((double)(1.0), "wREP", "Weight of Repetition in the fitness value", 'v', "Param").value();
     CursusEval::WEIGHT_JOB = parser.createParam((double)(1.0), "wJob", "Weight of profession in the fitness value", 'w', "Param").value();
     CursusEval::WEIGHT_PREREQ = parser.createParam((double)(1.0), "wPrereq", "Weight of prerequisites in the fitness value", 'W', "Param").value();
     DecayEngine::IS_DECAY_DEACTIVATED = parser.createParam((int)(0), "decayDeactivated", "Wether or not the decay is deactivated", 'D', "Param").value();
+    ConstraintsProfession::DISCRETE_METRIC = parser.createParam((unsigned int)(1), "jobEvalDiscrete" , "What type of metric to use between discret and continue with mag", 'k', "Param").value();
+    ConstraintsPrerequisites::DISCRETE_METRIC = parser.createParam((unsigned int)(1), "prqEvalDiscrete" , "What type of metric to use between discret and continue with mag constraints", 'K', "Param").value();
+    ConstraintsPrerequisites::INTEGRITY_CHECK = parser.createParam((unsigned int)(1), "prqCheckFunc" , "Dev. option: switching between prereqCheck func 1 and 2", 'O', "Param").value();
+    ConstraintsPrerequisites::OVERFLOW_PERCENT= parser.createParam((int)(0), "overflow", "Overflow above 1 authorized during prerequisite calculation can be negative too", 'Y', "Param").value();
+    CompetencyDistribution::HLEVEL[0] = parser.createParam((int)(50), "hLevel0", "Comp Percentage in the HLevel 0", '0', "Param").value();
+    CompetencyDistribution::HLEVEL[1] = parser.createParam((int)(50), "hLevel1", "Comp Percentage in the HLevel 1", '1', "Param").value();
+    CompetencyDistribution::HLEVEL[2] = parser.createParam((int)(-1), "hLevel2", "Comp Percentage in the HLevel 2", '2', "Param").value();
+    CompetencyDistribution::HLEVEL[3] = parser.createParam((int)(-1), "hLevel3", "Comp Percentage in the HLevel 3", '3', "Param").value();
+    CompetencyDistribution::HLEVEL[4] = parser.createParam((int)(-1), "hLevel4", "Comp Percentage in the HLevel 4", '4', "Param").value();
+    CompetencyDistribution::HLEVEL[5] = parser.createParam((int)(-1), "hLevel5", "Comp Percentage in the HLevel 5", '5', "Param").value();
+    CompetencyDistribution::HLEVEL[6] = parser.createParam((int)(-1), "hLevel6", "Comp Percentage in the HLevel 6", '6', "Param").value();
+    CompetencyDistribution::HLEVEL[7] = parser.createParam((int)(-1), "hLevel7", "Comp Percentage in the HLevel 7", '7', "Param").value();
+    CompetencyDistribution::HLEVEL[8] = parser.createParam((int)(-1), "hLevel8", "Comp Percentage in the HLevel 8", '8', "Param").value();
+    CompetencyDistribution::HLEVEL[9] = parser.createParam((int)(-1), "hLevel9", "Comp Percentage in the HLevel 9", '9', "Param").value();
 
     //PROFESSION PARAMETERS
     unsigned int JOB_SEED = parser.createParam((unsigned int)(7777), "jobSeed", "Seed used for the Profession", 'g', "Param").value();
@@ -75,7 +91,8 @@ int main(int argc, char* argv[]){
     unsigned int JOB_MAXPRE = parser.createParam((unsigned int)(4), "jobMaxPre" , "maximal competency prerequisite by a job", 'J', "Param").value();
     double JOB_MINMAG = parser.createParam((double)(0.5), "jobMinMag" , "miminal magnitude for a job" , 'h', "Param").value();
     double JOB_MAXMAG = parser.createParam((double)(0.95), "jobMaxMag" , "maxima magnitude for a job" , 'H', "Param").value();
-
+    Profession::JOB_SELECTION_TYPE = parser.createParam((unsigned int)(0), "jobSelectType" , "Which type to use to select job", 'z', "Param").value();
+    
     //EVOLUTION ENGINE PARAMETERS
     unsigned int POPSIZE = parser.createParam((unsigned int)(100), "popSize", "Population size", 'P', "Evolution Engine").value();
     double PMUT = parser.createParam((double)(0.5), "pMut", "mutation rate", 'x', "Evolution Engine").value();
@@ -85,6 +102,7 @@ int main(int argc, char* argv[]){
     RATIO_RANDOM_VS_BEST = parser.createParam((unsigned int)(75), "ratioBest", "Ratio between full random and best while prereq check fails in mutation",'B',"Param").value();
 
     // ===== PB CONFIG ZONE =====
+    CompetencyDistribution::sanitizeHLEVEL(); //Mandatory for HLevel
     CSDVP pb;
     Profession job;
     std::cout << "nb cours: ---> " << NBCOURSES << std::endl;
@@ -103,6 +121,7 @@ int main(int argc, char* argv[]){
     pb.set_cfg_minimalPrerequisiteByCourse(MINPRE);
     pb.set_cfg_maximalPrerequisiteByCourse(MAXPRE);
     pb.set_cfg_pickedCoursesByTimeFrame(CBYTF);
+    pb.set_cfg_thresholdHLevelMaxOverMin(THRESHOLD_HLEVEL);
 
     CSDVP::generateProblem(pb, CSDVP::GenerationType::RANDOM, SEED);
     assert(pb.checkConfig());
@@ -167,7 +186,7 @@ int main(int argc, char* argv[]){
     //POPULATION INITIALISATION
     eoPop<Cursus> pop;
     Cursus c1;
-    for(int i = 0; i < POPSIZE; i++){
+    for(unsigned int i = 0; i < POPSIZE; i++){
       init(c1);
       eval(c1);
       pop.push_back(c1);
@@ -310,7 +329,17 @@ int main(int argc, char* argv[]){
 
     if(localDisplay)
     {
+      pb.displayDistribution();
+      std::cout << pb << std::endl;
+      std::cout << job << std::endl;
+
+      std::vector<Competency> compHL = CompetencyDistribution::upToHLevel(pb,2);
+      std::cout << "HL GTTING" << std::endl;
+      for(unsigned int i = 0 ; i < compHL.size(); i++)
+        std::cout << compHL[i] << std::endl;
+
       std::cout << "===== CURRENT POP =====" << std::endl;
+      // pop.printOn(std::cout);
       pop.best_element().printOn(std::cout);
       std::cout << " fitness:" << pop.best_element().fitness() << std::endl;
       std::cout << "Stats & metrics: \n" << std::endl;
@@ -360,7 +389,7 @@ int main(int argc, char* argv[]){
     
     outputfile2 << pop.size() << std::endl;
     outputfile3 << pop.size() << std::endl;
-    for(int i=0; i<pop.size();i++){
+    for(unsigned int i=0; i<pop.size();i++){
       //Write pop + prerequires values 
       pop[i].printOn(outputfile2);
       outputfile2 << " " << ctrECTS.integrityCheck(pop[i]).second << " " << ctrRep.integrityCheck(pop[i]).second << " " << ctrJob.integrityCheck(pop[i]).second << " " << ctrPrq.integrityCheck(pop[i]).second << std::endl;
@@ -381,7 +410,7 @@ int main(int argc, char* argv[]){
     outputfile2 << pop.size() << std::endl;
     outputfile3 << pop.size() << std::endl;
 
-    for(int i=0; i<pop.size();i++){
+    for(unsigned int i=0; i<pop.size();i++){
       //Write pop + prerequires values 
       pop[i].printOn(outputfile2);
       outputfile2 << " " << ctrECTS.integrityCheck(pop[i]).second << " " << ctrRep.integrityCheck(pop[i]).second << " " << ctrJob.integrityCheck(pop[i]).second << " " << ctrPrq.integrityCheck(pop[i]).second << std::endl;
@@ -439,6 +468,10 @@ int main(int argc, char* argv[]){
       std::cout << " | value: " << resPrq.second << std::endl;
 
       std::cout << "===============" << std::endl;
+
+      ctrPrq._displayDecayedArrays(pop.best_element());
+
+      std::cout << job ;
     }
     
     // ================================= END RUN ZONE ===============================

@@ -22,6 +22,8 @@ class ConstraintsProfession
         Profession _job;
 
     public:
+        static int DISCRETE_METRIC;
+
         ConstraintsProfession(const CSDVP & csdvp, const Profession & job)
             : _pb(csdvp), _job(job) {}
         

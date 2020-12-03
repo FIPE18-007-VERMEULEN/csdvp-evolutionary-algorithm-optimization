@@ -81,6 +81,7 @@ class Course
         std::vector<Competency>& unlocked_prerequisites() {return this->_prerequisites;}
         const std::vector<int> timeFrame() const {return this->_temporalAvailability;}
         const std::vector<std::pair<Competency, double>> teachedCompetenciesWeighted() const{return this->_weightedTeached;}
+        const int lastTimeFrame() const;
 
         // === MUTATOR
             // SETTER

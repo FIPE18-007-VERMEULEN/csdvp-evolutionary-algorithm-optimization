@@ -2,6 +2,7 @@
 #define SRC_PROBLEM_H_
 
 #include <vector>
+#include <tuple>
 
 #include "course.h"
 #include "competency.h"
@@ -48,6 +49,8 @@ class CSDVP
 
         Magnitude _minimalMagnitude;
         Magnitude _maximalMagnitude;
+
+        int _thresholdMinMaxHLevel; // used for rand in prereq assign with HLevel
         // ---------- END CONFIGURATION ATTRIBUTES ----------
 
         // ---------- PROBLEM SPECIFIC ATTRIBUTES ----------
@@ -56,7 +59,11 @@ class CSDVP
         std::vector<Course> _availableCourses;
         std::vector<std::vector<Course>> _coursesSortedByTF; //sorted by standard index. e.g. TF[4;6] -> [0]=4; [1]=5 ; [2] = 6
         std::vector<Competency> _availableCompentecies; //The competency's magnitude should not be used here. 
-
+        
+        // This array is index aligned with the compCatalogue of the problem. It represents the current compentecies distrib in the pb. Mostly used during configuratioin.
+        // -1 : not assigned ; [0;1] the ith comp at the indice i in the cmpCatalogue as been assigned, with a value of x € [0;1].
+        std::vector<double> _distributedCompetencies; 
+        
         ///@todo implements a decay politics
         //DecayPolitics 
         // --------- END PROBLEM SPECIFIC ATTRIBUTES ---------
@@ -81,6 +88,10 @@ class CSDVP
         /// It sources _coursesSortedByTF, which is another view of _availableCourses, sorted by TF
         void _makeCoursesSortedByTF();
 
+        // This fuction creates a new tmpComp with mag and add it the comp teached by the course idx of the catalogue
+        // Using the sourcing function keeps the _distributedCompetencies up to date
+        void _sourceCourseTeachedComp(CSDVP & pb, unsigned int idx, Competency & c);
+        void _updateDistribComp(CSDVP & pb, Competency & cpt);
     public:
         // --------- GENERATION RELATED FUNCTION ---------
         /// allows a random attribution of pb's attributes
@@ -117,6 +128,7 @@ class CSDVP
         int cfg_prerequisiteByCourseMin() const {return this->_minimalPrerequisiteByCourse;}
         int cfg_prerequisiteByCourseMax() const {return this->_maximalPrerequisiteByCourse;}
         int cfg_pickedCoursesByTimeFrame() const {return this->_pickedCoursesByTimeFrame;}
+        int cfg_thresholdHLevelMaxOverMin() const {return this->_thresholdMinMaxHLevel;}
         const Magnitude & cfg_magnitudeMin() const{return this->_minimalMagnitude;}
         const Magnitude & cfg_magnitudeMax() const{return this->_maximalMagnitude;}
 
@@ -130,7 +142,8 @@ class CSDVP
         std::vector<int> & unlocked_timeFrames(){return this->_timeFrames;}
         std::vector<Course> & unlocked_coursesCatalogue(){return this->_availableCourses;}
         std::vector<Competency> & unlocked_competenciesCatalogue(){return this->_availableCompentecies;}
-        
+        std::vector<double> & unlocked_distributedCompetencies(){return this->_distributedCompetencies;}
+
         int getQuantityCoursesToPick() const{
             if(this->_isConfig)
                 return this->_timeFrames.size() * this->_pickedCoursesByTimeFrame;
@@ -140,7 +153,21 @@ class CSDVP
          * returns the index of the course within the coursesCatalogue [0;size[  ; otherwise return -1 if the course is not found.
          */
         int mapCourseToPosition(const Course & c);
+        /** Maps a competency into its position inside the this->competencyCatalogue().
+         * returns the index of the competency within the competencyCatalogue [0;size[  ; otherwise return -1 if the competency is not found.
+         */
+        int mapCompToPosition(const Competency & comp);
         ///@todo getDecayPolitic
+
+        // === Competency Distribution related
+            void const displayDistribution();
+            /* Retrieves some stats regarding the comp distrib
+             * First element is the nb of unassigned comp
+             * Second element is the nb of comp above 0.5
+             * Third element is the mean (all unassigned elm excluded)
+             * Fourth element is the median (idem)
+             */
+            std::tuple<int, int, double, double> distributionStats();
 
         // === MUTATOR
             // SETTER
@@ -161,6 +188,7 @@ class CSDVP
             void set_cfg_minimalPrerequisiteByCourse(int nb);
             void set_cfg_maximalPrerequisiteByCourse(int nb);
             void set_cfg_pickedCoursesByTimeFrame(int nb);
+            void set_cfg_thresholdHLevelMaxOverMin(int thr);
 
             void setTimeFrames(std::vector<int> & v);
             void setCoursesCatalogue(std::vector<Course> &);

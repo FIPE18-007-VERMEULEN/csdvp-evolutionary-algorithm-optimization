@@ -8,7 +8,7 @@ std::pair<bool, double> ConstraintsECTS::integrityCheck(Cursus indiv)
     int tmpECTS = 0;
     //std::cout << "courses size : " << std::to_string(courses.size()) << std::endl;
     //std::cout << "courses catl : " << std::to_string(this->_pb.cfg_quantityCourses()) << std::endl;
-    for(int i = 0; i < indiv.size(); i++)
+    for(unsigned int i = 0; i < indiv.size(); i++)
     {
         tmpECTS += courses.at(indiv[i]).ects();
         //std::cout << std::to_string(courses.at(indiv[i]).ects()) << " + ";

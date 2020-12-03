@@ -6,10 +6,12 @@
 
 #include "profession.h"
 #include "competency.h"
+#include "competencyDistribution.h"
 
 #include "exception/JobOverlappingBoundariesException.h"
 
 int Profession::PROFESSION_COUNTER = 0;
+unsigned int Profession::JOB_SELECTION_TYPE = 0;
 
 // === FACTORY
     // No factory needed
@@ -170,21 +172,52 @@ void Profession::_randomlyGenerate(Profession & job, CSDVP & pb)
     std::random_shuffle(tmpComp.begin(), tmpComp.end());
 
     int i;
-    for(i = 0; i < (int)tmpComp.size() && i < howManyPrereq; i++)
+    std::vector<Competency> compHigherHL;
+    
+    switch (Profession::JOB_SELECTION_TYPE)
     {
+    case 1: //at least one comp in the higher HL
+        compHigherHL = CompetencyDistribution::getHLevel(pb, CompetencyDistribution::HLevelRange(pb)-1);
+        // std::cout << "compHigherHL size :" << compHigherHL.size() << std::endl;
+        std::random_shuffle(compHigherHL.begin(), compHigherHL.end());
+        
+        assert(compHigherHL.size() > 0); //if no comp retrieved in the higher hlevel (hhl), there is a pb here !
+
         magVal = job.cfg_minimalMagnitude().value() + ( (double)rand()/RAND_MAX) * ( job.cfg_maximalMagnitude().value() - job.cfg_minimalMagnitude().value()) ;
-        ctmp = Competency::buildTMP(magVal,tmpComp.at(i).name());
-
+        ctmp = Competency::buildTMP(magVal,compHigherHL.at(0).name());
+        ctmp.setHL(compHigherHL.at(0).hLevel());
         job.addPrerequisite(ctmp);
-    }
 
-    if(i != howManyPrereq) //Warning need to check if still in range because not enought courses
-    {
-        if(i < job.cfg_minimalPrerequisites() || i > job.cfg_maximalPrerequisites())
+        // !! No duplicata protection: we can insert another time the competency above from the HHL
+        for(i = 0; i < (int)tmpComp.size() && i < howManyPrereq-1; i++) //cp/paste from default case
         {
-            //considering as a fail during generation
-            assert(i < job.cfg_minimalPrerequisites() || i > job.cfg_maximalPrerequisites());
+            magVal = job.cfg_minimalMagnitude().value() + ( (double)rand()/RAND_MAX) * ( job.cfg_maximalMagnitude().value() - job.cfg_minimalMagnitude().value()) ;
+            ctmp = Competency::buildTMP(magVal,tmpComp.at(i).name());
+            ctmp.setHL(tmpComp.at(i).hLevel());
+            job.addPrerequisite(ctmp);
         }
+        break;
+    case 2: // emphasis on higher HL
+        _pickWithHLWeighting(howManyPrereq, job, pb);
+        break;
+    default: //classic behavior
+        for(i = 0; i < (int)tmpComp.size() && i < howManyPrereq; i++)
+        {
+            magVal = job.cfg_minimalMagnitude().value() + ( (double)rand()/RAND_MAX) * ( job.cfg_maximalMagnitude().value() - job.cfg_minimalMagnitude().value()) ;
+            ctmp = Competency::buildTMP(magVal,tmpComp.at(i).name());
+            ctmp.setHL(tmpComp.at(i).hLevel());
+            job.addPrerequisite(ctmp);
+        }
+
+        if(i != howManyPrereq) //Warning need to check if still in range because not enought courses
+        {
+            if(i < job.cfg_minimalPrerequisites() || i > job.cfg_maximalPrerequisites())
+            {
+                //considering as a fail during generation
+                assert(i < job.cfg_minimalPrerequisites() || i > job.cfg_maximalPrerequisites());
+            }
+        }
+        break;
     }
 
     // If ECTS is set to be random, then calculating it
@@ -208,6 +241,49 @@ void Profession::_randomlyGenerate(Profession & job, CSDVP & pb)
     }
 
     job.setRequiredECTS(ects);
+}
+
+// Here we weight where we pick the comp, the higher the HL, more likely a comp is to be pick
+void Profession::_pickWithHLWeighting(int nbToPick, Profession & job, CSDVP & pb)
+{
+    std::vector<int> range;
+    int sumInterval = 0;
+    int x; unsigned int currentHL;
+    double magVal;
+    Competency ctmp;
+    const int hLRange = CompetencyDistribution::HLevelRange(pb);
+    std::vector<Competency> hlComp;
+
+    for(int i = 0; i < hLRange ; i++)
+    {
+        // sumInterval+=i;
+        // sumInterval = i * 2;
+        sumInterval = i * i;
+        range.push_back(sumInterval);
+    }
+
+    for(int i = 0; i < nbToPick; i++)
+    {
+        x = rand() % ( sumInterval + 1);
+        assert(x <= sumInterval);
+
+        currentHL = 0;
+
+        // std::cout << "sumInterval: " << sumInterval << " & x: " << x << std::endl;
+
+        while(x > range[currentHL] && currentHL < range.size())
+        {
+            currentHL++;
+        }
+        
+        hlComp = CompetencyDistribution::getHLevel(pb, currentHL);//we get the correspond hl level
+        assert(hlComp.size() > 0);
+        std::random_shuffle(hlComp.begin(), hlComp.end());
+        magVal = job.cfg_minimalMagnitude().value() + ( (double)rand()/RAND_MAX) * ( job.cfg_maximalMagnitude().value() - job.cfg_minimalMagnitude().value()) ;
+        ctmp = Competency::buildTMP(magVal,hlComp.at(0).name());
+        ctmp.setHL(hlComp.at(0).hLevel());
+        job.addPrerequisite(ctmp);
+    }
 }
 
 // === STATIC

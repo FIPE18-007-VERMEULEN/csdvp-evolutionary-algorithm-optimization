@@ -26,6 +26,7 @@ void CursusEval::operator()(Cursus & _cursus){
   resCP=cp.integrityCheck(_cursus);
   resCR=cr.integrityCheck(_cursus);
   resCPR=cpr.integrityCheck(_cursus);
+  
   /*
   std::cout << "EVAL: ";
   std::cout << resCE.first << " " << resCE.second << std::endl;

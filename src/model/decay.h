@@ -19,6 +19,7 @@ class DecayEngine
             if(t == 0)
                 return 0;
             return (exp(t / 1.25) + 5)/100;
+            //return (double)t/10;
         }
 };
 

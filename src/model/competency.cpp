@@ -145,7 +145,7 @@ void Competency::saveDecay()
 // === OPERATOR
 std::ostream& operator<<(std::ostream& Stream, const Competency & c) 
 { 
-    std::string s = "Competency\n\tid:"+std::to_string(c.id())+"\n\tname:"+c.c_name()+"\n\tvalue:"+std::to_string(c.competencyValue());
+    std::string s = "Competency\n\tid:"+std::to_string(c.id())+"\n\tname:"+c.c_name()+"\n\tvalue:"+std::to_string(c.competencyValue())+"\n\tHLevel:"+std::to_string(c.hLevel());
     Stream << s ; 
     return Stream; 
 }

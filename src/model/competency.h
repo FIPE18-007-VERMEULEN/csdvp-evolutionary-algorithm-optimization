@@ -23,7 +23,7 @@ class Competency
         std::string _name;
         int _howLongDecaying; //Decay related
         bool _isDecaying; //Decay related
-        
+        int _hLevel; // Hierarchy level (HL) of the competency. HL should onlye have lower HL comp as prereq. thus HL 0 has no prereq
 
         //Constructor
         Competency(int, Magnitude, std::string);
@@ -64,12 +64,15 @@ class Competency
             ///Retrieves the name of the competency
         const std::string c_name() const {return this->_name;}
         std::string & name() {return this->_name;}
+        
+        int hLevel() const{return this->_hLevel;}
 
         int id() const {return this->_id;}
 
         // === SETTER
         void setMagnitude(Magnitude & m){this->_m = m;}
         void setName(std::string s){this->_name = s;}
+        void setHL(int hl){this->_hLevel = hl;}
 
         // === DECAY
         bool isDecaying() const {return this->_isDecaying;}
