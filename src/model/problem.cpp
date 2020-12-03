@@ -78,6 +78,8 @@ int CSDVP::CSDVP_COUNTER = 0;
         {
             this->_maximalMagnitude = Magnitude::build(m);
         }
+        void CSDVP::set_cfg_thresholdHLevelMaxOverMin(int thr)
+            {this->_thresholdMinMaxHLevel = thr;}
         
         void CSDVP::setTimeFrames(std::vector<int> & v)
             {this->_timeFrames = v;}
@@ -85,6 +87,7 @@ int CSDVP::CSDVP_COUNTER = 0;
             {this->_availableCourses = c;}
         void CSDVP::setCompetenciesCatalogue(std::vector<Competency> & c)
             {this->_availableCompentecies = c;}
+        
         // ADDER
         bool CSDVP::addTimeFrame(int tF)
         {
@@ -441,14 +444,14 @@ int CSDVP::CSDVP_COUNTER = 0;
             queue.push(randomVec.at(i));
         
         int firstTF = 0; int randVal = 0;
-        int threshold = 30;
+        //int threshold = 30;
         for(unsigned int i = 0; i < pb.coursesCatalogue().size(); i++)
         {
             x = _randomizeIn(pb.cfg_prerequisiteByCourseMin(), pb.cfg_prerequisiteByCourseMax());
             lastTF = pb.coursesCatalogue().at(i).lastTimeFrame();
             firstTF = pb.coursesCatalogue().at(i).timeFrame().at(0);
             randVal = rand() % (100);
-            if( x < threshold)
+            if( x < pb.cfg_thresholdHLevelMaxOverMin())
                 maxLevel = lastTF * hLevelR / nbTF;
             else
                 maxLevel = firstTF * hLevelR / nbTF;

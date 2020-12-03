@@ -64,6 +64,7 @@ int main(int argc, char* argv[]){
     unsigned int MINPRE = parser.createParam((unsigned int)(0), "minPre", "minimal competency by course",'q',"Param").value();
     unsigned int MAXPRE = parser.createParam((unsigned int)(3), "maxPre", "maximal competency by course",'Q',"Param").value();
     unsigned int CBYTF = parser.createParam((unsigned int)(2), "cbyTF", "course by time frame to pick",'A',"Param").value();
+    unsigned int THRESHOLD_HLEVEL = parser.createParam((unsigned int)(30), "minMaxHLevelPrq", "Threshold under the one the HLevel max is used instead of min for prqs", 'y', "Param").value();
     CursusEval::WEIGHT_ECTS = parser.createParam((double)(1.0), "wECTS", "Weight of ECTS in the fitness value", 'V', "Param").value();
     CursusEval::WEIGHT_REPETION = parser.createParam((double)(1.0), "wREP", "Weight of Repetition in the fitness value", 'v', "Param").value();
     CursusEval::WEIGHT_JOB = parser.createParam((double)(1.0), "wJob", "Weight of profession in the fitness value", 'w', "Param").value();
@@ -118,6 +119,7 @@ int main(int argc, char* argv[]){
     pb.set_cfg_minimalPrerequisiteByCourse(MINPRE);
     pb.set_cfg_maximalPrerequisiteByCourse(MAXPRE);
     pb.set_cfg_pickedCoursesByTimeFrame(CBYTF);
+    pb.set_cfg_thresholdHLevelMaxOverMin(THRESHOLD_HLEVEL);
 
     CSDVP::generateProblem(pb, CSDVP::GenerationType::RANDOM, SEED);
     assert(pb.checkConfig());

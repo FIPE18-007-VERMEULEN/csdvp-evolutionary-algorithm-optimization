@@ -49,6 +49,8 @@ class CSDVP
 
         Magnitude _minimalMagnitude;
         Magnitude _maximalMagnitude;
+
+        int _thresholdMinMaxHLevel; // used for rand in prereq assign with HLevel
         // ---------- END CONFIGURATION ATTRIBUTES ----------
 
         // ---------- PROBLEM SPECIFIC ATTRIBUTES ----------
@@ -126,6 +128,7 @@ class CSDVP
         int cfg_prerequisiteByCourseMin() const {return this->_minimalPrerequisiteByCourse;}
         int cfg_prerequisiteByCourseMax() const {return this->_maximalPrerequisiteByCourse;}
         int cfg_pickedCoursesByTimeFrame() const {return this->_pickedCoursesByTimeFrame;}
+        int cfg_thresholdHLevelMaxOverMin() const {return this->_thresholdMinMaxHLevel;}
         const Magnitude & cfg_magnitudeMin() const{return this->_minimalMagnitude;}
         const Magnitude & cfg_magnitudeMax() const{return this->_maximalMagnitude;}
 
@@ -185,6 +188,7 @@ class CSDVP
             void set_cfg_minimalPrerequisiteByCourse(int nb);
             void set_cfg_maximalPrerequisiteByCourse(int nb);
             void set_cfg_pickedCoursesByTimeFrame(int nb);
+            void set_cfg_thresholdHLevelMaxOverMin(int thr);
 
             void setTimeFrames(std::vector<int> & v);
             void setCoursesCatalogue(std::vector<Course> &);
