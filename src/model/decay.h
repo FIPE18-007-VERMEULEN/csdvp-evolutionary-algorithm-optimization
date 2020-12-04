@@ -18,8 +18,9 @@ class DecayEngine
                 return 0;
             if(t == 0)
                 return 0;
-            return (exp(t / 1.25) + 5)/100;
-            //return (double)t/10;
+            // seems to be quitte similar to ebbinghaus : r = e^{-t/s} with s memory stability and t time
+            //return (exp(t / 1.25) + 5)/100; 
+            return (exp(t/2.125) + 10)/100;
         }
 };
 
