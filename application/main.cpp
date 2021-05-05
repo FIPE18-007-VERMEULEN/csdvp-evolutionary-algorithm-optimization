@@ -329,6 +329,8 @@ int main(int argc, char* argv[]){
 
     if(localDisplay)
     {
+      std::cout << exportProblem(pb,job) << std::endl;
+      
       pb.displayDistribution();
       std::cout << pb << std::endl;
       std::cout << job << std::endl;

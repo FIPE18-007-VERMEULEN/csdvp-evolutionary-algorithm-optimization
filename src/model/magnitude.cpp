@@ -134,3 +134,11 @@ double Magnitude::rebase()
     }
     return this->_value;        
 }
+
+// EXPORT
+std::string Magnitude::exportMe() const
+{
+    std::string res = "\"magnitude\":{\"value\":"+std::to_string(this->_value)+"}";
+
+    return res;
+}

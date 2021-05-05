@@ -7,6 +7,14 @@
 #include <queue>
 #include <random>
 #include <limits>
+#include <string>
+
+#include "problem.h"
+#include "profession.h"
+
+static std::string APP_VERSION = "1.0.0";
+static std::string MAIN_AUTHOR = "Alexis Lebis";
+static std::string MAIN_AUTHOR_EMAIL = "ceao@alexis.lebis.org";
 
 static const int ID_RANGE_FOR_OBJECT = 10000;
 static const int ID_RANGE_FOR_TEMPORARY_OBJECT = std::numeric_limits<int>::max();
@@ -54,6 +62,19 @@ static std::pair<bool,T> getElementById(const std::vector<T> & elem, int idToFin
             return std::pair<bool,T>(true, elem.at(i));
     }
     return std::pair<bool, T>(false, T());
+}
+
+static std::string exportProblem(const CSDVP & csdvp, const Profession & job)
+{
+    std::string res = "{\"problem\":{";
+    res += "\"version\":\""+APP_VERSION+"\",";
+    res += "\"mainAuthor\":\""+MAIN_AUTHOR+"\",";
+    res += "\"mainAuthorEmail\":\""+MAIN_AUTHOR_EMAIL+"\",";
+    res += csdvp.exportMe()+",";
+    res += job.exportMe();
+    res += "}";
+    res += "}";
+    return res;
 }
 
 ///Not working properly yet, just for debug

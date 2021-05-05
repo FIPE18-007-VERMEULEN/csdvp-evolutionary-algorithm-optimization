@@ -203,6 +203,9 @@ class CSDVP
         // === FUNC
         /// Checks all configuration attributes. If they have been all set, then isConfig is set to true
         bool checkConfig();
+
+        // === EXPORT
+        std::string exportMe() const;
 };
 std::ostream & operator<<(std::ostream & Stream, const CSDVP & c);
 
