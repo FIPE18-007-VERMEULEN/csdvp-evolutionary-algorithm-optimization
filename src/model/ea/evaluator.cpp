@@ -35,8 +35,11 @@ void CursusEval::operator()(Cursus & _cursus){
   std::cout << resCPR.first << " " << resCPR.second << std::endl;
   std::cout << std::endl << std::endl;
   */
-  double sum=pCE*resCE.second + pCR*resCR.second + pCP*resCP.second + pCPR*resCPR.second;
-  fit=1.0/(1+sum)*100;
+
+  // double sum=pCE*resCE.second + pCR*resCR.second + pCP*resCP.second + pCPR*resCPR.second;
+  // fit=1.0/(1+sum)*100;
+
+  fit = 4 - (pCE*resCE.second + pCR*resCR.second + pCP*resCP.second + pCPR*resCPR.second);
 
   _cursus.fitness(fit);
 }
