@@ -125,7 +125,6 @@ int main(int argc, char* argv[]){
 
     CSDVP::generateProblem(pb, CSDVP::GenerationType::RANDOM, SEED);
     assert(pb.checkConfig());
-    std::cout << pb.exportMe() << std::endl;
     // std::cout << "CSDVP IS : \n" << pb << std::endl;
     // for(int i = 0; i < pb.coursesCatalogue().size(); i++)
     //   std::cout << pb.coursesCatalogue().at(i) << std::endl;
@@ -330,6 +329,8 @@ int main(int argc, char* argv[]){
 
     if(localDisplay)
     {
+      std::cout << exportProblem(pb,job) << std::endl;
+      
       pb.displayDistribution();
       std::cout << pb << std::endl;
       std::cout << job << std::endl;

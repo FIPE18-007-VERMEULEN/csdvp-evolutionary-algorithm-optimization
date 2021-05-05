@@ -286,6 +286,34 @@ void Profession::_pickWithHLWeighting(int nbToPick, Profession & job, CSDVP & pb
     }
 }
 
+std::string Profession::exportMe() const
+{
+    std::string res = "\"job\":{";
+    res += "\"cfg_seed\":"+std::to_string(this->_seed)+",";
+    res += "\"cfg_minimalPrereq\":"+std::to_string(this->_minimalPrerequisites)+",";
+    res += "\"cfg_maximalPrereq\":"+std::to_string(this->_maximalPrerequisites)+",";
+    res += "\"cfg_minimalMagnitude\":"+std::to_string(this->_minimalMagnitude.value())+",";
+    res += "\"cfg_maximalMagnitude\":"+std::to_string(this->_maximalMagnitude.value())+",";
+    res += "\"cfg_drawECTSRandomly\":"+std::to_string(this->_isECTSRandom)+",";
+
+    res += "\"name\":\""+this->_name+"\",";
+    res += "\"requiredECTS\":"+std::to_string(this->_requiredECTS)+",";
+
+    std::string tmp = "";
+    res += "\"prerequisites\":[";
+    for(unsigned int i = 0; i < this->_prerequisites.size(); i++)
+    {
+        tmp = this->_prerequisites.at(i).exportMe();
+        res += "{"+tmp+"}";
+        if(i < this->_prerequisites.size()-1)
+            res += ",";
+    }   
+    res += "]";
+
+    res += "}";
+    return res;
+}
+
 // === STATIC
 int Profession::assignID(){return ++Profession::PROFESSION_COUNTER;}
 

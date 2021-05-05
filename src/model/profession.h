@@ -98,6 +98,8 @@ class Profession
             void set_cfg_minimalMagnitude(double mag);
             void set_cfg_maximalMagnitude(double mag);
 
+        // === EXPORT
+        std::string exportMe() const;
 };
 
 // === OPERATOR
