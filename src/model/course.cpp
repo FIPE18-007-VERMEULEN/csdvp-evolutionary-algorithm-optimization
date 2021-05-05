@@ -288,6 +288,35 @@ bool Course::operator==(const Course & c) const
 }
 // === END OPERATOR
 
+// === EXPORT
+std::string Course::exportMe() const
+{
+    std::string res = "\"course\":{\"name\":\""+this->_name+"\",\"ects\":"+std::to_string(this->_ects);
+    std::string tmp = "";
+
+    res +=",\"prerequisites\":[";
+    for(unsigned int i = 0; i < this->_prerequisites.size(); i++)
+    {
+        tmp = this->_prerequisites.at(i).exportMe();
+        res+="{"+tmp+"}";
+        if(i < this->_prerequisites.size()-1)
+            res+=",";
+    }
+    res += "]";
+
+    res +=",\"competencies\":[";
+    for(unsigned int i = 0; i < this->_weightedTeached.size();i++)
+    {
+        tmp = this->_weightedTeached.at(i).first.exportMe();
+        res+="{"+tmp+"}";
+        if(i < this->_weightedTeached.size()-1)
+            res+=",";
+    }
+    res+="]";
+
+    res += "}";
+    return res;
+}
 
 // === STATIC
 /// Course counter

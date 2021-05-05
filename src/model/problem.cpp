@@ -595,3 +595,51 @@ std::tuple<int, int, double, double> CSDVP::distributionStats()
         return Stream;
     }
 // === END OPERATOR
+
+// === EXPORT
+std::string CSDVP::exportMe() const
+{
+    std::string res = "\"problem\":{";
+
+    res+="\"cfg_seed\":"+std::to_string(this->_seed)+",";
+    res+="\"cfg_nbCourses\":"+std::to_string(this->_quantityAvailableCourses)+",";
+    res+="\"cfg_nbCompetencies\":"+std::to_string(this->_quantityAvailableCompetencies)+",";
+    res+="\"cfg_minTimeFrame\":"+std::to_string(this->_minimalTimeFrame)+",";
+    res+="\"cfg_maxTimeFrame\":"+std::to_string(this->_maximalTimeFrame)+",";
+    res+="\"cfg_minECTS\":"+std::to_string(this->_minimalECTSValue)+",";
+    res+="\"cfg_maxECTS\":"+std::to_string(this->_maximalECTSValue)+",";
+    res+="\"cfg_minCoursesByTF\":"+std::to_string(this->_minimalCoursesByTimeFrame)+",";
+    res+="\"cfg_maxCoursesByTF\":"+std::to_string(this->_maximalCoursesByTimeFrame)+",";
+    res+="\"cfg_minCompByCourse\":"+std::to_string(this->_minimalCompetencyByCourse)+",";
+    res+="\"cfg_maxCompByCourse\":"+std::to_string(this->_maximalCompetencyByCourse)+",";
+    res+="\"cfg_minPrereqByCourse\":"+std::to_string(this->_minimalPrerequisiteByCourse)+",";
+    res+="\"cfg_maxPrereqByCourse\":"+std::to_string(this->_maximalPrerequisiteByCourse)+",";
+    res+="\"cfg_minMagnitude\":"+std::to_string(this->_minimalMagnitude.value())+",";
+    res+="\"cfg_maxMagnitude\":"+std::to_string(this->_maximalMagnitude.value())+",";
+    res+="\"cfg_pickedCourseByTF\":"+std::to_string(this->_pickedCoursesByTimeFrame)+",";
+    
+    // res+="\"seed\":"+std::to_string(this->_seed)+",";
+    std::string tmp = "";
+    res += "\"coursesCatalogue\":[";
+    for(unsigned int i = 0 ; i < this->_availableCourses.size(); i++)
+    {
+        tmp = this->_availableCourses.at(i).exportMe();
+        res+="{"+tmp+"}";
+        if(i < this->_availableCourses.size()-1)
+            res+=",";
+    }
+    res += "],";
+
+    res += "\"competenciesCatalogue\":[";
+    for(unsigned int i = 0; i < this->_availableCompentecies.size(); i++)
+    {
+        tmp = this->_availableCompentecies.at(i).exportMe();
+        res+="{"+tmp+"}";
+        if(i < this->_availableCompentecies.size()-1)
+            res+=",";
+    }
+    res+= "]";
+
+    res += "}";
+    return res;
+}

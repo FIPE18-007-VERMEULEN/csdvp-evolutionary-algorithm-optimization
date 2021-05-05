@@ -1,6 +1,8 @@
 #ifndef SRC_MAGNITUDE_H_
 #define SRC_MAGNITUDE_H_
 
+#include <string>
+
 /** Magnitude represents the mastery of a competency.
  * 
  * It should be used in accordance with a scale
@@ -34,6 +36,9 @@ class Magnitude
         
         //SETTER
         bool set(double v);
+
+        //EXPORT
+        std::string exportMe() const;
 };
 
 Magnitude operator+(const Magnitude & m1, const Magnitude & m2);

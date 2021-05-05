@@ -154,3 +154,10 @@ bool Competency::operator==(const Competency & c) const
 {
     return ( this->_id == c.id() || ( this->_name.compare(c.c_name()) == 0 ) );
 }
+
+std::string Competency::exportMe() const
+{
+    std::string res = "\"competency\":{\"name\":\""+this->_name+"\","+this->_m.exportMe()+"}";
+
+    return res;
+}

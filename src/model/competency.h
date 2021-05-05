@@ -93,6 +93,8 @@ class Competency
         /// A competency is equal to another iff their id are the same, or their name
         bool operator==(const Competency & c) const;
         
+        // === EXPORT
+        std::string exportMe() const;
 };
 // === OPERATOR
 std::ostream & operator<<(std::ostream& Stream, const Competency & c);

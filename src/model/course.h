@@ -116,6 +116,9 @@ class Course
         // === OPERATOR
         /// A course is equal to another iff {(lazy_equality) || (full_equality)
         bool operator==(const Course & c) const;
+
+        // === EXPORT
+        std::string exportMe() const;
 };
 
 // === OPERATOR
