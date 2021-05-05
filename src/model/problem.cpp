@@ -599,7 +599,7 @@ std::tuple<int, int, double, double> CSDVP::distributionStats()
 // === EXPORT
 std::string CSDVP::exportMe() const
 {
-    std::string res = "\"problem\":{";
+    std::string res = "\"csdvp\":{";
 
     res+="\"cfg_seed\":"+std::to_string(this->_seed)+",";
     res+="\"cfg_nbCourses\":"+std::to_string(this->_quantityAvailableCourses)+",";
