@@ -1,6 +1,6 @@
-# CSDVP Evolutionary Algorithm Optimization
+# FIC/DK-P Meta-Heuristic Solver (using GA)
 
-Constraint Satisfaction Decaying Variables Problem (CSDVP) optimization through EA approach (**CEAO**)
+Constraint Satisfaction Decaying Variables Problem (CSDVP) optimization through EA approach (**CEAO**) (CSDVP Evolutionary Algorithm Optimization)
 
 ## Dependencies and configuration
 
