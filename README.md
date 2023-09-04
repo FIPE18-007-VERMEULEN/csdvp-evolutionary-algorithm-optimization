@@ -29,6 +29,7 @@ ceaoPath/build> make
 Your project should now be correctly compiled.
 
 Please check the code to see which parameters can be passed as arguments.
+Invoking examples exist in run.tar.gz if needed. For comparison purpose, if you need some data produced by the scripts in run.tar.gz, please contact the authors.
 
 Documentation soon™ (contact the authors if needed).
 
