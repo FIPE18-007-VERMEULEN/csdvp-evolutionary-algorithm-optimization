@@ -1,0 +1,68 @@
+{
+    "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+    "@type": "SoftwareSourceCode",
+    "license": "https://spdx.org/licenses/CECILL-2.1",
+    "codeRepository": "https://gvipers.imt-nord-europe.fr/m3tal/csdvp-evolutionary-algorithm-optimization",
+    "dateCreated": "2020-04-29",
+    "datePublished": "2022-07-22",
+    "dateModified": "2022-07-22",
+    "downloadUrl": "https://archive.softwareheritage.org/swh:1:dir:34a6fd8767a1e215e41aab8dae10b2a957404edc;origin=http://gvipers.imt-nord-europe.fr/m3tal/csdvp-evolutionary-algorithm-optimization;visit=swh:1:snp:cd91adfd71d8f2aae33845fca2f9de5718c64021;anchor=swh:1:rev:8a2b5f651a03cf03f32890bc888ea905956ac18e",
+    "issueTracker": "https://gvipers.imt-nord-europe.fr/m3tal/csdvp-evolutionary-algorithm-optimization/issues",
+    "name": "Fully Individualized Curriculum with Decaying Knowledge Meta-Heurisitc Solver",
+    "version": "1.0.0",
+    "identifier": "swh:1:dir:34a6fd8767a1e215e41aab8dae10b2a957404edc;origin=http://gvipers.imt-nord-europe.fr/m3tal/csdvp-evolutionary-algorithm-optimization;visit=swh:1:snp:cd91adfd71d8f2aae33845fca2f9de5718c64021;anchor=swh:1:rev:8a2b5f651a03cf03f32890bc888ea905956ac18e",
+    "description": "Meta-heuristic solver based on genetic algorithm for solving the problem of fully individualizing a student curriculum while taking into account his/her knowledge decay.",
+    "applicationCategory": "Technology for Human Learning",
+    "funding": "FIPE18-007-VERMEULEN",
+    "developmentStatus": "wip",
+    "funder": {
+        "@type": "Organization",
+        "name": "i-SITE ULNES"
+    },
+    "keywords": [
+        "Education",
+        "Curriculum",
+        "Recommendation",
+        "Modeling",
+        "Student Profile",
+        "Planning",
+        "Artificial Intelligence",
+        "Decision Making",
+        "Metaheuristic"
+    ],
+    "programmingLanguage": [
+        "C++"
+    ],
+    "operatingSystem": [
+        "Linux"
+    ],
+    "softwareRequirements": [
+        "gcc",
+        "cMake",
+        "swh:1:dir:cc83fa70d755c8bae509b3c9eb56cb3a8e7a339e;origin=https://gitlab.inria.fr/paradiseo/paradiseo;visit=swh:1:snp:ab929bf560e9d1ad33143b73d38434e900f01858;anchor=swh:1:rev:c2a3ed4e7f67772afb37ea325c9ef80fca2b008d"
+    ],
+    "author": [
+        {
+            "@type": "Person",
+            "@id": "https://cv.hal.science/alexislebis",
+            "givenName": "Alexis",
+            "familyName": "Lebis",
+            "email": "alexis.lebis@imt-nord-europe.fr",
+            "affiliation": {
+                "@type": "Organization",
+                "name": "Centre for Digital Systems - CERI SN - IMT Nord Europe"
+            }
+        },
+        {
+            "@type": "Person",
+            "@id": "https://orcid.org/0000-0002-6825-8564",
+            "givenName": "Jérémie",
+            "familyName": "Humeau",
+            "email": "jeremie.humeau@imt-nord-europe.fr",
+            "affiliation": {
+                "@type": "Organization",
+                "name": "Centre for Digital Systems - CERI SN - IMT Nord Europe"
+            }
+        }
+    ]
+}
