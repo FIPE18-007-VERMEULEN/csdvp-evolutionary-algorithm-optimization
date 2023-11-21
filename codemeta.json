@@ -4,8 +4,8 @@
     "license": "https://spdx.org/licenses/CECILL-2.1",
     "codeRepository": "https://gvipers.imt-nord-europe.fr/m3tal/csdvp-evolutionary-algorithm-optimization",
     "dateCreated": "2020-04-29",
-    "datePublished": "2023-10-21",
-    "dateModified": "2023-10-21",
+    "datePublished": "2023-11-20",
+    "dateModified": "2023-11-20",
     "downloadUrl": "https://archive.softwareheritage.org/swh:1:dir:34a6fd8767a1e215e41aab8dae10b2a957404edc;origin=http://gvipers.imt-nord-europe.fr/m3tal/csdvp-evolutionary-algorithm-optimization;visit=swh:1:snp:cd91adfd71d8f2aae33845fca2f9de5718c64021;anchor=swh:1:rev:8a2b5f651a03cf03f32890bc888ea905956ac18e",
     "issueTracker": "https://gvipers.imt-nord-europe.fr/m3tal/csdvp-evolutionary-algorithm-optimization/issues",
     "name": "Fully Individualized Curriculum with Decaying Knowledge Meta-Heurisitc Solver",
@@ -17,7 +17,7 @@
     "developmentStatus": "wip",
     "funder": {
         "@type": "Organization",
-        "name": "i-SITE ULNES"
+        "name": " FIPE18-007-VERMEULEN"
     },
     "keywords": [
         "Education",
@@ -61,7 +61,7 @@
             "email": "jeremie.humeau@imt-nord-europe.fr",
             "affiliation": {
                 "@type": "Organization",
-                "name": "Centre for Digital Systems - CERI SN - IMT Nord Europe"
+                "name": " IMT Nord Europe - Ecole nationale supérieure Mines-Télécom Lille Douai "
             }
         }
     ]
