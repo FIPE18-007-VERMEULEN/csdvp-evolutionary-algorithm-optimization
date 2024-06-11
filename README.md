@@ -38,4 +38,5 @@ With some distros, Paradiseo project based can throw an error during the build d
 
 ## Citation
 To cite this work, please use the following :
-Lebis, A., Humeau, J., Fleury, A., Lucas, F., & Vermeulen, M. (2023). Fully Individualized Curriculum with Decaying Knowledge, a New Hard Problem: Investigation and Recommendations. International Journal of Artificial Intelligence in Education, 1-36.
+
+`Lebis, A., Humeau, J., Fleury, A., Lucas, F., & Vermeulen, M. (2023). Fully Individualized Curriculum with Decaying Knowledge, a New Hard Problem: Investigation and Recommendations. International Journal of Artificial Intelligence in Education, 1-36.`
