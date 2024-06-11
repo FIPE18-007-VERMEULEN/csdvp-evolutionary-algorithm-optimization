@@ -35,3 +35,7 @@ Documentation soon™ (contact the authors if needed).
 
 ### Word of caution
 With some distros, Paradiseo project based can throw an error during the build due to linking some static objects to dynamic ones. In that case, rebuild Paradiseo with the `-fPIC` option (or `--enable-shared` if the previous does not work) in the CmakeConfig of the repository.
+
+## Citation
+To cite this work, please use the following :
+Lebis, A., Humeau, J., Fleury, A., Lucas, F., & Vermeulen, M. (2023). Fully Individualized Curriculum with Decaying Knowledge, a New Hard Problem: Investigation and Recommendations. International Journal of Artificial Intelligence in Education, 1-36.
